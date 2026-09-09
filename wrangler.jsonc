@@ -1,0 +1,13 @@
+{
+  "name": "asps-1",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-09",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "asps-1",
+      "database_id": "623a7de8-f496-4049-a786-a4ce1e5a4af4",
+      "remote": true
+    }
+  ]
+}
