@@ -18,7 +18,10 @@ export default {
       if (!person || !match) return json({ error: "person과 match가 필요합니다." }, 400);
 
       const result = await env.DB.prepare(
-        "SELECT * FROM individual_matches WHERE person_name = ? AND match_name = ?",
+        `SELECT person_name, personal_rank, match_name, match_score, match_group,
+                kai_difference, mbti_score, saju_score
+         FROM individual_matches
+         WHERE person_name = ? AND match_name = ?`,
       ).bind(person, match).first();
       return result ? json(result) : json({ error: "궁합 결과가 없습니다." }, 404);
     }
