@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch server.js",
-    "start": "node server.js",
+    "dev": "npx wrangler dev",
+    "start": "npx wrangler dev",
     "d1:dev": "npx wrangler dev",
     "d1:check": "node --test worker.test.js"
   }

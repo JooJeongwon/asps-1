@@ -1,2 +1,10 @@
 .wrangler/
 *.xlsx
+AGENTS.md
+asps-1_design.webp
+.DS_Store
+.env
+.env.*
+!.env.example
+node_modules/
+*.log

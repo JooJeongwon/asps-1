@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="네 사람이 만드는 팀, ASPS의 데이터 기반 궁합 이야기" />
+    <title>ASPS — 우리는 얼마나 잘 맞을까?</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="absolute inset-x-0 top-0 z-50">
+      <nav class="wrap flex h-20 items-center justify-between" aria-label="주요 메뉴">
+        <a href="#" class="flex items-center gap-2 text-sm font-black tracking-[-.04em]" aria-label="ASPS 홈"><span class="grid size-7 place-items-center rounded-full bg-ink text-[9px] text-white">A</span>ASPS</a>
+        <div class="hidden gap-7 text-[11px] font-bold md:flex"><a href="#team" class="hover:text-violet">팀 소개</a><a href="#compatibility" class="hover:text-violet">우리의 조합</a><a href="#try" class="hover:text-violet">26인 궁합</a><a href="#blind" class="hover:text-violet">블라인드 1위</a></div>
+        <a href="#try" class="btn !px-4 !py-2.5">궁합 확인하기</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero relative overflow-hidden">
+        <div class="hero-grid wrap">
+        <div class="hero-copy">
+          <h1 class="title mx-auto max-w-4xl text-5xl sm:text-7xl">우리는 얼마나<br />잘 맞는 팀일까?</h1>
+          <p class="mx-auto mt-6 max-w-xl text-sm leading-6 text-black/50 sm:text-base">주정원, 남성수, 박진환, 정치훈.<br />서로 다른 네 사람이 만드는 팀의 궁합을 숫자와 이야기로 소개합니다.</p>
+          <div class="mt-8 flex items-center gap-5"><a href="#compatibility" class="btn">결과 바로보기</a><a href="#team" class="text-xs font-black text-violet hover:text-ink">우리 팀 만나기 →</a></div>
+        </div>
+
+        <div class="hero-stage">
+          <div class="grid-floor absolute inset-x-[-15%] bottom-[-10rem] h-[650px]"></div>
+          <div class="hero-report card z-10 overflow-hidden bg-white/95 backdrop-blur">
+            <div class="flex h-11 items-center justify-between border-b border-black/8 px-4"><p class="text-[8px] font-black tracking-widest">ASPS / 01</p><p class="text-[8px] font-bold">TEAM COMPATIBILITY REPORT</p><span class="text-[7px] font-bold text-violet">D1 LIVE</span></div>
+            <div class="grid min-h-[340px] sm:grid-cols-[1fr_250px]">
+              <div class="relative overflow-hidden border-b border-black/8 p-5 sm:border-r sm:border-b-0 sm:p-8">
+                <p class="text-left text-[9px] font-black uppercase tracking-widest text-black/30">Team constellation</p>
+                <svg class="absolute inset-x-6 top-16 h-52 w-[calc(100%-3rem)]" viewBox="0 0 520 210" fill="none" aria-hidden="true"><path d="M95 55L257 25L425 70L350 175L165 170L95 55ZM257 25L350 175M425 70L165 170M95 55L350 175" stroke="#cfc9f9" stroke-width="1.5" stroke-dasharray="4 5"/><circle cx="95" cy="55" r="3" fill="#7457ff"/><circle cx="257" cy="25" r="3" fill="#7457ff"/><circle cx="425" cy="70" r="3" fill="#7457ff"/><circle cx="350" cy="175" r="3" fill="#7457ff"/></svg>
+                <div class="relative mx-auto mt-3 h-52 max-w-lg">
+                  <div class="absolute left-[5%] top-5 text-center"><span class="face mx-auto size-12 bg-gradient-to-br from-blue-400 to-indigo-700">JW</span><p class="mt-2 text-[9px] font-black">주정원</p></div>
+                  <div class="absolute left-[42%] top-0 text-center"><span class="face mx-auto size-12 bg-gradient-to-br from-orange-300 to-rose-600">SS</span><p class="mt-2 text-[9px] font-black">남성수</p></div>
+                  <div class="absolute right-[4%] top-9 text-center"><span class="face mx-auto size-12 bg-gradient-to-br from-cyan-400 to-teal-700">JH</span><p class="mt-2 text-[9px] font-black">박진환</p></div>
+                  <div class="absolute bottom-0 left-[58%] text-center"><span class="face mx-auto size-12 bg-gradient-to-br from-violet to-fuchsia-600">CH</span><p class="mt-2 text-[9px] font-black">정치훈</p></div>
+                </div>
+                <div class="mt-3 grid grid-cols-3 gap-2 text-left"><div class="rounded-lg bg-[#f7f6fa] p-3"><p class="text-[7px] text-black/35">최고 케미</p><b class="mt-1 block text-[10px]">정원 × 치훈</b></div><div class="rounded-lg bg-[#f7f6fa] p-3"><p class="text-[7px] text-black/35">MBTI 평균</p><b id="hero-mbti" class="mt-1 block text-[10px]">83.9</b></div><div class="rounded-lg bg-[#f7f6fa] p-3"><p class="text-[7px] text-black/35">분석 조합</p><b id="hero-pairs" class="mt-1 block text-[10px]">6 pairs</b></div></div>
+              </div>
+              <aside class="flex items-center justify-center p-7"><div><p class="text-[8px] font-black uppercase tracking-widest text-black/30">Team score</p><div class="score-ring relative mx-auto mt-5 grid size-32 place-items-center rounded-full" style="--score:69.2%"><div class="relative z-10 text-center"><b id="hero-score" class="text-3xl tracking-[-.06em]">69.2</b><p class="text-[7px] font-bold text-black/35">OUT OF 100</p></div></div><p id="hero-status" class="mt-5 border border-violet/20 bg-lilac px-4 py-2 text-center text-[9px] font-black text-violet">좋은 균형의 팀</p></div></aside>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section class="metric-strip"><div class="wrap flex flex-wrap items-center justify-center text-center text-[9px] font-black uppercase tracking-[.15em] sm:justify-between"><span>4 different minds</span><span>6 relationships</span><span>3 data signals</span><span>1 team</span></div></section>
+
+      <section id="team" class="wrap py-28 sm:py-40">
+        <div class="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:gap-20"><div><p class="eyebrow">01 · Meet ASPS</p><h2 class="title mt-4 text-4xl sm:text-6xl">먼저, 우리를<br />소개합니다.</h2><p class="mt-6 max-w-md text-sm leading-7 text-black/50">네 사람의 MBTI, 사주 원국, KAI 점수입니다. 서로 다른 기질과 인지 스타일이 우리 팀의 출발점입니다.</p></div>
+          <div class="member-grid grid sm:grid-cols-2">
+            <article class="card p-5" data-member="주정원"><div class="flex items-center gap-4"><span class="face size-14 bg-gradient-to-br from-blue-400 to-indigo-700">JW</span><div><p class="text-[9px] font-bold text-violet">TEAM MEMBER 01</p><h3 class="mt-1 text-xl font-black">주정원</h3></div></div><p class="mt-5 text-xs leading-6 text-black/45">서로 다른 관점을 연결하는 탐색자.</p><div class="member-metrics mt-5 grid grid-cols-3 gap-2"><span><small>MBTI</small><b>ENTP</b></span><span><small>사주</small><b>경진 (庚辰)</b></span><span><small>KAI</small><b>126</b></span></div></article>
+            <article class="card p-5 sm:translate-y-8" data-member="정치훈"><div class="flex items-center gap-4"><span class="face size-14 bg-gradient-to-br from-violet to-fuchsia-600">CH</span><div><p class="text-[9px] font-bold text-violet">TEAM MEMBER 02</p><h3 class="mt-1 text-xl font-black">정치훈</h3></div></div><p class="mt-5 text-xs leading-6 text-black/45">선명한 성향을 실행력으로 바꾸는 촉진자.</p><div class="member-metrics mt-5 grid grid-cols-3 gap-2"><span><small>MBTI</small><b>ESTP</b></span><span><small>사주</small><b>갑진 (甲辰)</b></span><span><small>KAI</small><b>102</b></span></div></article>
+            <article class="card p-5" data-member="박진환"><div class="flex items-center gap-4"><span class="face size-14 bg-gradient-to-br from-cyan-400 to-teal-700">JH</span><div><p class="text-[9px] font-bold text-violet">TEAM MEMBER 03</p><h3 class="mt-1 text-xl font-black">박진환</h3></div></div><p class="mt-5 text-xs leading-6 text-black/45">관계의 흐름을 잇는 연결자.</p><div class="member-metrics mt-5 grid grid-cols-3 gap-2"><span><small>MBTI</small><b>ENFP</b></span><span><small>사주</small><b>을해 (乙亥)</b></span><span><small>KAI</small><b>111</b></span></div></article>
+            <article class="card p-5 sm:translate-y-8" data-member="남성수"><div class="flex items-center gap-4"><span class="face size-14 bg-gradient-to-br from-orange-300 to-rose-600">SS</span><div><p class="text-[9px] font-bold text-violet">TEAM MEMBER 04</p><h3 class="mt-1 text-xl font-black">남성수</h3></div></div><p class="mt-5 text-xs leading-6 text-black/45">팀의 현실적인 균형을 잡는 조율자.</p><div class="member-metrics mt-5 grid grid-cols-3 gap-2"><span><small>MBTI</small><b>INFJ</b></span><span><small>사주</small><b>무진 (戊辰)</b></span><span><small>KAI</small><b>103</b></span></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="compatibility" class="border-y border-black/6 bg-white py-28 sm:py-40">
+        <div class="wrap"><div class="max-w-2xl"><p class="eyebrow">02 · Our compatibility</p><h2 class="title mt-4 text-4xl sm:text-6xl">넷이 만나면,<br />여섯 조합이 됩니다.</h2><p class="mt-6 text-sm leading-7 text-black/50">D1에 저장된 KAI 차이, MBTI, 사주 지표를 바탕으로 우리 안의 여섯 관계를 읽었습니다. 점수는 답이 아니라 서로를 이해하는 대화의 시작입니다.</p></div>
+          <div id="pair-grid" class="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3" aria-live="polite">
+            <article class="card p-5" data-pair><div class="flex justify-between"><p class="text-sm font-black">주정원 × 정치훈</p><b class="text-violet">75.6</b></div><p class="mt-2 text-[10px] text-black/40">좋음 · 팀 내 최고 케미</p><div class="mt-5 h-1 rounded bg-black/5"><i class="block h-full rounded bg-violet" style="width:75.6%"></i></div></article>
+            <article class="card p-5" data-pair><div class="flex justify-between"><p class="text-sm font-black">주정원 × 박진환</p><b class="text-violet">75.4</b></div><p class="mt-2 text-[10px] text-black/40">좋음 · 가장 높은 MBTI 조화</p><div class="mt-5 h-1 rounded bg-black/5"><i class="block h-full rounded bg-violet" style="width:75.4%"></i></div></article>
+            <article class="card p-5" data-pair><div class="flex justify-between"><p class="text-sm font-black">주정원 × 남성수</p><b class="text-violet">72.8</b></div><p class="mt-2 text-[10px] text-black/40">좋음 · 안정적인 균형</p><div class="mt-5 h-1 rounded bg-black/5"><i class="block h-full rounded bg-violet" style="width:72.8%"></i></div></article>
+            <article class="card p-5" data-pair><div class="flex justify-between"><p class="text-sm font-black">박진환 × 정치훈</p><b class="text-violet">70.1</b></div><p class="mt-2 text-[10px] text-black/40">좋음 · 강한 성향 시너지</p><div class="mt-5 h-1 rounded bg-black/5"><i class="block h-full rounded bg-violet" style="width:70.1%"></i></div></article>
+            <article class="card p-5" data-pair><div class="flex justify-between"><p class="text-sm font-black">남성수 × 박진환</p><b class="text-violet">63.0</b></div><p class="mt-2 text-[10px] text-black/40">보통 · 발견 중인 접점</p><div class="mt-5 h-1 rounded bg-black/5"><i class="block h-full rounded bg-violet" style="width:63%"></i></div></article>
+            <article class="card p-5" data-pair><div class="flex justify-between"><p class="text-sm font-black">남성수 × 정치훈</p><b class="text-violet">58.5</b></div><p class="mt-2 text-[10px] text-black/40">보통 · 다른 만큼 넓어지는 관점</p><div class="mt-5 h-1 rounded bg-black/5"><i class="block h-full rounded bg-violet" style="width:58.5%"></i></div></article>
+          </div>
+          <p id="data-state" class="mt-5 text-right text-[9px] text-black/30">D1 데이터 연결 중…</p>
+        </div>
+      </section>
+
+      <section id="try" class="bg-ink py-28 text-white sm:py-36">
+        <div class="wrap grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-24"><div><p class="text-[10px] font-black uppercase tracking-[.2em] text-white/35">03 · 26 people, live data</p><h2 class="title mt-4 text-4xl sm:text-6xl">이름으로 찾아<br />궁합을 확인하세요.</h2><p class="mt-6 max-w-md text-sm leading-6 text-white/45">D1에 연결된 26명, 325개 조합을 실시간으로 확인합니다. 두 사람의 이름을 검색하면 종합 궁합과 관계가 바로 나타납니다.</p></div>
+          <div class="rounded-2xl border border-white/10 bg-white/[.06] p-5 sm:p-7"><form id="match-form" class="grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-end"><label class="text-[9px] font-bold text-white/40">첫 번째 이름<input id="person-a" type="search" value="주정원" placeholder="이름 검색" autocomplete="off" class="mt-2 w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-bold text-white outline-none placeholder:text-white/35" /></label><span class="hidden pb-3 text-white/20 sm:block">×</span><label class="text-[9px] font-bold text-white/40">두 번째 이름<input id="person-b" type="search" value="정치훈" placeholder="이름 검색" autocomplete="off" class="mt-2 w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-bold text-white outline-none placeholder:text-white/35" /></label><button class="btn mt-2 !bg-white !text-ink sm:col-span-3 hover:!bg-lilac">궁합 계산하기</button></form>
+            <div id="match-result" class="mt-5 rounded-xl bg-black/25 p-5" aria-live="polite"><div class="flex items-center justify-between"><div><p class="text-[9px] font-bold text-white/35">현재 조합</p><h3 class="mt-1 font-black">주정원 × 정치훈</h3></div><b class="text-3xl tracking-[-.05em] text-[#a997ff]">75.6</b></div><p class="mt-3 text-xs font-bold text-white/45">좋음</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="blind" class="wrap py-28 sm:py-40">
+        <div class="grid items-center gap-14 lg:grid-cols-[.8fr_1.2fr] lg:gap-24">
+          <div><p class="eyebrow">04 · Blind best match</p><h2 class="title mt-4 text-4xl sm:text-6xl">이름보다 먼저,<br />점수를 보세요.</h2><p class="mt-6 max-w-md text-sm leading-7 text-black/50">26명의 모든 조합에서 가장 높은 궁합입니다. 선입견 없이 세 지표를 먼저 보고, 준비되면 두 사람의 이름을 확인하세요.</p><p class="mt-6 text-[10px] font-black text-violet">325 UNIQUE PAIRS · D1 LIVE</p></div>
+          <details id="blind-result" class="blind-card card overflow-hidden">
+            <summary class="cursor-pointer list-none p-6 sm:p-9"><div class="flex items-start justify-between"><p class="text-[9px] font-black tracking-[.18em] text-black/30">HIGHEST SCORE</p><b id="blind-score" class="text-5xl tracking-[-.07em] text-violet">80.3</b></div><div class="my-12 flex items-center justify-center gap-5 sm:gap-9"><span class="blind-person">?</span><span class="text-xl text-black/20">×</span><span class="blind-person">?</span></div><div class="grid grid-cols-3 gap-2 text-center"><span class="blind-metric"><small>MBTI</small><b id="blind-mbti">86.8</b></span><span class="blind-metric"><small>KAI 차이</small><b id="blind-kai">35.0</b></span><span class="blind-metric"><small>사주</small><b id="blind-saju">81.5</b></span></div><p class="mt-7 text-center text-[10px] font-black text-violet"><span class="closed-copy">이름 공개하기 ＋</span><span class="open-copy">다시 가리기 −</span></p></summary>
+            <div class="border-t border-black/10 bg-lilac p-6 text-center sm:p-9"><p class="text-[9px] font-black tracking-[.18em] text-violet">THE BEST MATCH IS</p><h3 id="blind-names" class="mt-3 text-2xl font-black">전형원 × 현세은</h3><p id="blind-group" class="mt-2 text-xs text-black/45">베스트 프렌드 · 전체 1위 조합</p></div>
+          </details>
+        </div>
+      </section>
+
+      <section class="wrap py-24"><div class="mx-auto max-w-3xl"><p class="eyebrow">FAQ</p><div class="mt-8 divide-y divide-black/10 border-y border-black/10"><details class="group py-5" open><summary class="flex cursor-pointer list-none justify-between text-sm font-black">궁합 점수는 어떻게 계산되나요?<span class="group-open:rotate-45">＋</span></summary><p class="pt-4 pr-10 text-xs leading-6 text-black/45">KAI 차이와 MBTI, 사주 지표를 함께 반영한 데이터 모델의 결과입니다.</p></details><details class="group py-5"><summary class="flex cursor-pointer list-none justify-between text-sm font-black">점수가 팀의 좋고 나쁨을 의미하나요?<span class="group-open:rotate-45">＋</span></summary><p class="pt-4 pr-10 text-xs leading-6 text-black/45">아닙니다. 서로의 차이를 이해하고 대화를 시작하기 위한 참고 지표입니다.</p></details><details class="group py-5"><summary class="flex cursor-pointer list-none justify-between text-sm font-black">다른 팀도 볼 수 있나요?<span class="group-open:rotate-45">＋</span></summary><p class="pt-4 pr-10 text-xs leading-6 text-black/45">네. 다른 팀의 이야기를 순차적으로 공개하고, 현재 데이터에 있는 두 사람의 궁합은 위에서 바로 확인할 수 있습니다.</p></details></div></div></section>
+    </main>
+
+    <footer class="border-t border-black/8 bg-white py-9"><div class="wrap flex flex-col gap-5 text-[10px] text-black/35 sm:flex-row sm:items-center sm:justify-between"><a href="#" class="flex items-center gap-2 text-sm font-black text-ink"><span class="grid size-7 place-items-center rounded-full bg-ink text-[9px] text-white">A</span>ASPS</a><p>주정원 · 남성수 · 박진환 · 정치훈</p><p>© 2026 ASPS</p></div></footer>
+
+    <script>
+      const members = ["주정원", "남성수", "박진환", "정치훈"];
+      const uniquePairs = (rows) => rows.filter(({ person_name, match_name }) => person_name < match_name);
+      const pairCopy = (score) => score >= 75 ? "높은 시너지" : score >= 70 ? "안정적인 호흡" : score >= 60 ? "발견 중인 접점" : "다른 만큼 넓어지는 관점";
+
+      async function loadTeam() {
+        try {
+          const query = members.map((name) => `member=${encodeURIComponent(name)}`).join("&");
+          const response = await fetch(`/api/team?${query}`);
+          if (!response.ok || !response.headers.get("content-type")?.includes("application/json")) throw new Error();
+          const pairs = uniquePairs(await response.json());
+          if (pairs.length !== 6) throw new Error();
+          const average = pairs.reduce((sum, pair) => sum + pair.match_score, 0) / pairs.length;
+          const mbti = pairs.reduce((sum, pair) => sum + pair.mbti_score, 0) / pairs.length;
+          document.querySelector(".score-ring").style.setProperty("--score", `${average}%`);
+          document.querySelector("#hero-score").textContent = average.toFixed(1);
+          document.querySelector("#hero-mbti").textContent = mbti.toFixed(1);
+          document.querySelector("#hero-pairs").textContent = `${pairs.length} pairs`;
+          document.querySelector("#pair-grid").innerHTML = pairs.map((pair) => `<article class="card p-5"><div class="flex justify-between"><p class="text-sm font-black">${pair.person_name} × ${pair.match_name}</p><b class="text-violet">${pair.match_score.toFixed(1)}</b></div><p class="mt-2 text-[10px] text-black/40">${pair.match_group} · ${pairCopy(pair.match_score)}</p><div class="mt-5 h-1 rounded bg-black/5"><i class="block h-full rounded bg-violet" style="width:${pair.match_score}%"></i></div><div class="pair-metrics mt-5"><span>MBTI <b>${pair.mbti_score.toFixed(1)}</b></span><span>KAI 차이 <b>${pair.kai_difference.toFixed(1)}</b></span><span>사주 <b>${pair.saju_score.toFixed(1)}</b></span></div></article>`).join("");
+          document.querySelector("#data-state").textContent = "Cloudflare D1 실시간 데이터";
+        } catch {
+          document.querySelector("#data-state").textContent = "최근 동기화된 D1 데이터";
+        }
+      }
+
+      document.querySelector("#match-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const person = document.querySelector("#person-a").value;
+        const match = document.querySelector("#person-b").value;
+        const result = document.querySelector("#match-result");
+        if (person === match) return result.innerHTML = "<p class='text-xs text-rose-300'>서로 다른 두 사람을 선택해주세요.</p>";
+        result.innerHTML = "<p class='text-xs text-white/40'>D1에서 궁합을 찾는 중…</p>";
+        try {
+          const response = await fetch(`/api/match?person=${encodeURIComponent(person)}&match=${encodeURIComponent(match)}`);
+          if (!response.headers.get("content-type")?.includes("application/json")) throw new Error("궁합 API 연결을 확인해주세요.");
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error);
+          result.innerHTML = `<div class="flex items-center justify-between"><div><p class="text-[9px] font-bold text-white/35">선택한 조합</p><h3 class="mt-1 font-black">${data.person_name} × ${data.match_name}</h3></div><b class="text-3xl tracking-[-.05em] text-[#a997ff]">${data.match_score.toFixed(1)}</b></div><p class="mt-3 text-xs font-bold text-white/45">${data.match_group}</p>`;
+        } catch (error) {
+          result.innerHTML = `<p class="text-xs text-rose-300">${error.message || "궁합 데이터를 불러오지 못했습니다."}</p>`;
+        }
+      });
+
+      async function loadHighlight() {
+        try {
+          const response = await fetch("/api/highlight");
+          if (!response.ok) return;
+          const data = await response.json();
+          document.querySelector("#blind-score").textContent = data.match_score.toFixed(1);
+          document.querySelector("#blind-mbti").textContent = data.mbti_score.toFixed(1);
+          document.querySelector("#blind-kai").textContent = data.kai_difference.toFixed(1);
+          document.querySelector("#blind-saju").textContent = data.saju_score.toFixed(1);
+          document.querySelector("#blind-names").textContent = `${data.person_name} × ${data.match_name}`;
+          document.querySelector("#blind-group").textContent = `${data.match_group} · 전체 1위 조합`;
+        } catch {}
+      }
+
+      loadTeam();
+      loadHighlight();
+    </script>
+  </body>
+</html>
