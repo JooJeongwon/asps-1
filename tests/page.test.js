@@ -18,6 +18,12 @@ test('page shows fetched highlight, handles ties, and escapes search results',as
   assert.match(w.document.querySelector('#blind-data-label').textContent,/LIVE RESULT/);
   assert.match(w.document.querySelector('#blind-group').textContent,/공동 1위 2개/);
   assert.equal(w.document.querySelectorAll('#pair-grid article').length,6);
+  w.document.querySelector('[data-member="주정원"]').click();
+  assert.equal(w.document.querySelector('#member-dialog').open,true);
+  assert.match(w.document.querySelector('#member-one-line').textContent,/질문/);
+  assert.match(w.document.querySelector('#member-bio').textContent,/문제/);
+  w.document.querySelector('#member-dialog').dispatchEvent(new w.Event('click'));
+  assert.equal(w.document.querySelector('#member-dialog').open,false);
   const details=w.document.querySelector('#blind-result');details.open=true;assert.equal(details.open,true);
   w.document.querySelector('#match-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle();
   assert.match(w.document.querySelector('#match-result').textContent,/<img/);
