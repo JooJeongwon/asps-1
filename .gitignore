@@ -5,6 +5,12 @@ asps-1_design.webp
 .DS_Store
 .env
 .env.*
-!.env.example
 node_modules/
 *.log
+private/
+.vercel/
+public/tailwind.css
+.dev.vars
+.vercel
+.env*
+!.env.example

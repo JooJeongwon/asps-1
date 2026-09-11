@@ -3,9 +3,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npx wrangler dev",
-    "start": "npx wrangler dev",
-    "d1:dev": "npx wrangler dev",
-    "d1:check": "node --test worker.test.js"
+    "dev": "npm run build && node --env-file-if-exists=.env.local scripts/dev-server.js",
+    "start": "node --env-file-if-exists=.env.local scripts/dev-server.js",
+    "build": "tailwindcss -i styles/tailwind.css -o public/tailwind.css --minify",
+    "test": "node --test worker.test.js tests/*.test.js",
+    "cf:dev": "npm run build && npx wrangler dev"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "jsdom": "30.0.1",
+    "tailwindcss": "4.3.3"
   }
 }
