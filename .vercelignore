@@ -1,0 +1,8 @@
+.env*
+private/
+supabase/
+tests/
+worker.test.js
+scripts/test-database.py
+*.xlsx
+node_modules/
