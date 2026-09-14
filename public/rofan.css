@@ -259,7 +259,7 @@ text-box [data-content="name"] {
 }
 text-box p,
 text-box type-writer {
-  font: 400 24px/1.6 var(--serif);
+  font: 400 27px/1.6 var(--serif);
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
@@ -812,7 +812,7 @@ alert-modal {
   }
   text-box p,
   text-box type-writer {
-    font-size: 20px;
+    font-size: 23px;
     line-height: 1.6;
   }
   text-box [data-content="name"] {
@@ -981,7 +981,7 @@ alert-modal {
     max-height: 145px;
   }
   game-screen:has(.final-choice) text-box type-writer {
-    font-size: 20px;
+    font-size: 23px;
   }
 }
 @media (max-height: 600px) and (min-width: 600px) {
@@ -1075,7 +1075,7 @@ alert-modal {
   }
   text-box p,
   text-box type-writer {
-    font-size: 18px;
+    font-size: 21px;
     line-height: 1.55;
   }
   game-screen:has(.story-choice) text-box {
