@@ -2,7 +2,7 @@
 import argparse
 import json
 from pathlib import Path
-from playwright.sync_api import sync_playwright, expect
+from playwright.sync_api import sync_playwright, expect, Error
 
 parser=argparse.ArgumentParser()
 parser.add_argument('--url', default='http://127.0.0.1:3012')
@@ -30,11 +30,22 @@ def walk(page, ending='chihoon', answer=0, stop=None):
     visited=set();unlocks=set()
     for _ in range(400):
         if '/team.html' in page.url:return visited,unlocks
-        label=page.evaluate('monogatari.state("label")')
+        try:
+            label=page.evaluate('monogatari.state("label")')
+        except Error as error:
+            if 'Execution context was destroyed' not in str(error):raise
+            page.wait_for_url(base+'/team.html?match='+ending)
+            return visited,unlocks
         if label.startswith('Cut'):visited.add(label[3:5])
         if page.locator('message-modal').count():
             modal=page.locator('message-modal')
-            unlocks.add(modal.locator('[data-content="title"]').inner_text())
+            if modal.locator('.saju-pairs').count():
+                expect(modal.locator('.saju-pairs li')).to_have_count(6)
+                data=page.evaluate('monogatari.storage().saju')
+                assert data['status']=='ready'
+                assert data['pairs'][0]['score']==max(p['score'] for p in data['pairs'])
+            elif 'profile-unlock' in (modal.get_attribute('class') or ''):
+                unlocks.add(modal.locator('[data-content="title"]').inner_text())
             shot(page, f'unlock-{label}-{page.viewport_size["width"]}.png')
             modal.locator('[data-action="close"]').click()
         elif page.locator('choice-container button').count():
@@ -88,6 +99,7 @@ with sync_playwright() as p:
         assert visited=={f'{i:02}' for i in range(1,21)},visited
         assert len(unlocks)==4,unlocks
         expect(page).to_have_url(base+'/team.html?match='+id)
+        page.wait_for_load_state('networkidle')
         expect(page.locator('#your-match')).to_contain_text(names[index]);expect(page.locator('.member')).to_have_count(4)
         for photo in page.locator('.member img').all():assert photo.evaluate('(e)=>e.complete && e.naturalWidth>0')
         page.locator('#show-profiles').click();expect(page.locator('details[open]')).to_have_count(4)

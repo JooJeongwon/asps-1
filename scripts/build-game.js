@@ -12,7 +12,7 @@ const html = (
   )
 ).join("\n");
 const context = vm.createContext({ window: {} });
-for (const file of ["characters.js", "team.js", "scenario.js", "story.js"])
+for (const file of ["characters.js", "team.js", "saju.js", "scenario.js", "story.js"])
   vm.runInContext(await readFile(new URL(file, root), "utf8"), context);
 const { YEONBUN_PORTRAITS: portraits, TEAM04_MEMBERS: routes } = context.window;
 for (const route of routes) {

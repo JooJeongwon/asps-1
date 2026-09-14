@@ -5,7 +5,7 @@ import { JSDOM } from "jsdom";
 const root = new URL("../public/", import.meta.url);
 const html = await fs.readFile(new URL("index.html", root), "utf8");
 const scripts = await Promise.all(
-  ["characters.js", "team.js", "scenario.js", "story.js", "game.js"].map((f) =>
+  ["characters.js", "team.js", "saju.js", "scenario.js", "story.js", "game.js"].map((f) =>
     fs.readFile(new URL(f, root), "utf8"),
   ),
 );
@@ -45,7 +45,7 @@ test("root always starts the shared story; old route links cannot bypass the mee
       await new Promise((r) => setTimeout(r, 0));
       assert.equal(captured.settings.ShowMainScreen, false);
       assert.equal(captured.settings.Label, "Start");
-      assert.equal(captured.settings.Name, "ASPS_TEAM04_v1");
+      assert.equal(captured.settings.Name, "ASPS_TEAM04_saju_v2");
       assert.equal(captured.script.Start[1], "jump Cut01");
       assert.equal(w.document.querySelectorAll("[data-affinity]").length, 4);
       for (const m of w.TEAM04_MEMBERS)

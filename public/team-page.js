@@ -29,7 +29,7 @@
     const facts = document.createElement("p");
     facts.textContent = `${member.mbti} · ${member.pillar} · KAI ${member.kai}`;
     const trait = document.createElement("p");
-    trait.textContent = member.trait;
+    trait.textContent = member.sajuScene;
     const interests = document.createElement("p");
     interests.className = "interests";
     interests.textContent = `관심사 · ${member.interests}`;

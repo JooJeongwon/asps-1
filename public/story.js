@@ -19,6 +19,7 @@
     choices: {},
     unlocked: {},
     selected: null,
+    saju: null,
   });
   // A choice ledger prevents loading/replaying callbacks from double-counting points.
   function recalculate(data) {
@@ -38,12 +39,19 @@
       "jump Cut01",
     ],
   };
-  const messages = {};
+  const messages = {
+    SajuNote: {
+      title: "우리 팀의 사주 노트",
+      subtitle: "같은 하루, 서로 다른 네 사람",
+      body: "{{saju.note}}",
+      actionString: "Continue",
+    },
+  };
   for (const member of members)
     messages[`Profile_${member.id}`] = {
       title: `PROFILE UNLOCK · ${member.name}`,
-      subtitle: `${member.role} · ${member.mbti} · ${member.pillar}`,
-      body: `<span class="unlock-profile"><img src="/assets/${window.YEONBUN_PORTRAITS[member.name]}" alt="${member.name} 애니메이션 캐릭터"><span><strong>${escape(member.trait)}</strong><span>${escape(member.hidden)}</span><small>${escape(member.motif)}</small></span></span>`,
+      subtitle: `${member.role} · ${member.pillar}`,
+      body: `<span class="unlock-profile"><img src="/assets/${window.YEONBUN_PORTRAITS[member.name]}" alt="${member.name} 애니메이션 캐릭터"><span><strong>${escape(member.trait)}</strong><span>${escape(member.hidden)}</span><small>${escape(member.motif)}<br>${escape(member.sajuScene)}</small></span></span>`,
       actionString: "Continue",
     };
   scenario.cuts.forEach((cut, index) => {
@@ -58,6 +66,22 @@
       ...cut.lines,
     ];
     script[cut.id] = entry;
+    if (cut.sajuNote) {
+      entry.push(
+        {
+          Function: {
+            async Apply() {
+              // The same observed data survives save/load and rewind for this run.
+              const data = this.storage();
+              if (!data.saju) data.saju = await window.TEAM04_SAJU.load();
+            },
+            Revert() {},
+          },
+        },
+        "show message SajuNote saju-note",
+        ...cut.sajuLines,
+      );
+    }
     if (cut.final) {
       entry.push({
         Choice: {

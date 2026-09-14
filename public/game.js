@@ -13,8 +13,8 @@
   ).matches;
   engine.settings({
     // New story, new save namespace. Original prologue saves remain intact.
-    Name: "ASPS_TEAM04_v1",
-    Version: "2.0.0",
+    Name: "ASPS_TEAM04_saju_v2",
+    Version: "2.1.0",
     Label: "Start",
     ShowMainScreen: false,
     ServiceWorkers: false,
@@ -112,7 +112,7 @@
     if (tag === "message-modal") {
       component.setAttribute("role", "dialog");
       component.setAttribute("aria-modal", "true");
-      component.setAttribute("aria-label", "새로운 팀원 프로필");
+      component.setAttribute("aria-label", component.querySelector('[data-content="title"]')?.textContent || "이야기 노트");
       requestAnimationFrame(() =>
         component.querySelector('[data-action="close"]')?.focus(),
       );

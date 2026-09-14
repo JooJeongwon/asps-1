@@ -18,15 +18,21 @@ const dialogue = (lines) =>
   lines
     .map((line) => {
       const i = line.indexOf(" ");
-      return `**${names[line.slice(0, i)]}** ${line.slice(i + 1)}`;
+      return `**${names[line.slice(0, i)]}** ${line.slice(i + 1)
+        .replace("{{saju.summary}}", "[이번 회차에 불러온 실제 사주 점수: 최고 조합의 이름·점수, 동점이면 모두 소개. 조회 실패 시 노트가 열리지 않는다는 대사.]")
+        .replace("{{saju.teamwork}}", "[CUT 03의 사주 최고 조합·점수를 다시 떠올린 뒤, 네 사람이 모두 서로의 일을 이어주는 모습을 이야기한다.]")}`;
     })
     .join("\n\n");
 let text = `# 《${story.title}》\n\n여자 전학생인 주인공은 이름과 얼굴이 드러나지 않는다. 첫날 네 명을 차례로 알아가고, 공동 위기를 함께 해결한 뒤 마지막 밤 직접 한 명을 선택한다.\n\n## 확정한 팀 역할\n\n| 인물 | 실제 역할 | 이야기 속 인상 |\n| --- | --- | --- |\n`;
 for (const m of members) text += `| ${m.name} | ${m.role} | ${m.trait} |\n`;
+text += "\n## 사주 데이터가 이야기에 쓰이는 곳\n\n";
+for (const m of members) text += `- **${m.name} · ${m.pillar}:** ${m.sajuScene}\n`;
+text += "\nCUT 03에서 Supabase의 네 팀원 간 사주 점수 여섯 조합을 조회해 ‘우리 팀의 사주 노트’를 연다. 종합 궁합·MBTI·KAI 점수를 사주 점수로 대신 쓰지 않는다. 원점수로 순서를 정하고 화면에는 소수점 한 자리로 표시한다. CUT 16에서는 같은 회차의 점수와 최고 조합을 다시 언급한다. 데이터 조회 실패 시 점수를 만들지 않고 공통 이야기를 계속한다. 저장/불러오기와 되감기는 해당 회차의 데이터를 유지하며 새 회차는 다시 조회한다. 주인공의 사주나 생년월일은 설정하지 않는다.\n";
 text +=
   "\n역할은 사용자가 확정했다. MBTI·일주·KAI와 관심사 문구는 기존 프로젝트에서 가져왔으며, 사건·대사·감정과 캐릭터의 성격 묘사는 창작이다. 사주나 MBTI가 실제 성격·감정·연애 결과를 결정한다는 설정은 사용하지 않는다.\n\n## 진행 규칙\n\n- CUT 01부터 공통 이야기로 시작한다. 초반 인물 선택은 없다.\n- 일상 선택은 짧은 반응 뒤 같은 컷의 뒷부분에 합류한다. 합류 후 모두 동일한 다음 컷으로 이동한다.\n- CUT 02 인사에 따라 두 인물의 호감도가 +1. CUT 04·07·10·13은 해당 인물 +1, CUT 16은 전원 +1이다. CUT 05는 점수 변화 없이 대사만 달라진다.\n- CUT 05·08·11·14에서 각각 프로필을 해금한다.\n- CUT 19에서 호감도 순위와 관계없이 네 명 모두 선택할 수 있다. CUT 20만 네 개의 엔딩으로 분기한다.\n- 7개의 이지선다 × 최종 4인 선택 = 512개 선택 조합이지만, 스토리는 20컷으로 합류한다.\n\n";
 for (const cut of story.cuts) {
   text += `## CUT ${cut.id.slice(3)}. ${cut.title}\n\n**배경:** ${cut.location}\n\n${dialogue(cut.lines)}\n\n`;
+  if (cut.sajuNote) text += "**사주 노트:** 실제 팀원 간 6개 조합과 사주 점수 / 100을 표시한다.\n\n" + dialogue(cut.sajuLines) + "\n\n";
   if (cut.prompt) text += dialogue([cut.prompt]) + "\n\n";
   if (cut.choices) {
     cut.choices.forEach((option, i) => {
@@ -41,7 +47,7 @@ for (const cut of story.cuts) {
   if (cut.after) text += dialogue(cut.after) + "\n\n";
   if (cut.unlock) {
     const m = members.find((m) => m.id === cut.unlock);
-    text += `> PROFILE UNLOCK · ${m.name}\n>\n> ${m.role} · ${m.mbti} · ${m.pillar}\n>\n> ${m.trait}\n>\n> ${m.hidden}\n\n`;
+    text += `> PROFILE UNLOCK · ${m.name}\n>\n> ${m.role} · ${m.pillar}\n>\n> ${m.trait}\n>\n> ${m.hidden}\n>\n> ${m.sajuScene}\n\n`;
   }
   if (cut.final)
     for (const m of members) text += `- **${m.name}** — ${m.summary}\n`;

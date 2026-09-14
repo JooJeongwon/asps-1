@@ -39,6 +39,7 @@ const files = new Map([
     ["assets/characters/nam-seongsu.png", "image/png"],
   ],
   ["/team.js", ["team.js", "text/javascript; charset=utf-8"]],
+  ["/saju.js", ["saju.js", "text/javascript; charset=utf-8"]],
   ["/scenario.js", ["scenario.js", "text/javascript; charset=utf-8"]],
   ["/team.html", ["team.html", "text/html; charset=utf-8"]],
   ["/team-page.js", ["team-page.js", "text/javascript; charset=utf-8"]],
