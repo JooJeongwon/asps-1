@@ -15,16 +15,16 @@ body {
   margin: 0;
   width: 100%;
   max-width: none;
-  height: auto;
-  min-height: 100dvh;
-  max-height: none;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
   background: #f7f3f8;
   color: #40364a;
   font-family: var(--sans);
   font-size: 14px;
 }
 body {
-  padding: 0 32px;
+  padding: 0;
 }
 a {
   color: inherit;
@@ -51,67 +51,12 @@ input:focus-visible {
 [hidden] {
   display: none !important;
 }
-.player-header {
-  max-width: 1180px;
-  margin: auto;
-  height: 96px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  text-align: left;
-}
-.player-brand {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  font-family: var(--serif);
-  font-size: 31px;
-  color: #8c6c9b;
-}
-.player-brand > span {
-  font-size: 28px;
-  line-height: 1.2;
-  letter-spacing: 0.12em;
-}
-.player-brand small {
-  display: block;
-  font: 7px var(--sans);
-  letter-spacing: 0.12em;
-  margin-top: 5px;
-}
-.player-chapter {
-  flex: 1;
-  border-left: 1px solid #d9ccdf;
-  padding-left: 25px;
-  font-size: 13px;
-}
-.player-chapter small {
-  display: block;
-  font-size: 10px;
-  margin-top: 5px;
-  color: #927d9e;
-}
-.archive-link {
-  font-size: 12px;
-  color: #795d88;
-  border: 1px solid #c9b6d1;
-  padding: 9px 17px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
 #monogatari {
-  max-width: 1180px;
-  margin: auto;
+  position: fixed;
+  inset: 0;
   width: 100%;
-  height: calc(100dvh - 156px);
-  min-height: 650px;
-  max-height: 920px;
-  border: 1px solid #cfbdd9;
-  border-radius: 9px;
+  height: 100dvh;
   overflow: hidden;
-  box-shadow: 0 15px 60px #60427217;
-  position: relative;
 }
 visual-novel {
   width: 100%;
@@ -164,34 +109,39 @@ game-screen .scene-3 {
   font-size: 10px;
   white-space: nowrap;
 }
-/* The engine displays native character sprites; CSS selects each quarter of the original sheet. */
+/* Original photographs are shown whole, with their own aspect ratios. */
 game-screen img[data-character] {
-  width: clamp(840px, 95vw, 1120px);
-  max-width: none;
-  max-height: none;
+  width: auto;
   height: auto;
+  max-width: 80%;
+  max-height: min(600px, calc(100% - 490px));
+  object-fit: contain;
   left: 50%;
   right: auto;
-  top: auto;
-  bottom: 160px;
+  top: 85px;
+  bottom: auto;
   margin: 0;
-  mask-image: linear-gradient(0deg, transparent, #000 22%);
+  transform: translateX(-50%);
+  border: 5px solid #fffcfa;
+  box-shadow: 0 12px 60px #30203935;
+  border-radius: 3px;
 }
-game-screen img[data-character="c0"] {
-  clip-path: inset(0 75% 0 0);
-  transform: translateX(-12.5%);
+.chapter {
+  padding: 8px 13px;
+  background: #fffdf9e8;
+  border: 1px solid #e6d5ed;
+  border-radius: 3px;
+  color: #725480;
+  text-align: left;
+  font-size: 12px;
 }
-game-screen img[data-character="c1"] {
-  clip-path: inset(0 50% 0 25%);
-  transform: translateX(-37.5%);
+.chapter small {
+  display: block;
+  font-size: 10px;
+  margin-top: 3px;
 }
-game-screen img[data-character="c2"] {
-  clip-path: inset(0 25% 0 50%);
-  transform: translateX(-62.5%);
-}
-game-screen img[data-character="c3"] {
-  clip-path: inset(0 0 0 75%);
-  transform: translateX(-87.5%);
+#route-location {
+  margin-left: auto;
 }
 text-box {
   left: 28px;
@@ -404,25 +354,6 @@ save-slot h3 {
 .modal__content button {
   font-size: 12px;
 }
-.player-footer {
-  max-width: 1180px;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  min-height: 59px;
-  font-size: 10px;
-  color: #96819f;
-}
-.player-footer i {
-  font-style: normal;
-  margin: 0 9px;
-}
-.player-footer a {
-  color: #795d88;
-  white-space: nowrap;
-}
 .engine-status {
   position: absolute;
   top: 45%;
@@ -436,45 +367,6 @@ save-slot h3 {
   z-index: 25;
 }
 @media (max-width: 760px) {
-  body {
-    padding: 0 10px;
-  }
-  .player-header {
-    height: 86px;
-    gap: 12px;
-  }
-  .player-brand {
-    font-size: 25px;
-    gap: 6px;
-  }
-  .player-brand > span {
-    font-size: 23px;
-  }
-  .player-brand small {
-    font-size: 6px;
-  }
-  .player-chapter {
-    padding-left: 13px;
-    font-size: 10px;
-  }
-  .player-chapter small {
-    font-size: 8px;
-    max-width: 190px;
-    line-height: 1.7;
-  }
-  .archive-link {
-    font-size: 0;
-    padding: 8px;
-  }
-  .archive-link:after {
-    content: "궁합 ↗";
-    font-size: 10px;
-  }
-  #monogatari {
-    height: calc(100dvh - 152px);
-    min-height: 620px;
-    border-radius: 6px;
-  }
   .scene-heading {
     top: 14px;
     left: 13px;
@@ -492,8 +384,9 @@ save-slot h3 {
     background-size: auto 200% !important;
   }
   game-screen img[data-character] {
-    width: 840px;
-    bottom: 200px;
+    top: 90px;
+    max-height: calc(100% - 475px);
+    max-width: 82%;
   }
   text-box {
     left: 10px;
@@ -547,18 +440,6 @@ save-slot h3 {
   }
   game-screen:has(.epilogue-choices) text-box type-writer {
     font-size: 13px;
-  }
-  .player-footer {
-    font-size: 8px;
-    gap: 10px;
-    line-height: 1.8;
-    min-height: 65px;
-  }
-  .player-footer > span {
-    max-width: 240px;
-  }
-  .player-footer i {
-    margin: 0 4px;
   }
   quick-menu {
     gap: 1px;
@@ -666,4 +547,169 @@ quick-menu .svg-inline--fa {
 #monogatari save-slot:focus-visible {
   outline: 3px solid #a688b8;
   outline-offset: 4px;
+}
+
+/* Character selection is a native Monogatari Choice inside the running game. */
+game-screen:has(.cast-choices) text-box {
+  min-height: 146px;
+  max-height: 146px;
+  padding-bottom: 20px;
+}
+.cast-choices {
+  top: 110px;
+  bottom: 250px;
+  max-height: 480px;
+  width: min(1080px, calc(100% - 80px));
+  overflow: visible;
+}
+.cast-choices [data-content="wrapper"] {
+  height: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+  gap: 18px;
+}
+.cast-choices button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 10px 10px 16px;
+  background: #fffcf7f5;
+  border: 1px solid #fff9f5;
+  border-radius: 3px;
+  box-shadow: 0 8px 35px #34273d24;
+  text-align: center;
+  transition:
+    transform 0.18s,
+    border-color 0.18s;
+}
+.cast-choices button:hover {
+  transform: translateY(-5px);
+}
+.cast-choices button:before {
+  display: none;
+}
+.cast-choices img {
+  position: static;
+  width: 100%;
+  height: 0;
+  flex: 1;
+  min-height: 0;
+  object-fit: contain;
+  margin: 0 0 14px;
+  pointer-events: none;
+}
+.cast-name {
+  font: 700 21px var(--serif);
+}
+.cast-choices small {
+  font-size: 11px;
+  margin-top: 6px;
+}
+@media (max-width: 760px) {
+  .chapter {
+    padding: 6px 9px;
+    font-size: 10px;
+  }
+  .chapter small {
+    font-size: 8px;
+  }
+  #route-location {
+    display: none;
+  }
+  .cast-choices {
+    top: 90px;
+    bottom: 228px;
+    max-height: none;
+    width: calc(100% - 40px);
+  }
+  .cast-choices [data-content="wrapper"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .cast-choices button {
+    padding: 6px 6px 8px;
+  }
+  .cast-choices img {
+    margin-bottom: 5px;
+  }
+  .cast-name {
+    font-size: 16px;
+  }
+  .cast-choices small {
+    font-size: 9px;
+    margin-top: 3px;
+  }
+  quick-menu button,
+  quick-menu > button {
+    padding: 5px 3px;
+    font-size: 9px;
+  }
+}
+/* Compact landscape phones keep the portrait beside the dialogue. */
+@media (max-height: 600px) and (min-width: 600px) {
+  .scene-heading {
+    top: 10px;
+  }
+  #route-location {
+    display: none;
+  }
+  game-screen img[data-character] {
+    left: 21%;
+    top: 77px;
+    max-height: calc(100% - 145px);
+    max-width: 35%;
+  }
+  text-box {
+    left: 42%;
+    width: 56%;
+    bottom: 65px;
+  }
+  game-screen:has(choice-container) text-box {
+    min-height: 260px;
+    max-height: 260px;
+    padding-bottom: 130px;
+  }
+  choice-container {
+    left: 70%;
+    width: 50%;
+    bottom: 78px;
+    max-height: 120px;
+  }
+  choice-container button {
+    padding: 8px;
+    font-size: 10px;
+  }
+  text-box type-writer {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .cast-choices {
+    left: 50%;
+    top: 74px;
+    bottom: 175px;
+    width: calc(100% - 60px);
+    max-height: none;
+  }
+  .cast-choices [data-content="wrapper"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+  }
+  game-screen:has(.cast-choices) text-box {
+    left: 28px;
+    width: calc(100% - 56px);
+    min-height: 100px;
+    max-height: 100px;
+    padding-bottom: 10px;
+  }
+  game-screen:has(.epilogue-choices) text-box {
+    min-height: 270px;
+    max-height: 270px;
+    padding-bottom: 90px;
+  }
+  game-screen:has(.epilogue-choices) text-box type-writer {
+    font-size: 12px;
+  }
 }

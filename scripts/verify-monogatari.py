@@ -13,6 +13,7 @@ parser.add_argument('--screenshots', default=None)
 args = parser.parse_args()
 base = args.url.rstrip('/')
 names = ['정치훈', '주정원', '박진환', '남성수']
+photos = ['jeong-chihoon.jpeg', 'joo-jeongwon.jpeg', 'park-jinhwan.jpg', 'nam-seongsu.png']
 titles = [
     ['내일도, 같은 출발선', '한 걸음의 여백'],
     ['우리만 아는 별의 이름', '접어둔 질문 하나'],
@@ -21,7 +22,7 @@ titles = [
 ]
 
 def start(page, name=None):
-    page.goto(base + '/play.html' + ('?' + urlencode({'route': name}) if name else ''), wait_until='networkidle')
+    page.goto(base + '/' + ('?' + urlencode({'route': name}) if name else ''), wait_until='networkidle')
     expect(page.locator('body')).to_have_attribute('data-engine-ready', 'true')
 
 def advance(page):
@@ -45,10 +46,24 @@ with sync_playwright() as p:
     page.on('pageerror', lambda err: errors.append(str(err)))
     page.on('response', lambda r: failed_assets.append(r.url) if r.status >= 400 and r.url.startswith(base) else None)
     endings=set()
+    start(page)
+    expect(page.locator('main-screen')).not_to_be_visible()
+    expect(page.locator('header, footer, #blind, #match-form')).to_have_count(0)
+    expect(page.locator('.cast-choices button')).to_have_count(4)
+    screenshot(page, 'root-desktop.png')
+    for index, name in enumerate(names):
+        choice = page.locator(f'[data-choice="Route{index}"]')
+        expect(choice).to_contain_text(name)
+        expect(choice.locator('img')).to_have_attribute('src', '/assets/characters/' + photos[index])
+        assert choice.locator('img').evaluate('(e)=>e.complete && e.naturalWidth > 0')
     # All 32 paths are clicked through the real engine, not a mock controller.
     for route,name in enumerate(names):
         for mask in range(8):
             start(page, name)
+            portrait = page.locator(f'img[data-character="c{route}"]')
+            expect(portrait).to_be_visible()
+            assert portrait.get_attribute('src').endswith('/assets/characters/' + photos[route])
+            assert portrait.evaluate('(e)=>e.complete && e.naturalWidth > 0')
             for step in range(3):
                 expect(page.locator('#route-step')).to_have_text(f'0{step+1} / 03')
                 advance(page)
@@ -124,9 +139,31 @@ with sync_playwright() as p:
     page.keyboard.press('Space')
     expect(page.locator('choice-container')).to_have_count(1)
     page.emulate_media(reduced_motion='reduce')
-    # Responsive player and landing regression, with the original real API integration.
+    # Native quit confirmation returns to cast selection even after a direct route link.
+    start(page, '박진환')
+    page.locator('quick-menu [data-action="end"]').click()
+    page.locator('alert-modal [data-action="dismiss-alert"]').click()
+    expect(page.locator('#route-name')).to_contain_text('박진환')
+    page.locator('quick-menu [data-action="end"]').click()
+    page.locator('alert-modal [data-action="quit"]').click()
+    expect(page.locator('.cast-choices button')).to_have_count(4)
+    page.locator('[data-choice="Route0"]').click()
+    expect(page.locator('#route-name')).to_contain_text('정치훈')
+    assert page.evaluate('monogatari.storage().decisions') == [None,None,None]
+    # Responsive full-screen game and all four original portraits.
     for width,height in [(1440,1000),(390,844),(375,812),(320,740),(768,1024)]:
         page.set_viewport_size({'width':width,'height':height})
+        start(page)
+        screenshot(page, f'root-{width}.png')
+        assert not page.evaluate('document.documentElement.scrollHeight > innerHeight'), width
+        for i in range(4):
+            item = page.locator(f'.cast-choices [data-choice="Route{i}"]')
+            expect(item).to_be_visible()
+            assert item.evaluate('(e)=>e.scrollHeight <= e.clientHeight'), f'portrait selection clipped at {width}'
+        for name in names:
+            start(page, name)
+            assert page.locator('img[data-character]').evaluate('(e)=>e.getBoundingClientRect().top >= 0 && e.getBoundingClientRect().bottom <= innerHeight'), width
+            screenshot(page, f'portrait-{names.index(name)}-{width}.png')
         start(page,'남성수')
         for step in range(3):
             advance(page)
@@ -136,16 +173,16 @@ with sync_playwright() as p:
             answer(page,0);advance(page)
         expect(page.locator('text-box')).to_contain_text(titles[3][0])
         assert page.locator('text-box [data-content="text"]').evaluate('(e)=>e.scrollHeight <= e.clientHeight'), f'ending clipped at {width}'
-    page.goto(base,wait_until='networkidle')
-    expect(page.locator('#people-list option')).to_have_count(26)
-    expect(page.locator('#pair-grid article')).to_have_count(6)
-    expect(page.locator('#blind-score')).to_have_text('80.3')
-    page.locator('#match-form button').click()
-    expect(page.locator('#match-result')).to_contain_text('75.5')
-    page.locator('[data-member="박진환"]').click()
-    page.locator('#profile-play').click()
+    # Old /play.html links are an alias to the same native entry point.
+    page.goto(base + '/play.html?' + urlencode({'route':'박진환'}), wait_until='networkidle')
     expect(page.locator('#route-name')).to_contain_text('박진환')
+    # Supabase-backed APIs remain available for the later scenario integration.
+    assert page.request.get(base+'/api/status').json() == {'configured':True}
+    assert len(page.request.get(base+'/api/people').json()) == 26
+    assert round(page.request.get(base+'/api/highlight').json()['match_score'],1) == 80.3
+    match = page.request.get(base+'/api/match?' + urlencode({'person':'주정원','match':'정치훈'}))
+    assert round(match.json()['match_score'],1) == 75.5
     assert not errors,errors
     assert not failed_assets,failed_assets
-    print(json.dumps({'engine':page.evaluate('monogatari.version'),'paths':32,'endings':len(endings),'save_load':'response + pending choice + cross-route + rollback passed','widths':[1440,390,375,320,768],'api':'26 people, 6 team pairs, 80.3 highest, 75.5 search','errors':errors},ensure_ascii=False))
+    print(json.dumps({'engine':page.evaluate('monogatari.version'),'paths':32,'endings':len(endings),'save_load':'response + pending choice + cross-route + rollback passed','widths':[1440,390,375,320,768],'api':'26 people, 80.3 highest, 75.5 search','errors':errors},ensure_ascii=False))
     browser.close()

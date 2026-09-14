@@ -5,10 +5,25 @@ import { handleApi } from "../lib/compatibility.js";
 const files = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
-  ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
-  ["/tailwind.css", ["tailwind.css", "text/css; charset=utf-8"]],
+  ["/characters.js", ["characters.js", "text/javascript; charset=utf-8"]],
+  [
+    "/assets/characters/jeong-chihoon.jpeg",
+    ["assets/characters/jeong-chihoon.jpeg", "image/jpeg"],
+  ],
+  [
+    "/assets/characters/joo-jeongwon.jpeg",
+    ["assets/characters/joo-jeongwon.jpeg", "image/jpeg"],
+  ],
+  [
+    "/assets/characters/park-jinhwan.jpg",
+    ["assets/characters/park-jinhwan.jpg", "image/jpeg"],
+  ],
+  [
+    "/assets/characters/nam-seongsu.png",
+    ["assets/characters/nam-seongsu.png", "image/png"],
+  ],
   ["/routes.js", ["routes.js", "text/javascript; charset=utf-8"]],
-  ["/play.html", ["play.html", "text/html; charset=utf-8"]],
+  ["/play.html", ["index.html", "text/html; charset=utf-8"]],
   ["/play.css", ["play.css", "text/css; charset=utf-8"]],
   ["/story.js", ["story.js", "text/javascript; charset=utf-8"]],
   [
@@ -20,11 +35,8 @@ const files = new Map([
     ["vendor/monogatari/monogatari.css", "text/css; charset=utf-8"],
   ],
   ["/game.js", ["game.js", "text/javascript; charset=utf-8"]],
-  ["/assets/yeonbun-hero.png", ["assets/yeonbun-hero.png", "image/png"]],
-  ["/assets/yeonbun-cast.png", ["assets/yeonbun-cast.png", "image/png"]],
   ["/assets/yeonbun-scenes.png", ["assets/yeonbun-scenes.png", "image/png"]],
   ["/assets/favicon.svg", ["assets/favicon.svg", "image/svg+xml"]],
-  ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
 ]);
 export function createAppServer(env = process.env, fetcher = fetch) {
   return createServer(async (req, res) => {

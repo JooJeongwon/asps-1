@@ -4,7 +4,7 @@
   const routes = window.YEONBUN_ROUTES;
   const script = {
     Start: [
-      "show scene keyvisual",
+      "show scene scenes with scene-1",
       {
         Choice: {
           Dialog: "n 이 봄을, 누구와 시작할까요?",
@@ -13,7 +13,7 @@
             routes.map((route, index) => [
               `Route${index}`,
               {
-                Text: `${route.name} — ${route.title}`,
+                Text: `<img src="/assets/${window.YEONBUN_PORTRAITS[route.name]}" alt="" draggable="false"><span class="cast-name">${route.name}</span><small>${route.pillar}</small>`,
                 Do: `jump Route${index}`,
               },
             ]),
@@ -27,7 +27,10 @@
     script[`Route${routeIndex}`] = [
       // A new/restarted prologue is an intentional rollback boundary.
       function () {
-        this.storage({ route: routeIndex, decisions: [null, null, null] });
+        this.storage({
+          route: routeIndex,
+          decisions: route.scenes.map(() => null),
+        });
         return true;
       },
       `jump R${routeIndex}S0`,
@@ -61,7 +64,7 @@
       scene.choices.forEach((choice, index) => {
         script[`R${routeIndex}S${step}A${index}`] = [
           `${character} ${choice.reply}`,
-          step < 2
+          step < route.scenes.length - 1
             ? `jump R${routeIndex}S${step + 1}`
             : {
                 Conditional: {
@@ -72,7 +75,9 @@
                           total +
                           (route.scenes[index].choices[choice]?.affinity || 0),
                         0,
-                      ) >= 5
+                      ) >=
+                      (route.endingThreshold ??
+                        Math.ceil(route.scenes.length * 1.5))
                     );
                   },
                   True: `jump R${routeIndex}EndClose`,

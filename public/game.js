@@ -14,7 +14,7 @@
   ).matches;
   engine.settings({
     Name: "ASPS_Yeonbun",
-    Version: "1.0.0",
+    Version: "1.1.0",
     Label: initialRoute < 0 ? "Start" : `Route${initialRoute}`,
     ShowMainScreen: false,
     ServiceWorkers: false,
@@ -48,25 +48,30 @@
         {
           name: route.name,
           color: "#795d88",
-          sprites: { portrait: "yeonbun-cast.png" },
+          sprites: { portrait: window.YEONBUN_PORTRAITS[route.name] },
         },
       ]),
     ),
   });
   engine.assets("scenes", {
-    keyvisual: "yeonbun-hero.png",
     scenes: "yeonbun-scenes.png",
   });
   engine.script(window.YEONBUN_STORY);
-  // The site header provides an exit. Native quit would restart with no title screen.
+  engine.translation("한국어", {
+    Quit: "인물 선택",
+    Confirm: "인물 선택으로 돌아갈까요? 저장하지 않은 진행은 사라집니다.",
+    QuitButton: "인물 선택으로 돌아가기",
+  });
+  // Keep the native confirmation and reset flow for returning to the cast.
   engine.on("didSetup", () => {
-    engine.component("quick-menu").removeButton("Quit");
     engine.component("quick-menu").removeButton("Hide");
   });
   engine.debug.level(0);
   function updateChapter() {
     const label = engine.state("label");
-    const match = /^R(\d)(?:S(\d)(?:A[01])?|End(Close|Slow))$/.exec(
+    // Direct route links apply only to the initial launch; restarting returns to Start.
+    engine.settings({ Label: "Start" });
+    const match = /^R(\d+)(?:S(\d+)(?:A[01])?|End(Close|Slow))$/.exec(
       label || "",
     );
     const route = match ? routes[Number(match[1])] : null;
@@ -84,7 +89,7 @@
     document.getElementById("route-step").textContent = match
       ? match[3]
         ? "EPILOGUE"
-        : `0${Number(match[2]) + 1} / 03`
+        : `${String(Number(match[2]) + 1).padStart(2, "0")} / ${String(route.scenes.length).padStart(2, "0")}`
       : "PROLOGUE";
   }
   for (const event of ["didRunAction", "didRevertAction", "didLoadGame"])

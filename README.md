@@ -1,8 +1,10 @@
 # 연분 · ASPS 사주 로맨스 비주얼 노벨
 
-정치훈·주정원·박진환·남성수의 첫 만남을 플레이하는 반응형 랜딩과 프롤로그 체험판이다. Monogatari 2.8.0으로 인물별 3회 선택, 총 8개 에필로그를 제공한다. 저장·불러오기·대사록·되감기·자동재생은 엔진 기본 기능을 사용한다. 실제 일주·MBTI·KAI를 캐릭터 모티프로 사용하며 아바타와 대사는 창작이다. [레퍼런스·루트 구성·아트워크](docs/design-reference.md)에서 제작 내용을 확인할 수 있다.
+접속하면 Monogatari 2.8.0 게임이 곧바로 시작된다. 첫 화면의 사진에서 정치훈·주정원·박진환·남성수를 선택하면 해당 인물의 대화로 이어진다. 별도의 랜딩페이지나 시작 버튼은 없다. 사용자가 제공한 네 장의 실제 사진을 이름별로 연결했다.
 
-26명 궁합 결과를 Supabase에 저장하고 Vercel의 `/api/*`에서 조회한다. 사이트는 실제 데이터가 도착한 뒤 점수를 표시하며, 조회 실패를 저장된 결과나 실시간 결과로 표시하지 않는다.
+현재 대본은 교체 예정인 프롤로그다. 인물별 3회 선택과 2개 엔딩, 총 32개 선택 경로와 8개 엔딩을 제공한다. 저장·불러오기·되감기·대사록·자동재생은 Monogatari 기본 기능이다. 하단 **인물 선택**으로 현재 회차를 끝내고 다른 인물을 고를 수 있다. 저장 파일은 현재 사이트 주소와 브라우저의 LocalStorage에 보관된다.
+
+사주 일주·MBTI·KAI는 기존 원본 데이터를 사용하며 대사·사건·감정·엔딩은 창작이다. Supabase의 26명 궁합 API는 그대로 유지한다. 현재 게임의 선택 점수는 실제 궁합 점수와 별개다. [대본 수정·사진 매핑·엔진 구성](docs/design-reference.md)을 참고한다.
 
 ## 대상
 
@@ -16,7 +18,7 @@
 1. Supabase SQL Editor에서 `supabase/migrations/202609110001_gcs.sql`을 한 번 실행한다. 동명 테이블이 이미 있다면 먼저 기존 구조를 확인한다.
 2. 로컬의 `private/002_seed.sql`을 실행한다. 실제 개인 데이터이므로 GitHub에는 포함하지 않는다. 같은 데이터 버전으로 다시 실행하면 해당 버전의 수동 점수 변경을 엑셀 값으로 덮어쓴다.
 3. Vercel `asps-1`의 Settings → Environment Variables에서 `.env.example`의 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GCS_DATASET_ID`를 설정한다. `DATABASE_URL`은 로컬 SQL 반영용이며 웹사이트에는 필요 없다.
-4. 이 변경을 배포한 후 `/api/status`가 `{"configured":true}`인지 확인한다. 팀 카드 6개, 두 이름 검색, 블라인드 1위의 `LIVE RESULT`도 확인한다.
+4. 이 변경을 배포한 후 `/api/status`가 `{"configured":true}`인지 확인한다. `/api/people`, `/api/team`, `/api/match`, `/api/highlight`도 조회한다.
 
 API 키는 서버에서만 사용한다. `SUPABASE_SERVICE_ROLE_KEY`에는 legacy `service_role` JWT 또는 `sb_secret_` 키를 넣을 수 있다. 브라우저용 공개 키는 이 구성에서 사용하지 않는다. RLS와 권한 설정으로 `anon`/`authenticated`의 테이블·뷰 접근을 차단하며 서버만 결과를 조회한다. API는 사이트에 필요한 이름과 점수만 반환한다. [Supabase API 키 설명](https://supabase.com/docs/guides/getting-started/api-keys)
 
@@ -29,13 +31,13 @@ cp .env.example .env.local  # 파일이 없을 때만 실행
 npm run dev
 ```
 
-Node 22 이상. 공식 Monogatari 브라우저 번들과 라이선스는 `public/vendor/monogatari/`에 고정되어 있어 별도 엔진 설치가 필요 없다. 랜딩은 `/`, 플레이어는 `/play.html`이며 인물별 직접 링크도 지원한다. `npm run build`는 Tailwind를 로컬 CSS로 빌드한다. Vercel은 `public/`과 `api/*.js`를 배포한다. 기존 Cloudflare 배포가 필요한 경우 `npm run cf:dev`를 쓰고 `.dev.vars`에 서버 키를 설정한다. D1은 더 이상 사용하지 않는다.
+Node 22 이상. 공식 Monogatari 브라우저 번들과 라이선스는 `public/vendor/monogatari/`에 고정되어 있어 별도 엔진 설치가 필요 없다. 게임의 진입점은 `/` 하나이며 `/?route=정치훈`처럼 인물별 직접 링크도 지원한다. 기존 `/play.html`은 같은 게임으로 연결된다. `npm run build`는 정적 게임 파일·사진·엔진 해시를 검증한다. 공식 엔진 번들은 이미 브라우저용으로 빌드되어 있어 별도 컴파일이 필요 없다. Vercel은 `public/`과 `api/*.js`를 배포한다. 기존 Cloudflare 배포가 필요한 경우 `npm run cf:dev`를 쓰고 `.dev.vars`에 서버 키를 설정한다. D1은 더 이상 사용하지 않는다.
 
 ## 관리
 
-Supabase Table Editor의 `gcs_pairs`에서 결과를 관리한다. `match_group`은 원점수 76/68 경계로 자동 생성된다. 수정 결과는 새로고침이나 재검색에 반영되며 자동 실시간 구독은 아니다. 참가자 프로필 변경에 따른 모델 재계산은 엑셀 재추출로 수행해야 한다. 최종 결과 DB이지 모델 학습/계산 서버는 아니다.
+Supabase Table Editor의 `gcs_pairs`에서 결과를 관리한다. `match_group`은 원점수 76/68 경계로 자동 생성된다. 수정 결과는 다음 API 조회에 반영되며 자동 실시간 구독은 아니다. 참가자 프로필 변경에 따른 모델 재계산은 엑셀 재추출로 수행해야 한다. 최종 결과 DB이지 모델 학습/계산 서버는 아니다.
 
-`GCS_DATASET_ID`로 웹사이트가 조회할 버전을 선택한다. 이름·순위·점수는 원점수 기준이며 화면에서만 소수점 한 자리로 표시한다. 공동 1위가 있으면 이름순 한 조합을 표시하고 공동 1위 수를 안내한다. 블라인드 이름 펼치기는 표시 효과이며 신원 인증 기능은 아니다.
+`GCS_DATASET_ID`로 API가 조회할 버전을 선택한다. 이름·순위·점수는 원점수 기준이다. 공동 1위가 있으면 이름순 한 조합과 공동 1위 수를 반환한다. 게임 대본에서 궁합 결과를 사용하려면 서버 키 없이 `/api/match?person=이름&match=이름`을 호출한다.
 
 ## 검증
 

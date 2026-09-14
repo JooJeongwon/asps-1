@@ -3,9 +3,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import vm from "node:vm";
 import { createHash } from "node:crypto";
-import { JSDOM } from "jsdom";
 const files = await Promise.all(
-  ["routes.js", "story.js"].map((file) =>
+  ["characters.js", "routes.js", "story.js"].map((file) =>
     fs.readFile(new URL(`../public/${file}`, import.meta.url), "utf8"),
   ),
 );
@@ -89,49 +88,6 @@ test("32 story paths use the expected ending and reversing a choice clears its c
         null,
       ]);
     }
-});
-
-test("landing links enter the native player and preserve profile-to-route navigation", async () => {
-  const html = await fs.readFile(
-    new URL("../public/index.html", import.meta.url),
-    "utf8",
-  );
-  const app = await fs.readFile(
-    new URL("../public/app.js", import.meta.url),
-    "utf8",
-  );
-  const dom = new JSDOM(html, {
-    runScripts: "outside-only",
-    url: "https://example.com",
-  });
-  try {
-    const w = dom.window;
-    w.AbortSignal = AbortSignal;
-    w.fetch = async () => {
-      throw new Error("offline");
-    };
-    w.eval(files[0]);
-    w.eval(app);
-    for (const route of routes) {
-      const links = w.document.querySelectorAll(`[data-route="${route.name}"]`);
-      assert.equal(links.length, 2);
-      for (const link of links) {
-        assert.equal(new URL(link.href).pathname, "/play.html");
-        assert.equal(new URL(link.href).searchParams.get("route"), route.name);
-      }
-      w.document.querySelector(`[data-member="${route.name}"]`).click();
-      assert.equal(
-        new URL(
-          w.document.querySelector("#profile-play").href,
-        ).searchParams.get("route"),
-        route.name,
-      );
-    }
-    assert.equal(w.document.querySelector("#game-dialog"), null);
-  } finally {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    dom.window.close();
-  }
 });
 
 test("bundled Monogatari runtime matches the pinned upstream release", async () => {

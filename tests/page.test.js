@@ -1,46 +1,95 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import fs from 'node:fs/promises';
-import { JSDOM } from 'jsdom';
-const html = await fs.readFile(new URL('../public/index.html',import.meta.url),'utf8');
-const script = (await Promise.all(['routes.js', 'app.js'].map(file => fs.readFile(new URL(`../public/${file}`,import.meta.url),'utf8')))).join('\n');
-const settle = () => new Promise(resolve=>setTimeout(resolve,20));
-const result = { person_name:'A <img src=x onerror=alert(1)>',match_name:'B',match_score:80.25,match_group:'베스트 프렌드',mbti_score:88,saju_score:79,kai_difference:15,tied_pairs:2 };
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs/promises";
+import { JSDOM } from "jsdom";
+const root = new URL("../public/", import.meta.url);
+const html = await fs.readFile(new URL("index.html", root), "utf8");
+const scripts = await Promise.all(
+  ["characters.js", "routes.js", "story.js", "game.js"].map((file) =>
+    fs.readFile(new URL(file, root), "utf8"),
+  ),
+);
+const portraits = {
+  정치훈: "characters/jeong-chihoon.jpeg",
+  주정원: "characters/joo-jeongwon.jpeg",
+  박진환: "characters/park-jinhwan.jpg",
+  남성수: "characters/nam-seongsu.png",
+};
 
-test('page shows fetched highlight, handles ties, and escapes search results',async()=>{
- const dom = new JSDOM(html,{runScripts:'outside-only',url:'https://example.com'});
- const w=dom.window;
- try {
-  w.AbortSignal=AbortSignal;
-  w.fetch=async path=>Response.json(path === '/api/people' ? [{name:'주정원'}, {name:'정치훈'}] : path.startsWith('/api/team') ? Array.from({length:6},(_,i)=>({...result,person_name:`A${i}`,match_name:`B${i}`})) : result);
-  w.eval(script);await settle();
-  assert.equal(w.document.querySelector('#blind-score').textContent,'80.3');
-  assert.match(w.document.querySelector('#blind-data-label').textContent,/LIVE RESULT/);
-  assert.match(w.document.querySelector('#blind-group').textContent,/공동 1위 2개/);
-  assert.equal(w.document.querySelectorAll('#pair-grid article').length,6);
-  w.document.querySelector('[data-member="주정원"]').click();
-  assert.equal(w.document.querySelector('#member-dialog').open,true);
-  assert.match(w.document.querySelector('#member-one-line').textContent,/질문/);
-  assert.match(w.document.querySelector('#member-bio').textContent,/문제/);
-  w.document.querySelector('#member-dialog').dispatchEvent(new w.Event('click'));
-  assert.equal(w.document.querySelector('#member-dialog').open,false);
-  const details=w.document.querySelector('#blind-result');details.open=true;assert.equal(details.open,true);
-  w.document.querySelector('#match-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle();
-  assert.match(w.document.querySelector('#match-result').textContent,/<img/);
-  assert.equal(w.document.querySelector('#match-result img'),null);
-  assert.equal(w.document.querySelector('#match-form button').disabled,false);
- }finally{dom.window.close();}
+test("root hosts the native game directly and loads character data before its script", () => {
+  const dom = new JSDOM(html);
+  const doc = dom.window.document;
+  assert.equal(
+    doc.querySelectorAll("#monogatari game-screen text-box").length,
+    1,
+  );
+  assert.equal(
+    doc.querySelectorAll("header, footer, #blind, #match-form").length,
+    0,
+  );
+  assert.deepEqual(
+    Array.from(doc.scripts, (script) => script.getAttribute("src")),
+    [
+      "/vendor/monogatari/monogatari.js",
+      "/characters.js",
+      "/routes.js",
+      "/story.js",
+      "/game.js",
+    ],
+  );
+  dom.window.close();
 });
-test('offline page never labels placeholders as live and search can retry',async()=>{
- const dom=new JSDOM(html,{runScripts:'outside-only',url:'https://example.com'});
- const w=dom.window;
- try{
-  w.AbortSignal=AbortSignal;w.fetch=async()=>{throw new Error('연결 오류');};
-  w.eval(script);await settle();
-  assert.equal(w.document.querySelector('#blind-score').textContent,'—');
-  assert.doesNotMatch(w.document.querySelector('#blind-data-label').textContent,/LIVE/);
-  w.document.querySelector('#match-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle();
-  assert.equal(w.document.querySelector('#match-result').textContent,'연결 오류');
-  assert.equal(w.document.querySelector('#match-form button').disabled,false);
- }finally{dom.window.close();}
+
+test("root and direct links auto-start the engine with the correct named photographs", async () => {
+  for (const [index, name] of [
+    undefined,
+    ...Object.keys(portraits),
+    "unknown",
+  ].entries()) {
+    const dom = new JSDOM(html, {
+      runScripts: "outside-only",
+      url:
+        "https://example.com/" +
+        (name ? "?route=" + encodeURIComponent(name) : ""),
+    });
+    try {
+      const w = dom.window;
+      const captured = {};
+      w.matchMedia = () => ({ matches: true });
+      w.monogatari = Object.fromEntries(
+        [
+          "settings",
+          "preferences",
+          "storage",
+          "characters",
+          "script",
+          "translation",
+        ].map((key) => [key, (value) => (captured[key] = value)]),
+      );
+      Object.assign(w.monogatari, {
+        assets() {},
+        on() {},
+        debug: { level() {} },
+        init: async (selector) => assert.equal(selector, "#monogatari"),
+      });
+      scripts.forEach((source) => w.eval(source));
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      assert.equal(captured.settings.ShowMainScreen, false);
+      assert.equal(captured.settings.ServiceWorkers, false);
+      assert.equal(
+        captured.settings.Label,
+        index > 0 && index < 5 ? `Route${index - 1}` : "Start",
+      );
+      Object.entries(portraits).forEach(([name, path], i) => {
+        assert.equal(captured.characters[`c${i}`].name, name);
+        assert.equal(captured.characters[`c${i}`].sprites.portrait, path);
+        assert.ok(
+          captured.script.Start[1].Choice[`Route${i}`].Text.includes(path),
+        );
+      });
+      assert.equal(w.document.body.dataset.engineReady, "true");
+    } finally {
+      dom.window.close();
+    }
+  }
 });
