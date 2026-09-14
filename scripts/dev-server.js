@@ -24,6 +24,9 @@ const files = new Map([
   ["/characters.js", ["characters.js", "text/javascript; charset=utf-8"]],
   ["/campus.css", ["campus.css", "text/css; charset=utf-8"]],
   ["/typography.css", ["typography.css", "text/css; charset=utf-8"]],
+  ["/bgm.css", ["bgm.css", "text/css; charset=utf-8"]],
+  ["/bgm.js", ["bgm.js", "text/javascript; charset=utf-8"]],
+  ["/assets/audio/sweet-cherry.mp3", ["assets/audio/sweet-cherry.mp3", "audio/mpeg"]],
   ...["hahmlet-bold", "maru-buri-regular", "maru-buri-semibold", "gowun-dodum-regular", "cormorant-garamond-semibold"].map((name) => [
     `/assets/fonts/${name}.woff2`, [`assets/fonts/${name}.woff2`, "font/woff2"],
   ]),
