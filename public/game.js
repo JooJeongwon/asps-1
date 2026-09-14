@@ -155,6 +155,22 @@
       document
         .querySelector("save-screen input")
         ?.setAttribute("aria-label", "저장 기록 이름");
+      // Route the engine's unused audio sliders to the shared music controls.
+      const audioSettings = document.querySelector('settings-screen [data-settings="audio"]');
+      const musicMenu = document.getElementById("bgm-menu");
+      if (audioSettings && musicMenu) {
+        const heading = document.createElement("h3");
+        heading.textContent = "배경음악";
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "소리 켜기·끄기 / 음량 조절";
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (musicMenu.getAttribute("aria-expanded") !== "true") musicMenu.click();
+          document.getElementById("bgm-toggle").focus();
+        });
+        audioSettings.replaceChildren(heading, button);
+      }
     })
     .catch(() => {
       status.textContent =
