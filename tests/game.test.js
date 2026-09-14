@@ -3,105 +3,143 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import vm from "node:vm";
 import { createHash } from "node:crypto";
-const files = await Promise.all(
-  ["characters.js", "routes.js", "story.js"].map((file) =>
-    fs.readFile(new URL(`../public/${file}`, import.meta.url), "utf8"),
-  ),
-);
 const context = vm.createContext({ window: {} });
-files.forEach((source) => vm.runInContext(source, context));
-const { YEONBUN_ROUTES: routes, YEONBUN_STORY: script } = context.window;
-const fresh = () => ({
-  data: {},
+for (const file of ["characters.js", "team.js", "scenario.js", "story.js"])
+  vm.runInContext(
+    await fs.readFile(new URL(`../public/${file}`, import.meta.url), "utf8"),
+    context,
+  );
+const {
+  TEAM04_MEMBERS: members,
+  TEAM04_SCENARIO: scenario,
+  TEAM04_STORY: script,
+  TEAM04_FRESH_STATE: freshState,
+} = context.window;
+const engine = () => ({
+  data: freshState(),
   storage(value) {
     if (value) Object.assign(this.data, value);
     return this.data;
   },
 });
-
-test("four Monogatari route graphs resolve all jumps and expose eight endings", () => {
-  const jumps = [];
-  function visit(value) {
-    if (typeof value === "string" && value.startsWith("jump "))
-      jumps.push(value.slice(5));
-    else if (value && typeof value === "object")
-      Object.values(value).forEach(visit);
-  }
-  visit(script);
-  jumps.forEach((label) =>
-    assert.ok(Array.isArray(script[label]), `Missing label ${label}`),
+const choiceOf = (cut) => script[cut.id].find((a) => a.Choice).Choice;
+test("confirmed roles and twenty-cut narrative replace all placeholder characters", () => {
+  assert.deepEqual(Object.fromEntries(members.map((m) => [m.name, m.role])), {
+    정치훈: "PM",
+    박진환: "백엔드",
+    주정원: "프론트엔드",
+    남성수: "발표",
+  });
+  assert.equal(scenario.cuts.length, 19);
+  assert.equal(scenario.endings.length, 4);
+  assert.doesNotMatch(JSON.stringify(scenario), /민준|진우|도윤|현석/);
+  assert.deepEqual(
+    Array.from(scenario.cuts, (c) => c.id),
+    Array.from(
+      { length: 19 },
+      (_, i) => `Cut${String(i + 1).padStart(2, "0")}`,
+    ),
   );
   assert.deepEqual(
-    Array.from(routes, (route) => route.name),
-    ["정치훈", "주정원", "박진환", "남성수"],
+    Array.from(
+      scenario.cuts.filter((c) => c.unlock),
+      (c) => c.unlock,
+    ),
+    Array.from(members, (m) => m.id),
   );
+});
+test("all jumps resolve and every ordinary choice rejoins the same next cut", () => {
+  const jumps = [];
+  function visit(v) {
+    if (typeof v === "string" && v.startsWith("jump ")) jumps.push(v.slice(5));
+    else if (v && typeof v === "object") Object.values(v).forEach(visit);
+  }
+  visit(script);
+  jumps.forEach((label) => assert.ok(script[label], `Missing ${label}`));
+  scenario.cuts.forEach((cut, index) => {
+    if (!cut.choices) return;
+    const options = choiceOf(cut);
+    cut.choices.forEach((_, i) => {
+      assert.equal(options[`Answer${i}`].Do, `jump ${cut.id}A${i}`);
+      assert.equal(script[`${cut.id}A${i}`].at(-1), `jump ${cut.id}After`);
+    });
+    assert.equal(
+      script[`${cut.id}After`].at(-1),
+      `jump ${scenario.cuts[index + 1].id}`,
+    );
+  });
   assert.equal(
-    Object.keys(script).filter((label) => /End(Close|Slow)$/.test(label))
-      .length,
-    8,
+    Object.keys(script).filter((l) => l.startsWith("Cut20_")).length,
+    4,
   );
-  for (let r = 0; r < 4; r++)
-    for (let s = 0; s < 3; s++) {
-      const choice = script[`R${r}S${s}`].find(
-        (action) => action.Choice,
-      ).Choice;
-      assert.equal(
-        Object.values(choice).filter((option) => option?.Do).length,
-        2,
-      );
-      for (let a = 0; a < 2; a++) {
-        assert.equal(choice[`Answer${a}`].Do, `jump R${r}S${s}A${a}`);
-        assert.equal(
-          script[`R${r}S${s}A${a}`][0],
-          `c${r} ${routes[r].scenes[s].choices[a].reply}`,
-        );
-      }
-    }
 });
-
-test("32 story paths use the expected ending and reversing a choice clears its contribution", () => {
-  for (let r = 0; r < 4; r++)
-    for (let mask = 0; mask < 8; mask++) {
-      const engine = fresh();
-      script[`Route${r}`][0].call(engine);
-      let direct = 0;
-      for (let s = 0; s < 3; s++) {
-        const a = (mask >> s) & 1;
-        const choice = script[`R${r}S${s}`].find((action) => action.Choice)
-          .Choice[`Answer${a}`];
-        choice.onChosen.call(engine);
-        const snapshot = JSON.parse(JSON.stringify(engine.storage()));
-        const restored = fresh();
-        restored.storage(snapshot);
-        choice.onRevert.call(restored);
-        assert.equal(restored.storage().decisions[s], null);
-        choice.onChosen.call(restored);
-        assert.equal(restored.storage().decisions[s], a);
-        if (a === 0) direct++;
-      }
-      const condition = script[`R${r}S2A${(mask >> 2) & 1}`][1].Conditional;
-      assert.equal(condition.Condition.call(engine), direct >= 2);
-      script[`Route${r}`][0].call(engine);
-      assert.deepEqual(Array.from(engine.storage().decisions), [
-        null,
-        null,
-        null,
-      ]);
+test("all 512 choice/ending combinations preserve affinity and free final selection", () => {
+  const cuts = scenario.cuts.filter((c) => c.choices?.length === 2);
+  assert.equal(cuts.length, 7);
+  for (let mask = 0; mask < 128; mask++) {
+    const game = engine();
+    const expected = Object.fromEntries(members.map((m) => [m.id, 0]));
+    cuts.forEach((cut, i) => {
+      const n = (mask >> i) & 1;
+      const option = choiceOf(cut)[`Answer${n}`];
+      option.onChosen.call(game);
+      option.onChosen.call(game);
+      for (const [id, delta] of Object.entries(cut.choices[n].affinity))
+        expected[id] += delta;
+      assert.deepEqual({ ...game.data.affinity }, expected);
+      const restored = engine();
+      restored.storage(JSON.parse(JSON.stringify(game.data)));
+      option.onRevert.call(restored);
+      option.onChosen.call(restored);
+      assert.deepEqual({ ...restored.data.affinity }, expected);
+    });
+    for (const member of members) {
+      const final = choiceOf(scenario.cuts.at(-1))[member.id];
+      assert.equal(final.Condition, undefined);
+      final.onChosen.call(game);
+      assert.equal(game.data.selected, member.id);
+      assert.equal(final.Do, `jump Cut20_${member.id}`);
+      assert.deepEqual({ ...game.data.affinity }, expected);
+      final.onRevert.call(game);
+      assert.equal(game.data.selected, null);
     }
+  }
+  const zero = engine();
+  for (const m of members) {
+    choiceOf(scenario.cuts.at(-1))[m.id].onChosen.call(zero);
+    assert.equal(zero.data.selected, m.id);
+  }
 });
-
+test("profile unlocks reverse cleanly and starting again clears this run", () => {
+  const game = engine();
+  for (const cut of scenario.cuts.filter((c) => c.unlock)) {
+    const action = (script[`${cut.id}After`] || script[cut.id]).find(
+      (a) => a.Function,
+    ).Function;
+    action.Apply.call(game);
+    assert.equal(game.data.unlocked[cut.unlock], true);
+    action.Revert.call(game);
+    assert.equal(game.data.unlocked[cut.unlock], undefined);
+    action.Apply.call(game);
+  }
+  game.data.selected = members[0].id;
+  script.Start[0].call(game);
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(game.data)),
+    JSON.parse(JSON.stringify(freshState())),
+  );
+});
 test("bundled Monogatari runtime matches the pinned upstream release", async () => {
   const root = new URL("../public/vendor/monogatari/", import.meta.url);
   const manifest = JSON.parse(
     await fs.readFile(new URL("manifest.json", root), "utf8"),
   );
   assert.equal(manifest.version, "2.8.0");
-  for (const [file, hash] of Object.entries(manifest.sha256)) {
+  for (const [file, hash] of Object.entries(manifest.sha256))
     assert.equal(
       createHash("sha256")
         .update(await fs.readFile(new URL(file, root)))
         .digest("hex"),
       hash,
     );
-  }
 });

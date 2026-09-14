@@ -1,79 +1,54 @@
-# 연분 · Monogatari 게임 구성
+# TEAM 04 · Monogatari 구성
 
-## 실행 흐름
+## 현재 이야기
 
-`/` 접속 → 엔진 자동 초기화 → 네 사람의 캐릭터 선택 → 선택한 인물의 대화 → 3회 선택 → 에필로그. 사이트 헤더·푸터·홍보 랜딩·프로필 팝업은 제거했다. 게임이 전체 화면을 사용한다. `/?route=이름`은 해당 인물부터 시작하며 `/play.html`도 동일한 진입점으로 연결된다.
+《오늘, 우리 중 한 명을 선택해》의 [전체 20컷 대본](scenario-team04.md)을 구현한다. 역할은 사용자 확인대로 정치훈=PM, 박진환=백엔드, 주정원=프론트엔드, 남성수=발표다. 익명의 여자 전학생이 네 사람을 전부 알아간 뒤 마지막 밤에 한 명을 직접 선택한다.
 
-엔진의 `ShowMainScreen: false`로 별도 타이틀 메뉴를 건너뛴다. 하단 메뉴의 **인물 선택**은 Monogatari의 종료 확인과 회차 초기화를 이용한다. 저장·불러오기·되감기·대사록·자동재생·넘기기 역시 실제 엔진 기능이다. 저장 기록은 같은 주소·브라우저의 LocalStorage에만 보관된다.
+`/` → CUT 01~18 공통 이야기 → CUT 19 자유 선택 → CUT 20 개별 엔딩 → `/team.html` 실제 팀 소개. 예전 `/play.html`과 `?route=이름`도 공통 이야기부터 시작한다. 사이트 랜딩은 없다.
 
-## 파일 역할
+## 편집 파일
 
-| 파일 | 수정할 내용 |
+| 파일 | 역할 |
 | --- | --- |
-| `public/index.html` | 게임 진입점과 네이티브 엔진 화면 |
-| `public/characters.js` | 이름 → AI 애니메이션 초상화 매핑 |
-| `public/routes.js` | 교체 예정인 인물별 대사·선택지·반응·엔딩, 사주 모티프 |
-| `public/story.js` | 루트를 Monogatari Choice·Jump·Conditional로 변환 |
-| `public/game.js` | 엔진 설정, 사진·배경 등록, 초기화, 진행 표시 |
-| `public/play.css` | 게임·사진·대화창·저장 화면의 PC/모바일 배치 |
-| `public/vendor/monogatari/` | 공식 2.8.0 번들, MIT 라이선스, 버전/해시 기록 |
+| `public/team.js` | 사용자 확정 역할, 기존 프로필 정보, 캐릭터 요약 |
+| `public/scenario.js` | 19개 공통 컷과 CUT 20의 4개 엔딩 대사 |
+| `public/characters.js` | 이름별 AI 초상화 경로 |
+| `public/story.js` | 대본을 Monogatari 라벨·Choice·Function·Message로 컴파일 |
+| `public/game.js` | 엔진 초기화, 호감도 HUD, CUT 진행 표시, 저장 UI |
+| `public/index.html`, `public/play.css` | 게임 화면과 프로필 해금 모달 |
+| `public/team.html`, `public/team-page.js`, `public/team.css` | 실제 사진·팀원 소개·프로젝트·GitHub 링크 |
+| `scripts/export-scenario.js` | 실제 플레이 대사를 검토용 Markdown으로 내보내기 |
 
-## 시나리오 교체
+컷의 `lines`는 `인물ID 대사` 형식이다. `you`는 나, `n`은 지문, `system`은 공지다. 역할을 바꾸면 `team.js`와 관련 대사를 함께 수정한다. 대본을 고친 뒤 `node scripts/export-scenario.js`로 문서도 갱신한다.
 
-`public/routes.js`에서 인물을 찾고 아래 필드를 수정한다. 사진을 바꾸지 않고 대본만 교체할 수 있다.
+각 일상 선택의 `affinity`는 `{인물ID: 증가량}`이다. 선택 기록은 `storage.choices`에 저장하고 이 기록에서 호감도를 다시 계산하므로 동일 콜백이 반복돼도 중복 가산되지 않는다. `onRevert`는 해당 선택을 지우고 다시 계산한다. 모든 반응 라벨은 같은 `CutXXAfter`로 합류한다. 프로필은 Monogatari의 되돌릴 수 있는 Function과 Message 액션으로 해금한다.
 
-- `title`, `motif`: 이야기 제목과 일주 모티프.
-- `scenes[].location`: 장면 위치.
-- `scenes[].narration`, `line`: 지문과 인물의 대사.
-- `scenes[].choices[].text`, `reply`: 선택지와 선택 후 응답.
-- `scenes[].choices[].affinity`: 서사 분기에 사용하는 선택 점수.
-- `endings.close`, `endings.slow`: 각 엔딩의 `title`과 `copy`.
+CUT 19의 네 선택에는 조건이나 호감도 경계를 두지 않았다. 선택한 ID에 해당하는 CUT 20으로만 분기한다. 최종 호감도가 0이어도 누구나 선택할 수 있다. 엔딩 대사를 읽은 뒤 클릭하면 선택한 사람을 표시하는 실제 팀 소개 화면으로 이동한다.
 
-장면 개수를 변경하면 진행 표시와 선택 저장 배열도 자동으로 맞춰진다. 기본 엔딩 경계는 `ceil(장면 수 × 1.5)`이며 인물 객체에 `endingThreshold`를 추가해 바꿀 수 있다. 현재 세 장면에서 선택지는 2점/1점이며 합계 5점 이상이면 `close`, 이하면 `slow`다. 실제 사주 궁합 점수와는 별개다. 대사와 감정은 임시 창작 시나리오다.
+## 저장
 
-대본 구조나 장면 순서를 크게 바꾸면 기존 저장 파일은 이전 대본의 위치를 가리킬 수 있다. 이런 변경을 배포할 때에는 `game.js`의 `Name`을 새 저장 공간 이름으로 변경한다. 단순 사진·문구 교체에는 변경할 필요가 없다.
+공식 Monogatari 2.8.0이 타이핑·선택·분기·되감기·대사록·저장/불러오기를 실행한다. 저장 공간은 `ASPS_TEAM04_v1`이고 이전 `ASPS_Yeonbun` 저장은 그대로 보관된다. 이야기를 처음부터 시작하면 선택 기록·호감도·프로필 해금·최종 선택을 모두 비운다. Supabase는 클라우드 세이브 용도가 아니다.
 
-## 이름별 사진
+## 이미지
 
-사용자가 제공한 네 장의 사진을 내장 `image_gen` 도구로 각각 애니메이션 미남 캐릭터로 변환했다. 원래 헤어스타일·인상·의상은 살리고 화풍과 배경을 통일했다. 이름으로 매핑하므로 루트 배열 순서를 바꿔도 이미지가 섞이지 않는다. 선택 화면과 대화 장면에서 같은 매핑을 사용한다. [실제 생성 프롬프트 및 결과](character-art-prompts.md)를 기록했다.
-
-| 인물 | 제공 파일명 | 게임용 AI 이미지 (`public/assets/characters/`) | 원본 정보 |
-| --- | --- | --- | --- |
-| 정치훈 | 정치훈.jpeg | jeong-chihoon-anime.png | ESTP · 갑진 甲辰 · KAI 102 |
-| 주정원 | 주정원.jpeg | joo-jeongwon-anime.png | ENTP · 경진 庚辰 · KAI 126 |
-| 박진환 | 박진환 .jpg | park-jinhwan-anime.png | ENFP · 을해 乙亥 · KAI 111 |
-| 남성수 | 남성수.png | nam-seongsu-anime.png | INFJ · 무진 戊辰 · KAI 103 |
-
-생성된 PNG는 1024×1536 비율을 유지해 표시한다. 사용자 제공 원본 사진도 별도 파일로 보존했다. `assets/yeonbun-scenes.png`는 기존의 인물 없는 운동장·옥상·정류장·도서관 배경 시트다.
-
-## 레퍼런스와 엔진
-
-- [KwonSeami/datingsim](https://github.com/KwonSeami/datingsim): 사용자가 지정한 레퍼런스. 배경·인물·하단 대화창과 선택지의 게임 화면 구성을 참고했다. 해당 저장소의 대본·코드·아트워크는 복사하지 않았다.
-- [Monogatari v2.8.0](https://github.com/Monogatari/Monogatari/releases/tag/v2.8.0): 공식 브라우저 번들을 저장소에 고정했다. 해시는 `public/vendor/monogatari/manifest.json`에 기록하며 빌드와 테스트에서 검증한다.
-- [선택지 콜백](https://github.com/Monogatari/Monogatari/blob/v2.8.0/docs/script-actions/choices.md): `onChosen`으로 선택을 기록하고 `onRevert`로 되돌린다. 응답은 독립 라벨로 이동해 저장 후 되감기도 동작한다.
-
-Supabase 스키마·데이터와 서버 API는 변경하지 않았다. 게임은 서버 비밀 키를 받지 않는다. 궁합 데이터는 나중에 대본에서 `/api/*`를 통해 사용할 수 있다.
+- [4인 AI 초상화와 실제 프롬프트](character-art-prompts.md): 사용자가 제공한 인물별 사진을 바탕으로 내장 image_gen으로 생성했다. 게임에서는 `*-anime.png`, 마지막 팀 소개에서는 제공된 원본 사진을 사용한다.
+- [TEAM 04 배경 시트와 실제 프롬프트](team04-background-prompt.md): 아침 캠퍼스, 낮 프로젝트 룸, 라운지, 밤 프로젝트 룸의 2×2 시트. `scene: 0~3`에 대응한다.
 
 ## 검증
 
+`npm run build`는 정적 진입점·사진·배경·공식 엔진 해시를 검증한다. `npm test`는 512개 선택/엔딩 조합, 동일 지점 합류, 자유 최종 선택, 호감도 복원, 프로필 해금/되돌리기, 역할·사진 매핑, 팀 페이지 동작 및 서버 API를 검증한다.
+
+실제 Chromium 검증:
+
 ```sh
-npm run build
-npm test
-# 별도 터미널에서 PORT=3010 npm start 실행 후:
-python3 -m venv .venv-playwright
-.venv-playwright/bin/pip install playwright
-.venv-playwright/bin/playwright install chromium
-.venv-playwright/bin/python scripts/verify-monogatari.py --url http://127.0.0.1:3010
+# 별도 터미널에서 PORT=3012 npm start
+python3 scripts/verify-monogatari.py --url http://127.0.0.1:3012
 ```
 
-Node 테스트는 API와 비밀 파일 접근 차단, 루트 자동 실행, 사진 매핑, 32개 선택 경로·8개 엔딩, 선택 복원, 정적 파일 별칭, 공식 엔진 해시를 확인한다. Chromium 검증은 실제 엔진에서 모든 경로를 플레이하고, 저장/불러오기·복원 후 되감기·인물 선택 복귀·네 장의 사진 로딩·PC/모바일 레이아웃·실 Supabase API를 확인한다. 브라우저 검증의 API 항목에는 로컬 Supabase 환경변수 설정이 필요하다.
+Playwright와 Chromium이 필요하다. 이 검증은 CUT 01~20 네 번 완주, 네 개의 엔딩·프로필, 선택 시점 저장/불러오기, 복원 뒤 되감기·호감도 표시·재시작, PC/모바일 레이아웃, 실제 팀 소개 및 Supabase API 준비 상태를 확인한다.
 
-## 배경 이미지 생성 기록
+## 레퍼런스
 
-인물이 없는 임시 배경만 OpenAI `image_gen`으로 생성했다. 다음은 배경 시트 프롬프트다.
-
-Scenes:
-
-```text
-Use case: illustration-story. Asset type: original background sprite sheet for a Korean romance visual novel. Create one landscape 16:9 image divided into EXACTLY FOUR equal rectangular panels in a precise 2 by 2 grid, edge to edge, no gaps, borders, labels or text. Each panel itself is a wide 16:9 scenic illustration, with NO people, NO characters anywhere. Top left: peaceful university running track after spring rain, wooden bench by green trees, small puddles reflecting a soft afternoon sun. Top right: university rooftop terrace at blue hour, railing and small telescope on right, a few stars emerging above distant hills and a lavender sky. Bottom left: quiet Korean neighborhood bus stop beside a cherry blossom walking path at peach sunset, a simple empty bench, petals, no readable signs. Bottom right: warm intimate library reading room with tall wooden bookshelves, long table by a window, two empty chairs, golden afternoon light. Consistent refined hand-painted anime background style, delicate textures, romantic muted lavender sage peach ivory palette, realistic perspective, beautiful atmospheric depth. Foreground center of each panel open for a character overlay. This is a 2x2 background sprite sheet for CSS display. No humans, no animals, no text, no logos, no watermark.
-```
+- 사용자 제공 20컷 시나리오가 현재 플롯의 기준이다.
+- [KwonSeami/datingsim](https://github.com/KwonSeami/datingsim): 배경·인물·하단 대화창 구성을 참고했으며 대본·코드·아트워크를 복사하지 않았다.
+- [Monogatari v2.8.0](https://github.com/Monogatari/Monogatari/releases/tag/v2.8.0): 공식 브라우저 번들과 MIT 라이선스를 `public/vendor/monogatari/`에 고정했고 해시는 `manifest.json`에 기록했다.

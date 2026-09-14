@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f3f8" />
+    <title>MEET OUR TEAM — ASPS</title>
+    <meta
+      name="description"
+      content="정치훈 PM, 박진환 백엔드, 주정원 프론트엔드, 남성수 발표. 서로 다른 네 사람이 만든 ASPS."
+    />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/team.css" />
+    <script src="/team.js" defer></script>
+    <script src="/team-page.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <section class="closing-story" aria-labelledby="closing-title">
+        <p class="eyebrow">YOU FOUND YOUR MATCH.</p>
+        <p id="your-match" class="your-match" hidden></p>
+        <p>하지만—</p>
+        <h1 id="closing-title">
+          좋은 프로젝트를 만드는 데에는<br />한 명의 완벽한 사람이 아니라<br /><em
+            >서로 다른 네 사람</em
+          >이 필요합니다.
+        </h1>
+      </section>
+      <section class="team-section" aria-labelledby="team-title">
+        <div class="section-heading">
+          <h2 id="team-title">MEET OUR TEAM</h2>
+          <p>이야기 밖에서, 실제로 함께 만드는 사람들.</p>
+        </div>
+        <div id="members" class="members"></div>
+      </section>
+      <nav class="end-actions" aria-label="팀과 프로젝트 더 알아보기">
+        <button
+          id="show-profiles"
+          type="button"
+          aria-controls="members"
+          aria-expanded="false"
+        >
+          MEMBER PROFILE
+        </button>
+        <button
+          id="show-project"
+          type="button"
+          aria-controls="project"
+          aria-expanded="false"
+        >
+          OUR PROJECT
+        </button>
+        <a
+          href="https://github.com/JooJeongwon/asps-1"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GITHUB ↗</a
+        >
+      </nav>
+      <section
+        id="project"
+        class="project"
+        hidden
+        aria-labelledby="project-title"
+      >
+        <p class="eyebrow">ASPS · TEAM 04</p>
+        <h2 id="project-title">
+          서로 다른 사람이 만나면, 어떤 이야기가 생길까.
+        </h2>
+        <p>
+          사주·MBTI·KAI 궁합 데이터와 선택형 이야기를 통해 서로를 알아가는
+          프로젝트입니다. 네 사람의 역할은 PM, 백엔드, 프론트엔드, 발표로
+          나뉘지만 완성하는 결과는 하나입니다.
+        </p>
+        <p>
+          이야기 속 호감도는 플레이 중의 선택 기록입니다. 실제 궁합 결과와는
+          별개이며 마지막 상대는 당신이 직접 정합니다.
+        </p>
+      </section>
+      <a class="play-again" href="/">처음부터 다시 플레이하기 →</a>
+    </main>
+    <noscript
+      >팀 프로필을 보려면 JavaScript를 켜주세요. 정치훈 · PM / 박진환 · 백엔드 /
+      주정원 · 프론트엔드 / 남성수 · 발표.</noscript
+    >
+  </body>
+</html>

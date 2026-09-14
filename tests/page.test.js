@@ -5,56 +5,24 @@ import { JSDOM } from "jsdom";
 const root = new URL("../public/", import.meta.url);
 const html = await fs.readFile(new URL("index.html", root), "utf8");
 const scripts = await Promise.all(
-  ["characters.js", "routes.js", "story.js", "game.js"].map((file) =>
-    fs.readFile(new URL(file, root), "utf8"),
+  ["characters.js", "team.js", "scenario.js", "story.js", "game.js"].map((f) =>
+    fs.readFile(new URL(f, root), "utf8"),
   ),
 );
-const portraits = {
-  정치훈: "characters/jeong-chihoon-anime.png",
-  주정원: "characters/joo-jeongwon-anime.png",
-  박진환: "characters/park-jinhwan-anime.png",
-  남성수: "characters/nam-seongsu-anime.png",
-};
-
-test("root hosts the native game directly and loads character data before its script", () => {
-  const dom = new JSDOM(html);
-  const doc = dom.window.document;
-  assert.equal(
-    doc.querySelectorAll("#monogatari game-screen text-box").length,
-    1,
-  );
-  assert.equal(
-    doc.querySelectorAll("header, footer, #blind, #match-form").length,
-    0,
-  );
-  assert.deepEqual(
-    Array.from(doc.scripts, (script) => script.getAttribute("src")),
-    [
-      "/vendor/monogatari/monogatari.js",
-      "/characters.js",
-      "/routes.js",
-      "/story.js",
-      "/game.js",
-    ],
-  );
-  dom.window.close();
-});
-
-test("root and direct links auto-start the engine with the correct named anime portraits", async () => {
-  for (const [index, name] of [
-    undefined,
-    ...Object.keys(portraits),
-    "unknown",
-  ].entries()) {
+test("root always starts the shared story; old route links cannot bypass the meetings", async () => {
+  for (const query of [
+    "",
+    "?route=정치훈",
+    "?route=박진환",
+    "?route=unknown",
+  ]) {
     const dom = new JSDOM(html, {
       runScripts: "outside-only",
-      url:
-        "https://example.com/" +
-        (name ? "?route=" + encodeURIComponent(name) : ""),
+      url: "https://example.com/" + query,
     });
+    const w = dom.window;
+    const captured = {};
     try {
-      const w = dom.window;
-      const captured = {};
       w.matchMedia = () => ({ matches: true });
       w.monogatari = Object.fromEntries(
         [
@@ -64,30 +32,70 @@ test("root and direct links auto-start the engine with the correct named anime p
           "characters",
           "script",
           "translation",
-        ].map((key) => [key, (value) => (captured[key] = value)]),
+        ].map((k) => [k, (v) => (captured[k] = v)]),
       );
       Object.assign(w.monogatari, {
         assets() {},
+        action: () => ({ messages() {} }),
         on() {},
         debug: { level() {} },
         init: async (selector) => assert.equal(selector, "#monogatari"),
       });
-      scripts.forEach((source) => w.eval(source));
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      scripts.forEach((s) => w.eval(s));
+      await new Promise((r) => setTimeout(r, 0));
       assert.equal(captured.settings.ShowMainScreen, false);
-      assert.equal(captured.settings.ServiceWorkers, false);
-      assert.equal(
-        captured.settings.Label,
-        index > 0 && index < 5 ? `Route${index - 1}` : "Start",
-      );
-      Object.entries(portraits).forEach(([name, path], i) => {
-        assert.equal(captured.characters[`c${i}`].name, name);
-        assert.equal(captured.characters[`c${i}`].sprites.portrait, path);
-        assert.ok(
-          captured.script.Start[1].Choice[`Route${i}`].Text.includes(path),
+      assert.equal(captured.settings.Label, "Start");
+      assert.equal(captured.settings.Name, "ASPS_TEAM04_v1");
+      assert.equal(captured.script.Start[1], "jump Cut01");
+      assert.equal(w.document.querySelectorAll("[data-affinity]").length, 4);
+      for (const m of w.TEAM04_MEMBERS)
+        assert.equal(
+          captured.characters[m.id].sprites.portrait,
+          w.YEONBUN_PORTRAITS[m.name],
         );
-      });
-      assert.equal(w.document.body.dataset.engineReady, "true");
+      assert.equal(captured.characters.you.name, "나");
+      assert.equal(captured.characters.you.sprites, undefined);
+      assert.equal(
+        w.document.querySelectorAll("header, footer, #blind").length,
+        0,
+      );
+    } finally {
+      dom.window.close();
+    }
+  }
+});
+test("ending team page uses real photos and offers functioning profile/project links", async () => {
+  const page = await fs.readFile(new URL("team.html", root), "utf8");
+  const code = await fs.readFile(new URL("team-page.js", root), "utf8");
+  for (const query of ["?match=jinhwan", "?match=%3Cimg%20src=x%3E"]) {
+    const dom = new JSDOM(page, {
+      runScripts: "outside-only",
+      url: "https://example.com/team.html" + query,
+    });
+    const w = dom.window;
+    try {
+      w.HTMLElement.prototype.scrollIntoView = () => {};
+      w.eval(scripts[1]);
+      w.eval(code);
+      assert.equal(w.document.querySelectorAll(".member").length, 4);
+      assert.equal(w.document.querySelectorAll(".member img").length, 4);
+      assert.equal(
+        w.document.querySelector("#your-match").hidden,
+        query.includes("%3C"),
+      );
+      if (!query.includes("%3C"))
+        assert.match(
+          w.document.querySelector("#your-match").textContent,
+          /박진환/,
+        );
+      w.document.querySelector("#show-profiles").click();
+      assert.equal(w.document.querySelectorAll("details[open]").length, 4);
+      w.document.querySelector("#show-project").click();
+      assert.equal(w.document.querySelector("#project").hidden, false);
+      assert.equal(
+        w.document.querySelector('a[target="_blank"]').href,
+        "https://github.com/JooJeongwon/asps-1",
+      );
     } finally {
       dom.window.close();
     }

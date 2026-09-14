@@ -1,107 +1,156 @@
-// Compile the original four prologues into native Monogatari labels and actions.
-// The engine owns progression, rollback, save/load, typing and the dialog log.
+// Native Monogatari labels: short responses rejoin the same cut; only Cut19 branches.
 (() => {
-  const routes = window.YEONBUN_ROUTES;
+  const members = window.TEAM04_MEMBERS;
+  const scenario = window.TEAM04_SCENARIO;
+  const escape = (value) =>
+    String(value).replace(
+      /[&<>"']/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[c],
+    );
+  const fresh = () => ({
+    affinity: Object.fromEntries(members.map((m) => [m.id, 0])),
+    choices: {},
+    unlocked: {},
+    selected: null,
+  });
+  // A choice ledger prevents loading/replaying callbacks from double-counting points.
+  function recalculate(data) {
+    data.affinity = fresh().affinity;
+    for (const cut of scenario.cuts) {
+      const option = cut.choices?.[data.choices[cut.id]];
+      for (const [id, amount] of Object.entries(option?.affinity || {}))
+        data.affinity[id] += amount;
+    }
+  }
   const script = {
     Start: [
-      "show scene scenes with scene-1",
-      {
+      function () {
+        Object.assign(this.storage(), fresh());
+        return true;
+      },
+      "jump Cut01",
+    ],
+  };
+  const messages = {};
+  for (const member of members)
+    messages[`Profile_${member.id}`] = {
+      title: `PROFILE UNLOCK · ${member.name}`,
+      subtitle: `${member.role} · ${member.mbti} · ${member.pillar}`,
+      body: `<span class="unlock-profile"><img src="/assets/${window.YEONBUN_PORTRAITS[member.name]}" alt="${member.name} 애니메이션 캐릭터"><span><strong>${escape(member.trait)}</strong><span>${escape(member.hidden)}</span><small>${escape(member.motif)}</small></span></span>`,
+      actionString: "Continue",
+    };
+  scenario.cuts.forEach((cut, index) => {
+    const next = scenario.cuts[index + 1]?.id;
+    const cast = cut.cast === "all" ? members.map((m) => m.id) : cut.cast;
+    const entry = [
+      `show scene team04 with scene-${cut.scene}`,
+      ...cast.map(
+        (id, i) =>
+          `show character ${id} portrait${cast.length > 1 ? ` with ensemble slot-${i}` : ""}`,
+      ),
+      ...cut.lines,
+    ];
+    script[cut.id] = entry;
+    if (cut.final) {
+      entry.push({
         Choice: {
-          Dialog: "n 이 봄을, 누구와 시작할까요?",
-          Class: "cast-choices",
+          Dialog: cut.prompt,
+          Class: "cast-choices final-choice",
           ...Object.fromEntries(
-            routes.map((route, index) => [
-              `Route${index}`,
+            members.map((member) => [
+              member.id,
               {
-                Text: `<img src="/assets/${window.YEONBUN_PORTRAITS[route.name]}" alt="" draggable="false"><span class="cast-name">${route.name}</span><small>${route.pillar}</small>`,
-                Do: `jump Route${index}`,
+                Text: `<img src="/assets/${window.YEONBUN_PORTRAITS[member.name]}" alt=""><span class="cast-name">${member.name}</span><small>${escape(member.summary)}</small>`,
+                Do: `jump Cut20_${member.id}`,
+                onChosen() {
+                  this.storage().selected = member.id;
+                },
+                onRevert() {
+                  this.storage().selected = null;
+                },
               },
             ]),
           ),
         },
-      },
-    ],
-  };
-  routes.forEach((route, routeIndex) => {
-    const character = `c${routeIndex}`;
-    script[`Route${routeIndex}`] = [
-      // A new/restarted prologue is an intentional rollback boundary.
-      function () {
-        this.storage({
-          route: routeIndex,
-          decisions: route.scenes.map(() => null),
-        });
-        return true;
-      },
-      `jump R${routeIndex}S0`,
-    ];
-    route.scenes.forEach((scene, step) => {
-      script[`R${routeIndex}S${step}`] = [
-        `show scene scenes with scene-${routeIndex}`,
-        `show character ${character} portrait`,
-        `n ${scene.narration}`,
+      });
+      return;
+    }
+    const after = [...(cut.after || [])];
+    if (cut.unlock)
+      after.push(
         {
-          Choice: {
-            Dialog: `${character} ${scene.line}`,
-            ...Object.fromEntries(
-              scene.choices.map((choice, index) => [
-                `Answer${index}`,
-                {
-                  Text: choice.text,
-                  Do: `jump R${routeIndex}S${step}A${index}`,
-                  onChosen() {
-                    this.storage().decisions[step] = index;
-                  },
-                  onRevert() {
-                    this.storage().decisions[step] = null;
-                  },
-                },
-              ]),
-            ),
+          Function: {
+            Apply() {
+              this.storage().unlocked[cut.unlock] = true;
+            },
+            Revert() {
+              delete this.storage().unlocked[cut.unlock];
+            },
           },
         },
-      ];
-      scene.choices.forEach((choice, index) => {
-        script[`R${routeIndex}S${step}A${index}`] = [
-          `${character} ${choice.reply}`,
-          step < route.scenes.length - 1
-            ? `jump R${routeIndex}S${step + 1}`
-            : {
-                Conditional: {
-                  Condition() {
-                    return (
-                      this.storage().decisions.reduce(
-                        (total, choice, index) =>
-                          total +
-                          (route.scenes[index].choices[choice]?.affinity || 0),
-                        0,
-                      ) >=
-                      (route.endingThreshold ??
-                        Math.ceil(route.scenes.length * 1.5))
-                    );
-                  },
-                  True: `jump R${routeIndex}EndClose`,
-                  False: `jump R${routeIndex}EndSlow`,
+        `show message Profile_${cut.unlock} profile-unlock`,
+      );
+    after.push(`jump ${next}`);
+    if (cut.choices) {
+      entry.push({
+        Choice: {
+          Dialog: cut.prompt,
+          Class: cut.id === "Cut01" ? "start-choice" : "story-choice",
+          ...Object.fromEntries(
+            cut.choices.map((option, choiceIndex) => [
+              `Answer${choiceIndex}`,
+              {
+                Text: option.text,
+                Do: `jump ${cut.id}A${choiceIndex}`,
+                onChosen() {
+                  const data = this.storage();
+                  data.choices[cut.id] = choiceIndex;
+                  recalculate(data);
+                },
+                onRevert() {
+                  const data = this.storage();
+                  delete data.choices[cut.id];
+                  recalculate(data);
                 },
               },
+            ]),
+          ),
+        },
+      });
+      cut.choices.forEach((option, choiceIndex) => {
+        script[`${cut.id}A${choiceIndex}`] = [
+          ...option.reply,
+          `jump ${cut.id}After`,
         ];
       });
-    });
-    for (const [kind, ending] of Object.entries(route.endings)) {
-      script[`R${routeIndex}End${kind === "close" ? "Close" : "Slow"}`] = [
-        {
-          Choice: {
-            Dialog: `n <span class="ending-title">${ending.title}</span>${ending.copy}`,
-            Class: "epilogue-choices",
-            Again: {
-              Text: "다른 선택으로 다시 만나기",
-              Do: `jump Route${routeIndex}`,
-            },
-            Other: { Text: "다른 사람 만나기", Do: "jump Start" },
-          },
-        },
-      ];
-    }
+      script[`${cut.id}After`] = after;
+    } else entry.push(...after);
   });
-  window.YEONBUN_STORY = script;
+  for (const ending of scenario.endings)
+    script[`Cut20_${ending.member}`] = [
+      "show scene team04 with scene-3",
+      `show character ${ending.member} portrait`,
+      `n <span class="ending-title">${ending.title}</span>${ending.subtitle}`,
+      ...ending.lines,
+      "jump TeamPage",
+    ];
+  script.TeamPage = [
+    function () {
+      const member = members.find((m) => m.id === this.storage().selected);
+      window.location.assign(
+        `/team.html${member ? `?match=${encodeURIComponent(member.id)}` : ""}`,
+      );
+      return false;
+    },
+  ];
+  window.TEAM04_FRESH_STATE = fresh;
+  window.TEAM04_STORY = script;
+  window.TEAM04_MESSAGES = messages;
 })();

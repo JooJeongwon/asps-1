@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f7f4f9" />
-    <title>연분 — 사주 로맨스</title>
+    <title>오늘, 우리 중 한 명을 선택해 — TEAM 04</title>
     <meta
       name="description"
-      content="정치훈, 주정원, 박진환, 남성수. 네 갈래의 사주 로맨스 프롤로그."
+      content="정치훈, 박진환, 주정원, 남성수. 하루 동안 네 사람을 알아가고 마지막 밤, 당신이 직접 한 명을 선택하는 이야기."
     />
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,23 +20,34 @@
     <link rel="stylesheet" href="/play.css" />
     <script src="/vendor/monogatari/monogatari.js" defer></script>
     <script src="/characters.js" defer></script>
-    <script src="/routes.js" defer></script>
+    <script src="/team.js" defer></script>
+    <script src="/scenario.js" defer></script>
     <script src="/story.js" defer></script>
     <script src="/game.js" defer></script>
   </head>
   <body>
-    <main id="monogatari" aria-label="연분 비주얼 노벨 플레이어">
+    <main id="monogatari" aria-label="오늘, 우리 중 한 명을 선택해">
       <visual-novel>
         <loading-screen></loading-screen>
         <main-screen><main-menu></main-menu></main-screen>
         <game-screen>
           <div class="scene-heading" aria-live="polite">
             <div class="chapter">
-              <span id="route-name">봄날의 첫 페이지</span
-              ><small id="route-motif">네 사람, 네 갈래의 운명</small>
+              <span id="route-name">새로운 시작</span
+              ><small id="route-motif">TEAM 04 · 네 사람을 알아가는 하루</small>
             </div>
-            <span id="route-location">어느 봄날, 해 질 무렵</span
-            ><span id="route-step">PROLOGUE</span>
+            <span id="route-location">학교 건물 외부 · 아침</span
+            ><span id="route-step">CUT 01 / 20</span>
+          </div>
+          <div
+            id="affinity-hud"
+            aria-label="네 사람의 호감도"
+            aria-live="polite"
+          ></div>
+          <div id="opening-title">
+            <small>TEAM 04</small>
+            <h1>오늘, 우리 중<br />한 명을 선택해</h1>
+            <p>첫 만남부터 마지막 선택까지, 함께 만드는 하루.</p>
           </div>
           <dialog-log></dialog-log>
           <text-box></text-box>

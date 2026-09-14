@@ -1,188 +1,101 @@
-"""Verify the actual bundled engine in Chromium. Requires Python Playwright + Chromium.
-Run against a running dev server: python scripts/verify-monogatari.py --url http://127.0.0.1:3009
-"""
+"""Verify the real Monogatari common story, save state and four freely chosen endings."""
 import argparse
 import json
-from urllib.parse import urlencode
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--url', default='http://127.0.0.1:3009')
+parser=argparse.ArgumentParser()
+parser.add_argument('--url', default='http://127.0.0.1:3012')
 parser.add_argument('--screenshots', default=None)
-args = parser.parse_args()
-base = args.url.rstrip('/')
-names = ['정치훈', '주정원', '박진환', '남성수']
-photos = ['jeong-chihoon-anime.png', 'joo-jeongwon-anime.png', 'park-jinhwan-anime.png', 'nam-seongsu-anime.png']
-titles = [
-    ['내일도, 같은 출발선', '한 걸음의 여백'],
-    ['우리만 아는 별의 이름', '접어둔 질문 하나'],
-    ['두 사람의 재생목록', '다음 곡을 기다리며'],
-    ['비워둔 맞은편 자리', '오래 남는 한 문장'],
-]
+args=parser.parse_args();base=args.url.rstrip('/')
+ids=['chihoon','jinhwan','jeongwon','seongsu']
+names=['정치훈','박진환','주정원','남성수']
 
-def start(page, name=None):
-    page.goto(base + '/' + ('?' + urlencode({'route': name}) if name else ''), wait_until='networkidle')
-    expect(page.locator('body')).to_have_attribute('data-engine-ready', 'true')
-
-def advance(page):
-    page.locator('text-box').click()
-
-def answer(page, index):
-    page.locator(f'choice-container [data-choice="Answer{index}"]').click()
-    expect(page.locator('choice-container')).to_have_count(0)
-
-def screenshot(page, name):
+def shot(page,name):
     if args.screenshots:
-        path=Path(args.screenshots)
-        path.mkdir(parents=True, exist_ok=True)
-        page.screenshot(path=str(path / name), full_page=True)
+        folder=Path(args.screenshots);folder.mkdir(parents=True,exist_ok=True)
+        page.screenshot(path=str(folder/name),full_page=True)
+
+def start(page):
+    page.goto(base,wait_until='networkidle')
+    expect(page.locator('body')).to_have_attribute('data-engine-ready','true')
+    expect(page.locator('#route-step')).to_have_text('CUT 01 / 20')
+    expect(page.locator('.final-choice')).to_have_count(0)
+
+def check_hud(page):
+    scores=page.evaluate('monogatari.storage().affinity')
+    for id in ids:expect(page.locator(f'[data-affinity="{id}"]')).to_have_text(str(scores[id]))
+
+def walk(page, ending='chihoon', answer=0, stop=None):
+    visited=set();unlocks=set()
+    for _ in range(400):
+        if '/team.html' in page.url:return visited,unlocks
+        label=page.evaluate('monogatari.state("label")')
+        if label.startswith('Cut'):visited.add(label[3:5])
+        if page.locator('message-modal').count():
+            modal=page.locator('message-modal')
+            unlocks.add(modal.locator('[data-content="title"]').inner_text())
+            shot(page, f'unlock-{label}-{page.viewport_size["width"]}.png')
+            modal.locator('[data-action="close"]').click()
+        elif page.locator('choice-container button').count():
+            check_hud(page)
+            if stop==label:return visited,unlocks
+            if label=='Cut19':
+                expect(page.locator('.final-choice button')).to_have_count(4)
+                assert all(page.locator(f'[data-choice="{id}"]').is_enabled() for id in ids)
+                assert len(page.evaluate('Object.keys(monogatari.storage().unlocked)'))==4
+                shot(page, f'final-choice-{page.viewport_size["width"]}.png')
+                page.locator(f'[data-choice="{ending}"]').click()
+            else:
+                count=page.locator('choice-container button').count()
+                page.locator(f'[data-choice="Answer{min(answer,count-1)}"]').click()
+        else:page.locator('text-box').click()
+        page.wait_for_timeout(55)
+    raise AssertionError('Story did not reach target or ending')
 
 with sync_playwright() as p:
-    browser=p.chromium.launch()
-    page=browser.new_page(viewport={'width':1440,'height':1000}, reduced_motion='reduce')
-    errors=[]
-    failed_assets=[]
-    page.on('pageerror', lambda err: errors.append(str(err)))
-    page.on('response', lambda r: failed_assets.append(r.url) if r.status >= 400 and r.url.startswith(base) else None)
-    endings=set()
-    start(page)
-    expect(page.locator('main-screen')).not_to_be_visible()
-    expect(page.locator('header, footer, #blind, #match-form')).to_have_count(0)
-    expect(page.locator('.cast-choices button')).to_have_count(4)
-    screenshot(page, 'root-desktop.png')
-    for index, name in enumerate(names):
-        choice = page.locator(f'[data-choice="Route{index}"]')
-        expect(choice).to_contain_text(name)
-        expect(choice.locator('img')).to_have_attribute('src', '/assets/characters/' + photos[index])
-        assert choice.locator('img').evaluate('(e)=>e.complete && e.naturalWidth > 0')
-    # All 32 paths are clicked through the real engine, not a mock controller.
-    for route,name in enumerate(names):
-        for mask in range(8):
-            start(page, name)
-            portrait = page.locator(f'img[data-character="c{route}"]')
-            expect(portrait).to_be_visible()
-            assert portrait.get_attribute('src').endswith('/assets/characters/' + photos[route])
-            assert portrait.evaluate('(e)=>e.complete && e.naturalWidth > 0')
-            for step in range(3):
-                expect(page.locator('#route-step')).to_have_text(f'0{step+1} / 03')
-                advance(page)
-                expect(page.locator('choice-container button')).to_have_count(2)
-                answer(page, (mask >> step) & 1)
-                advance(page)
-            expect(page.locator('#route-step')).to_have_text('EPILOGUE')
-            title=titles[route][0 if mask.bit_count() <= 1 else 1]
-            expect(page.locator('text-box')).to_contain_text(title)
-            endings.add(title)
-        print(f'{name}: all eight choice paths passed', flush=True)
-    assert len(endings) == 8
-    # Restart must clear decisions; another-person selection must jump to the chosen route.
-    page.locator('[data-choice="Again"]').click()
-    expect(page.locator('#route-step')).to_have_text('01 / 03')
-    assert page.evaluate('monogatari.storage().decisions') == [None,None,None]
-    start(page)
-    page.locator('[data-choice="Route1"]').click()
-    expect(page.locator('#route-name')).to_contain_text('주정원')
-    advance(page)
-    answer(page,0)
-    page.locator('quick-menu [data-action="back"]').click()
-    expect(page.locator('[data-choice="Answer1"]')).to_be_visible()
-    assert page.evaluate('monogatari.storage().decisions') == [None,None,None]
-    answer(page,1)
-    # Native dialog log.
-    page.locator('quick-menu [data-action="dialog-log"]').click()
-    expect(page.locator('dialog-log')).to_be_visible()
-    expect(page.locator('dialog-log')).to_contain_text('좋은 순서네요')
-    page.locator('dialog-log button').click()
-    # Save from a response, reopen on a different route, and load from the native UI.
-    page.locator('quick-menu [data-open="save"]').click()
-    page.locator('save-screen input').fill('정원 첫 선택 검증')
-    page.locator('save-screen [data-action="save"]').click()
-    expect(page.locator('save-screen save-slot')).to_have_count(1)
-    screenshot(page,'monogatari-save.png')
-    start(page, '남성수')
-    page.locator('quick-menu [data-open="load"]').click()
-    page.locator('load-screen save-slot').focus()
-    page.keyboard.press('Enter')
-    expect(page.locator('game-screen')).to_be_visible()
-    expect(page.locator('#route-name')).to_contain_text('주정원')
-    expect(page.locator('text-box')).to_contain_text('좋은 순서네요')
-    assert page.evaluate('monogatari.storage().decisions') == [1,None,None]
-    # Rewind after loading must also restore the decision, then reach a changed ending.
-    page.locator('quick-menu [data-action="back"]').click()
-    expect(page.locator('[data-choice="Answer0"]')).to_be_visible()
-    assert page.evaluate('monogatari.storage().decisions') == [None,None,None]
-    answer(page,0)
-    advance(page)
-    for step in [1,2]:
-        advance(page); answer(page,0); advance(page)
-    expect(page.locator('text-box')).to_contain_text(titles[1][0])
-    screenshot(page,'monogatari-ending.png')
-    # A save taken while choices are open must restore its pending choices exactly once.
-    start(page,'박진환'); advance(page)
-    page.locator('quick-menu [data-open="save"]').click()
-    page.locator('save-screen input').fill('진환 선택지 검증')
-    page.locator('save-screen [data-action="save"]').click()
-    expect(page.locator('save-screen save-slot')).to_have_count(2)
-    page.reload(wait_until='networkidle')
-    page.locator('quick-menu [data-open="load"]').click()
-    page.locator('load-screen save-slot').filter(has_text='진환 선택지 검증').click()
-    expect(page.locator('choice-container')).to_have_count(1)
-    expect(page.locator('choice-container button')).to_have_count(2)
-    answer(page,1)
-    assert page.evaluate('monogatari.storage().decisions') == [1,None,None]
-    # Keyboard advance and native instant typing.
-    page.emulate_media(reduced_motion='no-preference')
-    start(page,'정치훈')
-    page.keyboard.press('Space')
-    expect(page.locator('text-box')).to_contain_text('물웅덩이')
-    page.keyboard.press('Space')
-    expect(page.locator('choice-container')).to_have_count(1)
-    page.emulate_media(reduced_motion='reduce')
-    # Native quit confirmation returns to cast selection even after a direct route link.
-    start(page, '박진환')
-    page.locator('quick-menu [data-action="end"]').click()
-    page.locator('alert-modal [data-action="dismiss-alert"]').click()
-    expect(page.locator('#route-name')).to_contain_text('박진환')
-    page.locator('quick-menu [data-action="end"]').click()
-    page.locator('alert-modal [data-action="quit"]').click()
-    expect(page.locator('.cast-choices button')).to_have_count(4)
-    page.locator('[data-choice="Route0"]').click()
-    expect(page.locator('#route-name')).to_contain_text('정치훈')
-    assert page.evaluate('monogatari.storage().decisions') == [None,None,None]
-    # Responsive full-screen game and all four AI anime portraits.
-    for width,height in [(1440,1000),(390,844),(375,812),(320,740),(768,1024)]:
-        page.set_viewport_size({'width':width,'height':height})
-        start(page)
-        screenshot(page, f'root-{width}.png')
-        assert not page.evaluate('document.documentElement.scrollHeight > innerHeight'), width
-        for i in range(4):
-            item = page.locator(f'.cast-choices [data-choice="Route{i}"]')
-            expect(item).to_be_visible()
-            assert item.evaluate('(e)=>e.scrollHeight <= e.clientHeight'), f'portrait selection clipped at {width}'
-        for name in names:
-            start(page, name)
-            assert page.locator('img[data-character]').evaluate('(e)=>e.getBoundingClientRect().top >= 0 && e.getBoundingClientRect().bottom <= innerHeight'), width
-            screenshot(page, f'portrait-{names.index(name)}-{width}.png')
-        start(page,'남성수')
-        for step in range(3):
-            advance(page)
-            if step == 0: screenshot(page,f'monogatari-{width}.png')
-            assert not page.evaluate('document.documentElement.scrollWidth > innerWidth'), width
-            assert page.locator('choice-container').evaluate('(e)=>e.scrollHeight <= e.clientHeight'), width
-            answer(page,0);advance(page)
-        expect(page.locator('text-box')).to_contain_text(titles[3][0])
-        assert page.locator('text-box [data-content="text"]').evaluate('(e)=>e.scrollHeight <= e.clientHeight'), f'ending clipped at {width}'
-    # Old /play.html links are an alias to the same native entry point.
-    page.goto(base + '/play.html?' + urlencode({'route':'박진환'}), wait_until='networkidle')
-    expect(page.locator('#route-name')).to_contain_text('박진환')
-    # Supabase-backed APIs remain available for the later scenario integration.
-    assert page.request.get(base+'/api/status').json() == {'configured':True}
-    assert len(page.request.get(base+'/api/people').json()) == 26
-    assert round(page.request.get(base+'/api/highlight').json()['match_score'],1) == 80.3
-    match = page.request.get(base+'/api/match?' + urlencode({'person':'주정원','match':'정치훈'}))
-    assert round(match.json()['match_score'],1) == 75.5
-    assert not errors,errors
-    assert not failed_assets,failed_assets
-    print(json.dumps({'engine':page.evaluate('monogatari.version'),'paths':32,'endings':len(endings),'save_load':'response + pending choice + cross-route + rollback passed','widths':[1440,390,375,320,768],'api':'26 people, 80.3 highest, 75.5 search','errors':errors},ensure_ascii=False))
+    browser=p.chromium.launch();page=browser.new_page(viewport={'width':1440,'height':900},reduced_motion='reduce')
+    errors=[];failed=[]
+    page.on('pageerror',lambda e:errors.append(str(e)))
+    page.on('response',lambda r:failed.append(r.url) if r.status>=400 and r.url.startswith(base) else None)
+    # A native rewind must remove points, including after saving and loading pending choices.
+    start(page);walk(page,stop='Cut02')
+    page.locator('[data-choice="Answer0"]').click();page.wait_for_timeout(70);check_hud(page)
+    assert page.evaluate('monogatari.storage().affinity.chihoon')==1
+    page.locator('quick-menu [data-action="back"]').click();expect(page.locator('[data-choice="Answer1"]')).to_be_visible()
+    assert page.evaluate('Object.values(monogatari.storage().affinity)')==[0,0,0,0]
+    page.locator('[data-choice="Answer1"]').click();walk(page,stop='Cut07')
+    saved=page.evaluate('monogatari.storage()')
+    page.locator('quick-menu [data-open="save"]').click();page.locator('save-screen input').fill('TEAM04 공통 이야기')
+    page.locator('save-screen [data-action="save"]').click();expect(page.locator('save-screen save-slot')).to_have_count(1)
+    start(page);assert page.evaluate('Object.values(monogatari.storage().affinity)')==[0,0,0,0]
+    page.locator('quick-menu [data-open="load"]').click();page.locator('load-screen save-slot').focus();page.keyboard.press('Enter')
+    expect(page.locator('#route-step')).to_have_text('CUT 07 / 20');expect(page.locator('choice-container')).to_have_count(1)
+    assert page.evaluate('monogatari.storage()')==saved;check_hud(page)
+    page.locator('[data-choice="Answer0"]').click();page.wait_for_timeout(70)
+    assert page.evaluate('monogatari.storage().affinity.jinhwan')==saved['affinity']['jinhwan']+1
+    page.locator('quick-menu [data-action="back"]').click();expect(page.locator('[data-choice="Answer1"]')).to_be_visible()
+    assert page.evaluate('monogatari.storage()')==saved;check_hud(page)
+    # Native quit resets the entire ledger and starts the common story, never a character picker.
+    page.locator('quick-menu [data-action="end"]').click();page.locator('alert-modal [data-action="quit"]').click()
+    expect(page.locator('#route-step')).to_have_text('CUT 01 / 20')
+    assert page.evaluate('monogatari.storage().choices')=={}
+    # Play through all twenty cuts and each final ending; both ordinary answers are exercised.
+    for index,id in enumerate(ids):
+        width,height=[(1440,900),(390,844),(320,740),(768,1024)][index]
+        page.set_viewport_size({'width':width,'height':height});start(page)
+        shot(page,f'opening-{width}.png');visited,unlocks=walk(page,ending=id,answer=index%2)
+        assert visited=={f'{i:02}' for i in range(1,21)},visited
+        assert len(unlocks)==4,unlocks
+        expect(page).to_have_url(base+'/team.html?match='+id)
+        expect(page.locator('#your-match')).to_contain_text(names[index]);expect(page.locator('.member')).to_have_count(4)
+        for photo in page.locator('.member img').all():assert photo.evaluate('(e)=>e.complete && e.naturalWidth>0')
+        page.locator('#show-profiles').click();expect(page.locator('details[open]')).to_have_count(4)
+        page.locator('#show-project').click();expect(page.locator('#project')).to_be_visible()
+        assert not page.evaluate('document.documentElement.scrollWidth>innerWidth')
+        shot(page,f'team-ending-{width}.png')
+        print(names[index]+': CUT 01–20, four profiles and ending passed',flush=True)
+    assert page.request.get(base+'/api/status').json()=={'configured':True}
+    assert not errors,errors;assert not failed,failed
+    print(json.dumps({'engine': 'Monogatari 2.8.0', 'cuts':20, 'endings':4, 'save_load_rollback':'passed', 'viewports':[1440,390,320,768], 'errors':errors},ensure_ascii=False))
     browser.close()

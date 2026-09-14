@@ -1,10 +1,14 @@
 # 연분 · ASPS 사주 로맨스 비주얼 노벨
 
-접속하면 Monogatari 2.8.0 게임이 곧바로 시작된다. 첫 화면의 캐릭터에서 정치훈·주정원·박진환·남성수를 선택하면 해당 인물의 대화로 이어진다. 별도의 랜딩페이지나 시작 버튼은 없다. 사용자가 제공한 네 장의 사진을 AI로 애니메이션 미남 캐릭터로 변환해 이름별로 연결했다. [개별 이미지와 생성 프롬프트](docs/character-art-prompts.md)를 확인할 수 있다.
+접속하면 Monogatari 2.8.0으로 《오늘, 우리 중 한 명을 선택해》가 바로 시작된다. 여자 전학생인 주인공이 **정치훈(PM) → 박진환(백엔드) → 주정원(프론트엔드) → 남성수(발표)**를 차례로 알아가고 프로젝트를 함께 완성하는 20컷 공통 이야기다. 이름과 얼굴이 드러나지 않는 주인공을 플레이하며, 마지막에만 직접 상대를 선택한다.
 
-현재 대본은 교체 예정인 프롤로그다. 인물별 3회 선택과 2개 엔딩, 총 32개 선택 경로와 8개 엔딩을 제공한다. 저장·불러오기·되감기·대사록·자동재생은 Monogatari 기본 기능이다. 하단 **인물 선택**으로 현재 회차를 끝내고 다른 인물을 고를 수 있다. 저장 파일은 현재 사이트 주소와 브라우저의 LocalStorage에 보관된다.
+일상 선택은 반응과 호감도만 바꾼 뒤 같은 스토리로 합류한다. CUT 05·08·11·14에서 네 명의 프로필을 해금하고, CUT 19에서는 호감도와 관계없이 네 명 모두 선택할 수 있다. CUT 20의 4개 엔딩 뒤 실제 사진·팀 역할과 MEMBER PROFILE / OUR PROJECT / GITHUB를 제공하는 `/team.html`로 이어진다.
 
-사주 일주·MBTI·KAI는 기존 원본 데이터를 사용하며 대사·사건·감정·엔딩은 창작이다. Supabase의 26명 궁합 API는 그대로 유지한다. 현재 게임의 선택 점수는 실제 궁합 점수와 별개다. [대본 수정·사진 매핑·엔진 구성](docs/design-reference.md)을 참고한다.
+[전체 20컷 시나리오](docs/scenario-team04.md) · [엔진 및 편집 안내](docs/design-reference.md) · [AI 캐릭터와 프롬프트](docs/character-art-prompts.md)
+
+선택·되감기·대사록·저장·불러오기·자동재생은 Monogatari 기능이다. 저장 공간은 `ASPS_TEAM04_v1`이며 이전 프롤로그 저장과 분리했다. 하단 **처음부터**는 현재 회차를 초기화한다. 저장 파일은 현재 주소와 브라우저의 LocalStorage에 보관된다.
+
+실제 팀 역할은 사용자가 확정했고, 일주·MBTI·KAI는 기존 프로젝트 데이터를 사용한다. 대사·사건·감정은 창작이며 게임 호감도는 실제 궁합 점수와 별개다. Supabase의 기존 26명 궁합 API는 그대로 유지한다.
 
 ## 대상
 
@@ -31,7 +35,7 @@ cp .env.example .env.local  # 파일이 없을 때만 실행
 npm run dev
 ```
 
-Node 22 이상. 공식 Monogatari 브라우저 번들과 라이선스는 `public/vendor/monogatari/`에 고정되어 있어 별도 엔진 설치가 필요 없다. 게임의 진입점은 `/` 하나이며 `/?route=정치훈`처럼 인물별 직접 링크도 지원한다. 기존 `/play.html`은 같은 게임으로 연결된다. `npm run build`는 정적 게임 파일·사진·엔진 해시를 검증한다. 공식 엔진 번들은 이미 브라우저용으로 빌드되어 있어 별도 컴파일이 필요 없다. Vercel은 `public/`과 `api/*.js`를 배포한다. 기존 Cloudflare 배포가 필요한 경우 `npm run cf:dev`를 쓰고 `.dev.vars`에 서버 키를 설정한다. D1은 더 이상 사용하지 않는다.
+Node 22 이상. 공식 Monogatari 브라우저 번들과 라이선스는 `public/vendor/monogatari/`에 고정되어 있어 별도 엔진 설치가 필요 없다. 게임의 진입점은 `/`이며 기존 `/play.html`도 같은 게임으로 연결된다. 과거 `?route=이름` 링크로 들어와도 CUT 01에서 시작한다. `npm run build`는 정적 게임 파일·사진·엔진 해시를 검증한다. 공식 엔진 번들은 이미 브라우저용으로 빌드되어 있어 별도 컴파일이 필요 없다. Vercel은 `public/`과 `api/*.js`를 배포한다. 기존 Cloudflare 배포가 필요한 경우 `npm run cf:dev`를 쓰고 `.dev.vars`에 서버 키를 설정한다. D1은 더 이상 사용하지 않는다.
 
 ## 관리
 
@@ -44,6 +48,9 @@ Supabase Table Editor의 `gcs_pairs`에서 결과를 관리한다. `match_group`
 ```sh
 npm run build
 npm test
+node scripts/export-scenario.js
+# 실행 중인 개발 서버의 실제 엔진 검증 (Python Playwright 필요):
+python3 scripts/verify-monogatari.py --url http://127.0.0.1:3012
 python3 scripts/test-database.py
 # 실제 엑셀 추출본을 가진 로컬 환경에서만:
 python3 scripts/test-database.py private/002_seed.sql
