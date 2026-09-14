@@ -29,6 +29,9 @@ test("Kokone has four ordered personas, two binary conversations each and four e
   assert.match(JSON.stringify(scenario.commonEnding), /탈퇴 기능/);
   assert.ok(scenario.routes[3].sajuLines);
   assert.equal(scenario.targetSeconds, 160);
+  const jeongwon = scenario.routes.find((route) => route.id === "jeongwon");
+  assert.match(JSON.stringify(jeongwon), /플레이리스트|다음 곡/);
+  assert.doesNotMatch(JSON.stringify(jeongwon), /햄버거/);
 });
 
 test("every answer rejoins the next question and every jump has scene metadata", () => {
