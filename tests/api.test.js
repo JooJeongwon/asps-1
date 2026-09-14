@@ -71,7 +71,7 @@ test('HTTP serves assets and API but never private files',async()=>{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const root=`http://127.0.0.1:${server.address().port}`;
  try{
-  for(const [path,type] of [['/','text/html'],['/styles.css','text/css'],['/app.js','text/javascript'],['/routes.js','text/javascript'],['/game.js','text/javascript'],['/assets/yeonbun-hero.png','image/png'],['/assets/yeonbun-cast.png','image/png'],['/assets/yeonbun-scenes.png','image/png'],['/assets/favicon.svg','image/svg+xml'],['/api/highlight','application/json']]){
+  for(const [path,type] of [['/','text/html'],['/styles.css','text/css'],['/app.js','text/javascript'],['/routes.js','text/javascript'],['/game.js','text/javascript'],['/play.html','text/html'],['/play.css','text/css'],['/story.js','text/javascript'],['/vendor/monogatari/monogatari.js','text/javascript'],['/vendor/monogatari/monogatari.css','text/css'],['/assets/yeonbun-hero.png','image/png'],['/assets/yeonbun-cast.png','image/png'],['/assets/yeonbun-scenes.png','image/png'],['/assets/favicon.svg','image/svg+xml'],['/api/highlight','application/json']]){
    const response=await fetch(root+path);assert.equal(response.status,200);assert.ok(response.headers.get('content-type').includes(type));
   }
   assert.equal((await fetch(root+'/private/data.json')).status,404);

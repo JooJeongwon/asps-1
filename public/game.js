@@ -1,180 +1,132 @@
 (() => {
-  const el = (id) => document.getElementById(id);
-  const dialog = el("game-dialog");
-  let route,
-    step = 0,
-    choices = [],
-    timer = null,
-    returnFocus = null;
-  const stopTyping = () => {
-    clearInterval(timer);
-    timer = null;
-  };
-  const closeDialog = (target) =>
-    typeof target.close === "function"
-      ? target.close()
-      : target.removeAttribute("open");
-
-  function showChoices() {
-    stopTyping();
-    el("game-line").textContent = route.scenes[step].line;
-    el("game-line").removeAttribute("aria-busy");
-    el("game-skip").hidden = true;
-    el("game-choices").hidden = false;
+  const status = document.getElementById("engine-status");
+  const engine = window.monogatari;
+  if (!engine) {
+    status.textContent =
+      "플레이어를 불러오지 못했어요. 새로고침 후 다시 시도해주세요.";
+    return;
   }
-
-  function renderScene() {
-    stopTyping();
-    const scene = route.scenes[step];
-    el("game-location").textContent = scene.location;
-    el("game-step").textContent = `${String(step + 1).padStart(2, "0")} / 03`;
-    el("game-narration").textContent = scene.narration;
-    el("game-reaction").textContent = "";
-    el("game-ending").hidden = true;
-    el("game-next").hidden = true;
-    el("game-next").textContent =
-      step === 2 ? "에필로그 펼치기 →" : "다음 장면으로 →";
-    el("game-prev").disabled = step === 0;
-    el("game-line").hidden = false;
-    el("game-narration").hidden = false;
-    el("game-choices").hidden = true;
-    el("game-choices").replaceChildren(
-      ...scene.choices.map((choice, index) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent = choice.text;
-        button.addEventListener("click", () => {
-          if (choices[step] !== undefined) return;
-          choices[step] = index;
-          el("game-choices").hidden = true;
-          el("game-reaction").textContent = choice.reply;
-          el("game-next").hidden = false;
-          el("game-next").focus({ preventScroll: true });
-        });
-        return button;
-      }),
+  const routes = window.YEONBUN_ROUTES;
+  const requested = new URLSearchParams(location.search).get("route");
+  const initialRoute = routes.findIndex((route) => route.name === requested);
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  engine.settings({
+    Name: "ASPS_Yeonbun",
+    Version: "1.0.0",
+    Label: initialRoute < 0 ? "Start" : `Route${initialRoute}`,
+    ShowMainScreen: false,
+    ServiceWorkers: false,
+    Preload: true,
+    MultiLanguage: false,
+    LanguageSelectionScreen: false,
+    Orientation: "any",
+    ForceAspectRatio: "None",
+    TypeAnimation: !reducedMotion,
+    InstantText: true,
+    AllowRollback: true,
+    Skip: 250,
+    AutoSave: 0,
+    Slots: 10,
+    Screenshots: false,
+    Storage: { Adapter: "LocalStorage", Store: "GameData" },
+    AssetsPath: {
+      root: ".",
+      scenes: "assets",
+      characters: "assets",
+      images: "assets",
+    },
+  });
+  engine.preferences({ Language: "한국어", TextSpeed: 25, AutoPlaySpeed: 5 });
+  engine.storage({ route: null, decisions: [null, null, null] });
+  engine.characters({
+    n: { name: "이야기", color: "#795d88" },
+    ...Object.fromEntries(
+      routes.map((route, index) => [
+        `c${index}`,
+        {
+          name: route.name,
+          color: "#795d88",
+          sprites: { portrait: "yeonbun-cast.png" },
+        },
+      ]),
+    ),
+  });
+  engine.assets("scenes", {
+    keyvisual: "yeonbun-hero.png",
+    scenes: "yeonbun-scenes.png",
+  });
+  engine.script(window.YEONBUN_STORY);
+  // The site header provides an exit. Native quit would restart with no title screen.
+  engine.on("didSetup", () => {
+    engine.component("quick-menu").removeButton("Quit");
+    engine.component("quick-menu").removeButton("Hide");
+  });
+  engine.debug.level(0);
+  function updateChapter() {
+    const label = engine.state("label");
+    const match = /^R(\d)(?:S(\d)(?:A[01])?|End(Close|Slow))$/.exec(
+      label || "",
     );
-    // aria-busy keeps assistive readers from announcing every typed character.
-    el("game-line").textContent = "";
-    el("game-line").setAttribute("aria-busy", "true");
-    el("game-skip").hidden = false;
-    el("game-line").focus({ preventScroll: true });
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      showChoices();
-    } else {
-      const letters = Array.from(scene.line);
-      let position = 0;
-      timer = setInterval(() => {
-        el("game-line").textContent += letters[position++];
-        if (position >= letters.length) showChoices();
-      }, 25);
-    }
+    const route = match ? routes[Number(match[1])] : null;
+    document.getElementById("route-name").textContent = route
+      ? `${route.name} · ${route.title}`
+      : "봄날의 첫 페이지";
+    document.getElementById("route-motif").textContent = route
+      ? `${route.mbti} · ${route.pillar} · ${route.motif}`
+      : "네 사람, 네 갈래의 운명";
+    document.getElementById("route-location").textContent = route
+      ? match[2] !== undefined
+        ? route.scenes[Number(match[2])].location
+        : "우리의 첫 번째 에필로그"
+      : "어느 봄날, 해 질 무렵";
+    document.getElementById("route-step").textContent = match
+      ? match[3]
+        ? "EPILOGUE"
+        : `0${Number(match[2]) + 1} / 03`
+      : "PROLOGUE";
   }
-
-  function renderEnding() {
-    stopTyping();
-    const affinity = choices.reduce(
-      (sum, choice, index) =>
-        sum + route.scenes[index].choices[choice].affinity,
-      0,
-    );
-    const ending = route.endings[affinity >= 5 ? "close" : "slow"];
-    el("game-step").textContent = "EPILOGUE";
-    el("game-prev").disabled = false;
-    for (const id of [
-      "game-line",
-      "game-narration",
-      "game-choices",
-      "game-skip",
-      "game-next",
-    ])
-      el(id).hidden = true;
-    el("game-reaction").textContent = "";
-    el("ending-label").textContent =
-      `${route.name}의 이야기 · ${affinity >= 5 ? "함께하는 봄" : "천천히 피는 봄"}`;
-    el("ending-title").textContent = ending.title;
-    el("ending-copy").textContent = ending.copy;
-    el("game-ending").hidden = false;
-    el("ending-title").focus({ preventScroll: true });
-  }
-
-  function start(name, trigger) {
-    const index = window.YEONBUN_ROUTES.findIndex((item) => item.name === name);
-    if (index < 0) return;
-    route = window.YEONBUN_ROUTES[index];
-    returnFocus =
-      trigger.id === "profile-play"
-        ? document.querySelector(`[data-member="${name}"]`)
-        : trigger;
-    if (el("member-dialog").open) closeDialog(el("member-dialog"));
-    step = 0;
-    choices = [];
-    dialog.dataset.routeIndex = index;
-    el("game-title").textContent = `${route.name} · ${route.title}`;
-    el("game-speaker").textContent = route.name;
-    el("game-motif").textContent = route.motif;
-    el("game-portrait").className = `game-portrait portrait portrait-${index}`;
-    el("game-portrait").setAttribute(
+  for (const event of ["didRunAction", "didRevertAction", "didLoadGame"])
+    engine.on(event, updateChapter);
+  engine.on("didLoadGame", () => {
+    requestAnimationFrame(updateChapter);
+  });
+  // Native save slots are custom elements; expose their load/overwrite action to keyboards.
+  engine.on("componentDidMount", (event) => {
+    const { component, tag } = event.detail || {};
+    if (tag !== "save-slot") return;
+    component.setAttribute("role", "button");
+    component.setAttribute("tabindex", "0");
+    const savedRoute = routes[component.data?.game?.storage?.route];
+    component.setAttribute(
       "aria-label",
-      `${route.name}의 창작 게임 아바타`,
+      `${savedRoute?.name || "이야기"} · ${component.data?.name || "저장 기록"}`,
     );
-    typeof dialog.showModal === "function"
-      ? dialog.showModal()
-      : dialog.setAttribute("open", "");
-    document.body.classList.add("game-open");
-    renderScene();
-    dialog.scrollTop = 0;
-  }
-
-  function cleanup() {
-    stopTyping();
-    document.body.classList.remove("game-open");
-    returnFocus?.focus({ preventScroll: true });
-  }
-  function close() {
-    closeDialog(dialog);
-    cleanup();
-  }
-  document.addEventListener("click", (event) => {
-    const trigger = event.target.closest("[data-route]");
-    if (trigger) start(trigger.dataset.route, trigger);
+    component.addEventListener("keydown", (event) => {
+      if (event.target === component && ["Enter", " "].includes(event.key)) {
+        event.preventDefault();
+        event.stopPropagation();
+        component.click();
+      }
+    });
   });
-  el("game-skip").addEventListener("click", () => {
-    if (timer) {
-      showChoices();
-      el("game-choices")
-        .querySelector("button")
-        ?.focus({ preventScroll: true });
-    }
-  });
-  el("game-line").addEventListener("click", () => {
-    if (timer) showChoices();
-  });
-  el("game-next").addEventListener("click", () => {
-    if (choices[step] === undefined || step >= route.scenes.length) return;
-    step++;
-    step === route.scenes.length ? renderEnding() : renderScene();
-  });
-  el("game-prev").addEventListener("click", () => {
-    if (step <= 0) return;
-    step--;
-    // Rewinding discards this scene and later decisions; the score is derived from history.
-    choices = choices.slice(0, step);
-    renderScene();
-  });
-  el("game-restart").addEventListener("click", () => {
-    step = 0;
-    choices = [];
-    renderScene();
-  });
-  el("game-other").addEventListener("click", () => {
-    returnFocus = document.querySelector("#play [data-route]");
-    close();
-    returnFocus?.focus();
-  });
-  el("game-close").addEventListener("click", close);
-  dialog.addEventListener("close", cleanup);
-  dialog.addEventListener("click", (event) => {
-    if (event.target === dialog) close();
-  });
+  engine
+    .init("#monogatari")
+    .then(() => {
+      status.hidden = true;
+      document.body.dataset.engineReady = "true";
+      document
+        .querySelectorAll('[data-screen] > [data-action="back"]')
+        .forEach((button) =>
+          button.setAttribute("aria-label", "플레이로 돌아가기"),
+        );
+      document
+        .querySelector("save-screen input")
+        ?.setAttribute("aria-label", "저장 기록 이름");
+    })
+    .catch(() => {
+      status.textContent =
+        "이야기를 시작하지 못했어요. 새로고침 후 다시 시도해주세요.";
+    });
 })();

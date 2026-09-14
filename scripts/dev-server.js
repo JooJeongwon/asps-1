@@ -8,6 +8,17 @@ const files = new Map([
   ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
   ["/tailwind.css", ["tailwind.css", "text/css; charset=utf-8"]],
   ["/routes.js", ["routes.js", "text/javascript; charset=utf-8"]],
+  ["/play.html", ["play.html", "text/html; charset=utf-8"]],
+  ["/play.css", ["play.css", "text/css; charset=utf-8"]],
+  ["/story.js", ["story.js", "text/javascript; charset=utf-8"]],
+  [
+    "/vendor/monogatari/monogatari.js",
+    ["vendor/monogatari/monogatari.js", "text/javascript; charset=utf-8"],
+  ],
+  [
+    "/vendor/monogatari/monogatari.css",
+    ["vendor/monogatari/monogatari.css", "text/css; charset=utf-8"],
+  ],
   ["/game.js", ["game.js", "text/javascript; charset=utf-8"]],
   ["/assets/yeonbun-hero.png", ["assets/yeonbun-hero.png", "image/png"]],
   ["/assets/yeonbun-cast.png", ["assets/yeonbun-cast.png", "image/png"]],

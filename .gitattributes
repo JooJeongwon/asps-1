@@ -1,0 +1,3 @@
+# Preserve official engine bundles byte-for-byte; review the pinned version and hashes.
+public/vendor/monogatari/monogatari.js -diff -whitespace linguist-vendored
+public/vendor/monogatari/monogatari.css -diff -whitespace linguist-vendored

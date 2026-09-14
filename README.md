@@ -1,6 +1,6 @@
 # 연분 · ASPS 사주 로맨스 비주얼 노벨
 
-정치훈·주정원·박진환·남성수의 첫 만남을 플레이하는 반응형 랜딩과 프롤로그 체험판이다. 인물별 3회 선택, 총 8개 에필로그를 제공한다. 실제 일주·MBTI·KAI를 캐릭터 모티프로 사용하며 아바타와 대사는 창작이다. [레퍼런스·루트 구성·아트워크](docs/design-reference.md)에서 제작 내용을 확인할 수 있다.
+정치훈·주정원·박진환·남성수의 첫 만남을 플레이하는 반응형 랜딩과 프롤로그 체험판이다. Monogatari 2.8.0으로 인물별 3회 선택, 총 8개 에필로그를 제공한다. 저장·불러오기·대사록·되감기·자동재생은 엔진 기본 기능을 사용한다. 실제 일주·MBTI·KAI를 캐릭터 모티프로 사용하며 아바타와 대사는 창작이다. [레퍼런스·루트 구성·아트워크](docs/design-reference.md)에서 제작 내용을 확인할 수 있다.
 
 26명 궁합 결과를 Supabase에 저장하고 Vercel의 `/api/*`에서 조회한다. 사이트는 실제 데이터가 도착한 뒤 점수를 표시하며, 조회 실패를 저장된 결과나 실시간 결과로 표시하지 않는다.
 
@@ -29,7 +29,7 @@ cp .env.example .env.local  # 파일이 없을 때만 실행
 npm run dev
 ```
 
-Node 22 이상. `npm run build`는 Tailwind를 로컬 CSS로 빌드한다. Vercel은 `public/`과 `api/*.js`를 배포한다. 기존 Cloudflare 배포가 필요한 경우 `npm run cf:dev`를 쓰고 `.dev.vars`에 서버 키를 설정한다. D1은 더 이상 사용하지 않는다.
+Node 22 이상. 공식 Monogatari 브라우저 번들과 라이선스는 `public/vendor/monogatari/`에 고정되어 있어 별도 엔진 설치가 필요 없다. 랜딩은 `/`, 플레이어는 `/play.html`이며 인물별 직접 링크도 지원한다. `npm run build`는 Tailwind를 로컬 CSS로 빌드한다. Vercel은 `public/`과 `api/*.js`를 배포한다. 기존 Cloudflare 배포가 필요한 경우 `npm run cf:dev`를 쓰고 `.dev.vars`에 서버 키를 설정한다. D1은 더 이상 사용하지 않는다.
 
 ## 관리
 

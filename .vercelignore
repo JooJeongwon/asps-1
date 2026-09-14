@@ -6,3 +6,6 @@ worker.test.js
 scripts/test-database.py
 *.xlsx
 node_modules/
+
+.venv-playwright/
+scripts/verify-monogatari.py

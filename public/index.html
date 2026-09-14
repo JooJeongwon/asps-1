@@ -28,7 +28,6 @@
     <link rel="stylesheet" href="/styles.css" />
     <script src="/routes.js" defer></script>
     <script src="/app.js" defer></script>
-    <script src="/game.js" defer></script>
   </head>
   <body>
     <a href="#main" class="skip-link">본문 바로가기</a>
@@ -135,9 +134,9 @@
               </button>
               <div class="character-bottom">
                 <p>“일단 나와요. 나머지는 걸으면서.”</p>
-                <button data-route="정치훈" type="button">
+                <a data-route="정치훈" href="/play.html?route=정치훈">
                   치훈의 이야기 <span>↗</span>
-                </button>
+                </a>
               </div>
             </article>
             <article class="character-card metal">
@@ -162,9 +161,9 @@
               </button>
               <div class="character-bottom">
                 <p>“우연에도 이유가 있다면, 궁금하지 않아요?”</p>
-                <button data-route="주정원" type="button">
+                <a data-route="주정원" href="/play.html?route=주정원">
                   정원의 이야기 <span>↗</span>
-                </button>
+                </a>
               </div>
             </article>
             <article class="character-card vine">
@@ -189,9 +188,9 @@
               </button>
               <div class="character-bottom">
                 <p>“이 노래, 왠지 네가 좋아할 것 같아서.”</p>
-                <button data-route="박진환" type="button">
+                <a data-route="박진환" href="/play.html?route=박진환">
                   진환의 이야기 <span>↗</span>
-                </button>
+                </a>
               </div>
             </article>
             <article class="character-card earth">
@@ -216,9 +215,9 @@
               </button>
               <div class="character-bottom">
                 <p>“서두르지 않아도 돼요. 기다릴 수 있어요.”</p>
-                <button data-route="남성수" type="button">
+                <a data-route="남성수" href="/play.html?route=남성수">
                   성수의 이야기 <span>↗</span>
-                </button>
+                </a>
               </div>
             </article>
           </div>
@@ -263,15 +262,15 @@
               <span class="speaker-label">당신</span>
               <h3>이 봄을, 누구와 시작할까요?</h3>
               <div class="route-choices">
-                <button data-route="정치훈">
-                  정치훈 <small>비 온 뒤의 운동장</small><span>↗</span></button
-                ><button data-route="주정원">
-                  주정원 <small>별이 뜨는 옥상</small><span>↗</span></button
-                ><button data-route="박진환">
-                  박진환 <small>이어폰 한쪽의 거리</small><span>↗</span></button
-                ><button data-route="남성수">
+                <a data-route="정치훈" href="/play.html?route=정치훈">
+                  정치훈 <small>비 온 뒤의 운동장</small><span>↗</span></a
+                ><a data-route="주정원" href="/play.html?route=주정원">
+                  주정원 <small>별이 뜨는 옥상</small><span>↗</span></a
+                ><a data-route="박진환" href="/play.html?route=박진환">
+                  박진환 <small>이어폰 한쪽의 거리</small><span>↗</span></a
+                ><a data-route="남성수" href="/play.html?route=남성수">
                   남성수 <small>책갈피에 남긴 말</small><span>↗</span>
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -483,74 +482,13 @@
             <dd id="member-tmi">—</dd>
           </div>
         </dl>
-        <button id="profile-play" class="button primary" type="button">
+        <a id="profile-play" class="button primary" href="/play.html">
           이 사람의 이야기 시작하기 ↗
-        </button>
+        </a>
         <p class="small-note">
           일러스트와 게임 속 사건은 창작으로 구성했습니다.
         </p>
       </div>
-    </dialog>
-
-    <dialog id="game-dialog" class="game-dialog" aria-labelledby="game-title">
-      <div class="game-top">
-        <div>
-          <span class="tiny-star">✧</span><span id="game-title">프롤로그</span>
-        </div>
-        <div class="game-controls">
-          <button id="game-prev" type="button" disabled>← 이전 장면</button
-          ><button id="game-close" type="button" aria-label="프롤로그 닫기">
-            닫기 ×
-          </button>
-        </div>
-      </div>
-      <div class="game-scene">
-        <div class="game-scenery"></div>
-        <span id="game-location" class="scene-tag">—</span>
-        <div
-          id="game-portrait"
-          class="game-portrait portrait portrait-0"
-          role="img"
-          aria-label="등장인물의 창작 아바타"
-        ></div>
-        <div class="game-progress">
-          <span id="game-step">01 / 03</span
-          ><span id="game-motif">사주 모티프</span>
-        </div>
-      </div>
-      <div class="game-script">
-        <button id="game-skip" class="game-typing-skip" type="button">
-          대사 한 번에 보기</button
-        ><span id="game-speaker" class="speaker-label">—</span>
-        <p id="game-narration" class="game-narration"></p>
-        <h3
-          id="game-line"
-          tabindex="-1"
-          aria-live="polite"
-          aria-atomic="true"
-        ></h3>
-        <div id="game-choices" class="game-choices"></div>
-        <p id="game-reaction" class="game-reaction" role="status"></p>
-        <button id="game-next" class="button primary" type="button" hidden>
-          다음 장면으로 →
-        </button>
-        <div id="game-ending" hidden>
-          <p id="ending-label" class="eyebrow">EPILOGUE</p>
-          <h3 id="ending-title" tabindex="-1"></h3>
-          <p id="ending-copy"></p>
-          <div class="ending-actions">
-            <button id="game-restart" class="button primary" type="button">
-              다른 선택으로 다시 만나기</button
-            ><button id="game-other" class="button outline" type="button">
-              다른 사람 만나기
-            </button>
-          </div>
-        </div>
-      </div>
-      <p class="game-footnote">
-        사주의 모티프를 활용한 창작 이야기 · 선택은 체험판 안의 전개에만
-        반영됩니다.
-      </p>
     </dialog>
   </body>
 </html>

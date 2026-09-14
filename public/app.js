@@ -166,7 +166,7 @@ document.querySelectorAll(".member-card").forEach((card) =>
       "aria-label",
       `${route.name}의 창작 게임 아바타`,
     );
-    $("#profile-play").dataset.route = route.name;
+    $("#profile-play").href = `/play.html?${new URLSearchParams({ route: route.name })}`;
     if (typeof memberDialog.showModal === "function") memberDialog.showModal();
     else memberDialog.setAttribute("open", "");
   }),

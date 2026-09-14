@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f4f9" />
+    <title>연분 — 프롤로그 플레이</title>
+    <meta
+      name="description"
+      content="정치훈, 주정원, 박진환, 남성수. 네 갈래의 사주 로맨스 프롤로그."
+    />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/vendor/monogatari/monogatari.css" />
+    <link rel="stylesheet" href="/play.css" />
+    <script src="/vendor/monogatari/monogatari.js" defer></script>
+    <script src="/routes.js" defer></script>
+    <script src="/story.js" defer></script>
+    <script src="/game.js" defer></script>
+  </head>
+  <body>
+    <header class="player-header">
+      <a
+        href="/#play"
+        class="player-brand"
+        aria-label="연분 인물 선택으로 돌아가기"
+        >✳ <span>연분<small>緣 分 · YEONBUN</small></span></a
+      >
+      <div class="player-chapter">
+        <span id="route-name">봄날의 첫 페이지</span
+        ><small id="route-motif">네 사람, 네 갈래의 운명</small>
+      </div>
+      <a href="/#try" class="archive-link">우리의 궁합 ↗</a>
+    </header>
+    <main id="monogatari" aria-label="연분 비주얼 노벨 플레이어">
+      <visual-novel>
+        <loading-screen></loading-screen>
+        <main-screen><main-menu></main-menu></main-screen>
+        <game-screen>
+          <div class="scene-heading" aria-live="polite">
+            <span id="route-location">어느 봄날, 해 질 무렵</span
+            ><span id="route-step">PROLOGUE</span>
+          </div>
+          <dialog-log></dialog-log>
+          <text-box></text-box>
+          <quick-menu></quick-menu>
+        </game-screen>
+        <load-screen></load-screen>
+        <save-screen></save-screen>
+        <settings-screen></settings-screen>
+        <help-screen></help-screen>
+      </visual-novel>
+    </main>
+    <p id="engine-status" class="engine-status" role="status">
+      이야기를 준비하고 있어요…
+    </p>
+    <footer class="player-footer">
+      <span
+        >클릭·터치·스페이스로 다음 대사 <i>·</i> 저장 기록은 현재 브라우저에
+        보관됩니다.</span
+      ><a href="/#characters">다른 인물 만나기 ↗</a>
+    </footer>
+    <noscript
+      >플레이하려면 브라우저에서 JavaScript를 켜주세요.
+      <a href="/">연분 홈으로 돌아가기</a></noscript
+    >
+  </body>
+</html>
