@@ -13,3 +13,5 @@ private/
 .vercel
 .env*
 !.env.example
+
+.venv-playwright/

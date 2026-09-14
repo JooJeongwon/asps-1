@@ -1,34 +1,114 @@
-import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
-import { handleApi } from '../lib/compatibility.js';
+import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { handleApi } from "../lib/compatibility.js";
 
 const files = new Map([
-  ['/', ['index.html', 'text/html; charset=utf-8']],
-  ['/index.html', ['index.html', 'text/html; charset=utf-8']],
-  ['/styles.css', ['styles.css', 'text/css; charset=utf-8']],
-  ['/tailwind.css', ['tailwind.css', 'text/css; charset=utf-8']],
-  ['/app.js', ['app.js', 'text/javascript; charset=utf-8']],
+  ["/", ["index.html", "text/html; charset=utf-8"]],
+  ["/index.html", ["index.html", "text/html; charset=utf-8"]],
+  [
+    "/assets/characters/jeong-chihoon-anime.png",
+    ["assets/characters/jeong-chihoon-anime.png", "image/png"],
+  ],
+  [
+    "/assets/characters/joo-jeongwon-anime.png",
+    ["assets/characters/joo-jeongwon-anime.png", "image/png"],
+  ],
+  [
+    "/assets/characters/park-jinhwan-anime.png",
+    ["assets/characters/park-jinhwan-anime.png", "image/png"],
+  ],
+  [
+    "/assets/characters/nam-seongsu-anime.png",
+    ["assets/characters/nam-seongsu-anime.png", "image/png"],
+  ],
+  ["/characters.js", ["characters.js", "text/javascript; charset=utf-8"]],
+  ["/campus.css", ["campus.css", "text/css; charset=utf-8"]],
+  ["/typography.css", ["typography.css", "text/css; charset=utf-8"]],
+  ...["hahmlet-bold", "maru-buri-regular", "maru-buri-semibold", "gowun-dodum-regular", "cormorant-garamond-semibold"].map((name) => [
+    `/assets/fonts/${name}.woff2`, [`assets/fonts/${name}.woff2`, "font/woff2"],
+  ]),
+  ...[
+    "campus-gate",
+    "campus-project",
+    "campus-lounge",
+    "campus-night",
+    "campus-cover",
+    // Keep old illustration URLs available for existing browser saves.
+    "rofan-campus",
+    "rofan-atelier",
+    "rofan-conservatory",
+    "rofan-midnight",
+    "rofan-cover",
+  ].map((name) => [
+    `/assets/${name}.webp`,
+    [`assets/${name}.webp`, "image/webp"],
+  ]),
+  ...["jeong-chihoon", "joo-jeongwon", "park-jinhwan", "nam-seongsu"].flatMap(
+    (name) => ["campus", "rofan"].map((style) => [
+      `/assets/characters/${name}-${style}.webp`,
+      [`assets/characters/${name}-${style}.webp`, "image/webp"],
+    ]),
+  ),
+  ["/team.js", ["team.js", "text/javascript; charset=utf-8"]],
+  ["/saju.js", ["saju.js", "text/javascript; charset=utf-8"]],
+  ["/scenario.js", ["scenario.js", "text/javascript; charset=utf-8"]],
+  ["/team.html", ["team.html", "text/html; charset=utf-8"]],
+  ["/team-page.js", ["team-page.js", "text/javascript; charset=utf-8"]],
+  ["/team.css", ["team.css", "text/css; charset=utf-8"]],
+  ["/assets/team04-scenes.png", ["assets/team04-scenes.png", "image/png"]],
+  ["/play.html", ["index.html", "text/html; charset=utf-8"]],
+  ["/play.css", ["play.css", "text/css; charset=utf-8"]],
+  ["/story.js", ["story.js", "text/javascript; charset=utf-8"]],
+  [
+    "/vendor/monogatari/monogatari.js",
+    ["vendor/monogatari/monogatari.js", "text/javascript; charset=utf-8"],
+  ],
+  [
+    "/vendor/monogatari/monogatari.css",
+    ["vendor/monogatari/monogatari.css", "text/css; charset=utf-8"],
+  ],
+  ["/game.js", ["game.js", "text/javascript; charset=utf-8"]],
+  ["/assets/yeonbun-scenes.png", ["assets/yeonbun-scenes.png", "image/png"]],
+  ["/assets/favicon.svg", ["assets/favicon.svg", "image/svg+xml"]],
 ]);
 export function createAppServer(env = process.env, fetcher = fetch) {
   return createServer(async (req, res) => {
     try {
-      const url = new URL(req.url, 'http://localhost');
-      if (url.pathname.startsWith('/api/')) {
-        const response = await handleApi(new Request(url, { method: req.method }), env, fetcher);
+      const url = new URL(req.url, "http://localhost");
+      if (url.pathname.startsWith("/api/")) {
+        const response = await handleApi(
+          new Request(url, { method: req.method }),
+          env,
+          fetcher,
+        );
         res.writeHead(response.status, Object.fromEntries(response.headers));
         return res.end(await response.text());
       }
-      if (!['GET', 'HEAD'].includes(req.method)) { res.writeHead(405); return res.end(); }
+      if (!["GET", "HEAD"].includes(req.method)) {
+        res.writeHead(405);
+        return res.end();
+      }
       const file = files.get(url.pathname);
-      if (!file) { res.writeHead(404); return res.end('Not found'); }
-      const body = await readFile(new URL(`../public/${file[0]}`, import.meta.url));
-      res.writeHead(200, { 'Content-Type': file[1] });
-      res.end(req.method === 'HEAD' ? undefined : body);
+      if (!file) {
+        res.writeHead(404);
+        return res.end("Not found");
+      }
+      const body = await readFile(
+        new URL(`../public/${file[0]}`, import.meta.url),
+      );
+      res.writeHead(200, { "Content-Type": file[1] });
+      res.end(req.method === "HEAD" ? undefined : body);
     } catch {
-      res.writeHead(500); res.end('Internal server error');
+      res.writeHead(500);
+      res.end("Internal server error");
     }
   });
 }
-if (process.argv[1] && import.meta.url === new URL(process.argv[1], 'file:').href) {
-  createAppServer().listen(process.env.PORT || 3000, '127.0.0.1', () => console.log(`http://127.0.0.1:${process.env.PORT || 3000}`));
+if (
+  process.argv[1] &&
+  import.meta.url === new URL(process.argv[1], "file:").href
+) {
+  createAppServer().listen(process.env.PORT || 3000, "127.0.0.1", () =>
+    console.log(`http://127.0.0.1:${process.env.PORT || 3000}`),
+  );
 }

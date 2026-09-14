@@ -1,0 +1,10 @@
+{
+  "version": "2.8.0",
+  "source": "https://github.com/Monogatari/Monogatari/tree/v2.8.0/dist/engine",
+  "commit": "89045f59b6af1669eefcd74ec59de0df52106bf1",
+  "sha256": {
+    "monogatari.js": "cae028d02a43589bd7252c1a5288d17db9997d669ece64ff5ce8457c50f18676",
+    "monogatari.css": "3309dcadb1e5a96721bfe54ee375f88e73b5e32e0572c82c90d9ca5838012235",
+    "LICENSE": "dccbb73aec3904be126b80ad7d7ab05470651cdc1238642acf0e256feb8c69fa"
+  }
+}

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#172c48" />
+    <title>진짜 팀 역할 공개 — 두근두근 코코네</title>
+    <meta
+      name="description"
+      content="정치훈 PM, 박진환 백엔드, 주정원 프론트엔드, 남성수 발표. 서로 다른 네 사람이 만든 ASPS."
+    />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/assets/fonts/hahmlet-bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/maru-buri-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/team.css" />
+    <link rel="stylesheet" href="/campus.css" />
+    <link rel="stylesheet" href="/typography.css" />
+    <script src="/characters.js" defer></script>
+    <script src="/team.js" defer></script>
+    <script src="/team-page.js" defer></script>
+  </head>
+  <body class="team-ending">
+    <main>
+      <section class="closing-story" aria-labelledby="closing-title">
+        <p class="eyebrow">YOU JOINED THE TEAM.</p>
+        <p id="your-match" class="your-match" hidden></p>
+        <p>연애 상대는 한 명, 팀플 상대는 네 명.</p>
+        <h1 id="closing-title">
+          선택은 끝났지만,<br /><em>팀플은 지금부터.</em>
+        </h1>
+      </section>
+      <section class="team-section" aria-labelledby="team-title">
+        <div class="section-heading">
+          <h2 id="team-title">TEAM 01 · 실제 역할 공개</h2>
+          <p>왕도 귀족도, 마감 앞에서는 같은 팀.</p>
+        </div>
+        <div id="members" class="members"></div>
+      </section>
+      <nav class="end-actions" aria-label="팀과 프로젝트 더 알아보기">
+        <button
+          id="show-profiles"
+          type="button"
+          aria-controls="members"
+          aria-expanded="false"
+        >
+          MEMBER PROFILE
+        </button>
+        <button
+          id="show-project"
+          type="button"
+          aria-controls="project"
+          aria-expanded="false"
+        >
+          OUR PROJECT
+        </button>
+        <a
+          href="https://github.com/JooJeongwon/asps-1"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GITHUB ↗</a
+        >
+      </nav>
+      <section
+        id="project"
+        class="project"
+        hidden
+        aria-labelledby="project-title"
+      >
+        <p class="eyebrow">ASPS · TEAM 01</p>
+        <h2 id="project-title">
+          서로 다른 사람이 만나면, 어떤 이야기가 생길까.
+        </h2>
+        <p>
+          과장된 캐릭터는 게임 속 설정입니다. 성수의 노트에는 실제 팀원 사이의
+          사주 궁합 여섯 조합을 담았습니다. 네 사람의 역할은 PM, 백엔드, 프론트엔드,
+          발표로 나뉘지만 완성하는 결과는 하나입니다.
+        </p>
+        <p>
+          노트의 사주 점수는 팀원끼리의 궁합이고, 대화 진행은 플레이 중의 선택
+          기록입니다. 주인공의 사주는 설정하지 않았으며 마지막 상대는 당신이
+          직접 정합니다.
+        </p>
+      </section>
+      <a class="play-again" href="/">처음부터 다시 플레이하기 →</a>
+    </main>
+    <noscript
+      >팀 프로필을 보려면 JavaScript를 켜주세요. 정치훈 · PM / 박진환 · 백엔드 /
+      주정원 · 프론트엔드 / 남성수 · 발표.</noscript
+    >
+  </body>
+</html>

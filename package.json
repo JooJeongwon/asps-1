@@ -1,11 +1,11 @@
 {
-  "name": "landing-page",
+  "name": "yeonbun-monogatari",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "npm run build && node --env-file-if-exists=.env.local scripts/dev-server.js",
     "start": "node --env-file-if-exists=.env.local scripts/dev-server.js",
-    "build": "tailwindcss -i styles/tailwind.css -o public/tailwind.css --minify",
+    "build": "node scripts/build-game.js",
     "test": "node --test worker.test.js tests/*.test.js",
     "cf:dev": "npm run build && npx wrangler dev"
   },
@@ -13,8 +13,6 @@
     "node": ">=22"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "4.3.3",
-    "jsdom": "30.0.1",
-    "tailwindcss": "4.3.3"
+    "jsdom": "30.0.1"
   }
 }

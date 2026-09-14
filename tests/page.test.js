@@ -1,46 +1,119 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import fs from 'node:fs/promises';
-import { JSDOM } from 'jsdom';
-const html = await fs.readFile(new URL('../public/index.html',import.meta.url),'utf8');
-const script = await fs.readFile(new URL('../public/app.js',import.meta.url),'utf8');
-const settle = () => new Promise(resolve=>setTimeout(resolve,20));
-const result = { person_name:'A <img src=x onerror=alert(1)>',match_name:'B',match_score:80.25,match_group:'베스트 프렌드',mbti_score:88,saju_score:79,kai_difference:15,tied_pairs:2 };
-
-test('page shows fetched highlight, handles ties, and escapes search results',async()=>{
- const dom = new JSDOM(html,{runScripts:'outside-only',url:'https://example.com'});
- const w=dom.window;
- try {
-  w.AbortSignal=AbortSignal;
-  w.fetch=async path=>Response.json(path.startsWith('/api/team') ? Array.from({length:6},(_,i)=>({...result,person_name:`A${i}`,match_name:`B${i}`})) : result);
-  w.eval(script);await settle();
-  assert.equal(w.document.querySelector('#blind-score').textContent,'80.3');
-  assert.match(w.document.querySelector('#blind-data-label').textContent,/LIVE RESULT/);
-  assert.match(w.document.querySelector('#blind-group').textContent,/공동 1위 2개/);
-  assert.equal(w.document.querySelectorAll('#pair-grid article').length,6);
-  w.document.querySelector('[data-member="주정원"]').click();
-  assert.equal(w.document.querySelector('#member-dialog').open,true);
-  assert.match(w.document.querySelector('#member-one-line').textContent,/질문/);
-  assert.match(w.document.querySelector('#member-bio').textContent,/문제/);
-  w.document.querySelector('#member-dialog').dispatchEvent(new w.Event('click'));
-  assert.equal(w.document.querySelector('#member-dialog').open,false);
-  const details=w.document.querySelector('#blind-result');details.open=true;assert.equal(details.open,true);
-  w.document.querySelector('#match-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle();
-  assert.match(w.document.querySelector('#match-result').textContent,/<img/);
-  assert.equal(w.document.querySelector('#match-result img'),null);
-  assert.equal(w.document.querySelector('#match-form button').disabled,false);
- }finally{dom.window.close();}
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs/promises";
+import { JSDOM } from "jsdom";
+const root = new URL("../public/", import.meta.url);
+const html = await fs.readFile(new URL("index.html", root), "utf8");
+const scripts = await Promise.all(
+  [
+    "characters.js",
+    "team.js",
+    "saju.js",
+    "scenario.js",
+    "story.js",
+    "game.js",
+  ].map((f) => fs.readFile(new URL(f, root), "utf8")),
+);
+test("root starts the Kokone prologue and isolates incompatible old saves", async () => {
+  for (const query of [
+    "",
+    "?route=정치훈",
+    "?route=박진환",
+    "?route=unknown",
+  ]) {
+    const dom = new JSDOM(html, {
+      runScripts: "outside-only",
+      url: "https://example.com/" + query,
+    });
+    const w = dom.window;
+    const captured = {};
+    try {
+      w.matchMedia = () => ({ matches: true });
+      w.monogatari = Object.fromEntries(
+        [
+          "settings",
+          "preferences",
+          "storage",
+          "characters",
+          "script",
+          "translation",
+        ].map((k) => [k, (v) => (captured[k] = v)]),
+      );
+      Object.assign(w.monogatari, {
+        assets() {},
+        action: () => ({ messages() {} }),
+        on() {},
+        debug: { level() {} },
+        init: async (selector) => assert.equal(selector, "#monogatari"),
+      });
+      scripts.forEach((s) => w.eval(s));
+      await new Promise((r) => setTimeout(r, 0));
+      assert.equal(captured.settings.ShowMainScreen, false);
+      assert.equal(captured.settings.Label, "Start");
+      assert.equal(captured.settings.Name, "ASPS_TEAM01_kokone_short_v4");
+      assert.equal(captured.script.Start[1], "jump Prologue");
+      assert.equal(w.document.querySelectorAll("[data-affinity]").length, 4);
+      for (const m of w.TEAM04_MEMBERS)
+        assert.equal(
+          captured.characters[m.id].sprites.portrait,
+          w.YEONBUN_PORTRAITS[m.name],
+        );
+      assert.equal(captured.characters.you.name, "아무개");
+      assert.equal(captured.characters.you.sprites, undefined);
+      assert.equal(
+        w.document.querySelectorAll("header, footer, #blind").length,
+        0,
+      );
+    } finally {
+      dom.window.close();
+    }
+  }
 });
-test('offline page never labels placeholders as live and search can retry',async()=>{
- const dom=new JSDOM(html,{runScripts:'outside-only',url:'https://example.com'});
- const w=dom.window;
- try{
-  w.AbortSignal=AbortSignal;w.fetch=async()=>{throw new Error('연결 오류');};
-  w.eval(script);await settle();
-  assert.equal(w.document.querySelector('#blind-score').textContent,'—');
-  assert.doesNotMatch(w.document.querySelector('#blind-data-label').textContent,/LIVE/);
-  w.document.querySelector('#match-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await settle();
-  assert.equal(w.document.querySelector('#match-result').textContent,'연결 오류');
-  assert.equal(w.document.querySelector('#match-form button').disabled,false);
- }finally{dom.window.close();}
+test("ending team page uses illustrated portraits and offers functioning profile/project links", async () => {
+  const page = await fs.readFile(new URL("team.html", root), "utf8");
+  const code = await fs.readFile(new URL("team-page.js", root), "utf8");
+  for (const query of ["?match=jinhwan", "?match=%3Cimg%20src=x%3E"]) {
+    const dom = new JSDOM(page, {
+      runScripts: "outside-only",
+      url: "https://example.com/team.html" + query,
+    });
+    const w = dom.window;
+    try {
+      w.HTMLElement.prototype.scrollIntoView = () => {};
+      w.eval(scripts[0]);
+      w.eval(scripts[1]);
+      w.eval(code);
+      assert.equal(w.document.querySelectorAll(".member").length, 4);
+      assert.equal(w.document.querySelectorAll(".member img").length, 4);
+      for (const [index, image] of [
+        ...w.document.querySelectorAll(".member img"),
+      ].entries()) {
+        const member = w.TEAM04_MEMBERS[index];
+        assert.equal(
+          image.getAttribute("src"),
+          `/assets/${w.YEONBUN_PORTRAITS[member.name]}`,
+        );
+        assert.match(image.alt, /캠퍼스 일러스트/);
+      }
+      assert.equal(
+        w.document.querySelector("#your-match").hidden,
+        query.includes("%3C"),
+      );
+      if (!query.includes("%3C"))
+        assert.match(
+          w.document.querySelector("#your-match").textContent,
+          /박진환/,
+        );
+      w.document.querySelector("#show-profiles").click();
+      assert.equal(w.document.querySelectorAll("details[open]").length, 4);
+      w.document.querySelector("#show-project").click();
+      assert.equal(w.document.querySelector("#project").hidden, false);
+      assert.equal(
+        w.document.querySelector('a[target="_blank"]').href,
+        "https://github.com/JooJeongwon/asps-1",
+      );
+    } finally {
+      dom.window.close();
+    }
+  }
 });

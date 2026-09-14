@@ -71,9 +71,11 @@ test('HTTP serves assets and API but never private files',async()=>{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const root=`http://127.0.0.1:${server.address().port}`;
  try{
-  for(const [path,type] of [['/','text/html'],['/styles.css','text/css'],['/app.js','text/javascript'],['/api/highlight','application/json']]){
+  for(const [path,type] of [['/','text/html'],['/characters.js','text/javascript'],['/assets/characters/jeong-chihoon-anime.png','image/png'],['/assets/characters/joo-jeongwon-anime.png','image/png'],['/assets/characters/park-jinhwan-anime.png','image/png'],['/assets/characters/nam-seongsu-anime.png','image/png'],['/team.js','text/javascript'],['/scenario.js','text/javascript'],['/team.html','text/html'],['/team-page.js','text/javascript'],['/team.css','text/css'],['/typography.css','text/css'],['/assets/fonts/hahmlet-bold.woff2','font/woff2'],['/assets/fonts/maru-buri-regular.woff2','font/woff2'],['/assets/fonts/maru-buri-semibold.woff2','font/woff2'],['/assets/fonts/gowun-dodum-regular.woff2','font/woff2'],['/assets/fonts/cormorant-garamond-semibold.woff2','font/woff2'],['/assets/team04-scenes.png','image/png'],['/game.js','text/javascript'],['/play.html','text/html'],['/play.css','text/css'],['/story.js','text/javascript'],['/vendor/monogatari/monogatari.js','text/javascript'],['/vendor/monogatari/monogatari.css','text/css'],['/assets/characters/jeong-chihoon-campus.webp','image/webp'],['/assets/characters/joo-jeongwon-campus.webp','image/webp'],['/assets/characters/park-jinhwan-campus.webp','image/webp'],['/assets/characters/nam-seongsu-campus.webp','image/webp'],['/assets/yeonbun-scenes.png','image/png'],['/assets/favicon.svg','image/svg+xml'],['/api/highlight','application/json']]){
    const response=await fetch(root+path);assert.equal(response.status,200);assert.ok(response.headers.get('content-type').includes(type));
   }
+  assert.equal(await (await fetch(root+'/play.html?route=박진환')).text(), await (await fetch(root+'/')).text());
+  for (const name of ['jeong-chihoon.jpeg','joo-jeongwon.jpeg','park-jinhwan.jpg','nam-seongsu.png']) assert.equal((await fetch(root+'/assets/characters/'+name)).status,404);
   assert.equal((await fetch(root+'/private/data.json')).status,404);
   assert.equal((await fetch(root+'/.env.local')).status,404);
  }finally{await new Promise(resolve=>server.close(resolve));}
