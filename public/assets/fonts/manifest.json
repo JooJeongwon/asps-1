@@ -1,0 +1,55 @@
+{
+  "fonts": [
+    {
+      "file": "hahmlet-bold.woff2",
+      "source": "https://fonts.gstatic.com/s/hahmlet/v21/BngXUXpCQ3nKpIo0TfPyfCdXfaeU4RitP9jo.ttf",
+      "weight": 700,
+      "bytes": 237128,
+      "sha256": "1e3594430e56f75c4fc2495c5ccbc7aa418d91d76e426018567b09f793584102",
+      "glyphs": 3607,
+      "conversion": "lossless WOFF2 packaging"
+    },
+    {
+      "file": "gowun-dodum-regular.woff2",
+      "source": "https://fonts.gstatic.com/s/gowundodum/v12/3Jn5SD_00GqwlBnWc1TUJF0F.ttf",
+      "weight": 400,
+      "bytes": 444700,
+      "sha256": "dd56081583c5036923d775257e2eba6bbddc6fbf91e373ef5992e7306e109435",
+      "glyphs": 12494,
+      "conversion": "lossless WOFF2 packaging"
+    },
+    {
+      "file": "cormorant-garamond-semibold.woff2",
+      "source": "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3umX5slCNuHLi8bLeY9MK7whWMhyjypVO7abI26QOD_iE9GnM.ttf",
+      "weight": 600,
+      "bytes": 64712,
+      "sha256": "7119a9eedb6d98cea8ec1d9801767ad447a228f6f7e79d113c128d939ed85562",
+      "glyphs": 974,
+      "conversion": "lossless WOFF2 packaging"
+    },
+    {
+      "file": "maru-buri-regular.woff2",
+      "source": "https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2",
+      "weight": 400,
+      "bytes": 433776,
+      "sha256": "4cf1341cf2f23fb3e263712dfde1d8f25eedcc328b696a2e5a2c8add55e5c17b",
+      "glyphs": 12398,
+      "conversion": "unmodified upstream WOFF2"
+    },
+    {
+      "file": "maru-buri-semibold.woff2",
+      "source": "https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff2",
+      "weight": 600,
+      "bytes": 466108,
+      "sha256": "7aef4862fa3219b0a7deb6746e27116a38c4069f4424eb51edf103b29795f5c2",
+      "glyphs": 12398,
+      "conversion": "unmodified upstream WOFF2"
+    }
+  ],
+  "licenses": [
+    "hahmlet-OFL.txt",
+    "gowundodum-OFL.txt",
+    "cormorantgaramond-OFL.txt",
+    "maruburi-OFL.txt"
+  ]
+}

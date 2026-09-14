@@ -1,0 +1,209 @@
+/* Romance-novel typography, shared by the game and the team epilogue. */
+@font-face {
+  font-family: "Hahmlet";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/fonts/hahmlet-bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "MaruBuri";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/maru-buri-regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "MaruBuri";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/assets/fonts/maru-buri-semibold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Gowun Dodum";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/gowun-dodum-regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/assets/fonts/cormorant-garamond-semibold.woff2") format("woff2");
+}
+:root {
+  --font-display: "Hahmlet", "MaruBuri", "Batang", serif;
+  --font-story: "MaruBuri", "Batang", Georgia, serif;
+  --font-ui: "Gowun Dodum", "Apple SD Gothic Neo", sans-serif;
+  --font-ornament: "Cormorant Garamond", Georgia, serif;
+  /* Cover legacy selectors as well as the current campus theme. */
+  --serif: var(--font-display);
+  --sans: var(--font-ui);
+  font-family: var(--font-story);
+  font-synthesis: none;
+}
+body.campus-game,
+body.team-ending {
+  font-family: var(--font-story);
+  font-weight: 400;
+}
+:is(.campus-game, .team-ending) :is(button, input, select, textarea, label, summary) {
+  font-family: var(--font-ui);
+  font-weight: 400;
+}
+:is(.campus-game, .team-ending) :is(h1, h2, h3),
+.campus-game .chapter,
+.campus-game .cast-name,
+.campus-game text-box [data-content="name"],
+.campus-game .modal__content [data-content="title"] {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  word-break: keep-all;
+  text-wrap: balance;
+}
+#opening-title h1 {
+  font-size: clamp(40px, 4.6vw, 76px);
+  line-height: 1.3;
+  letter-spacing: -0.045em;
+  margin: 16px 0 22px;
+}
+#opening-title h1 em {
+  font-size: 1.12em;
+  letter-spacing: -0.055em;
+}
+#opening-title .cover-brand,
+#opening-title > small,
+.team-ending .eyebrow {
+  font-family: var(--font-ornament);
+  font-weight: 600;
+}
+#opening-title .cover-brand {
+  font-size: 28px;
+  letter-spacing: 0.32em;
+}
+#opening-title > small {
+  font-size: 13px;
+  letter-spacing: 0.24em;
+}
+#opening-title .cover-subtitle {
+  font-family: var(--font-story);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+#opening-title p,
+.campus-game text-box p,
+.campus-game text-box type-writer,
+.campus-game dialog-log {
+  font-family: var(--font-story);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+/* Retain the existing 27 / 23 / 21px dialogue sizes and compact boxes. */
+.campus-game text-box [data-content="name"] {
+  letter-spacing: 0.025em;
+}
+.campus-game .story-choice button,
+.campus-game .start-choice button {
+  font-family: var(--font-story);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.campus-game :is(.chapter small, .scene-heading > span, .affinity-item, .cast-choices small),
+.campus-game .meeting-choice button:disabled::after,
+.campus-game :is(.saju-caption, .saju-pairs small, .modal__content [data-content="subtitle"], save-slot figcaption),
+.team-ending :is(.role, .interests, .play-again) {
+  font-family: var(--font-ui);
+  font-weight: 400;
+}
+.campus-game :is(.scene-heading > span, .affinity-item b, .saju-pairs strong) {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.campus-game :is(.saju-intro, .saju-pairs, .modal__content [data-content="body"], save-slot .badge) {
+  font-family: var(--font-story);
+}
+.campus-game .saju-pairs strong {
+  font-family: var(--font-ui);
+  font-weight: 400;
+}
+.campus-game quick-menu button {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.team-ending .closing-story h1 {
+  font-weight: 700;
+  line-height: 1.5;
+}
+.team-ending .eyebrow {
+  font-size: 17px;
+  letter-spacing: 0.14em;
+}
+.team-ending .section-heading h2 {
+  font-size: 20px;
+  letter-spacing: -0.025em;
+}
+.team-ending :is(.closing-story p:not(.eyebrow), .section-heading p, .role-reveal, .project p, details p) {
+  font-family: var(--font-story);
+  line-height: 1.85;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.team-ending :is(.role-reveal, .project p) {
+  font-size: 16px;
+}
+.team-ending .end-actions :is(a, button) {
+  font-family: var(--font-ornament);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+}
+@media (max-width: 760px) {
+  #opening-title h1 {
+    font-size: clamp(28px, 8.2vw, 42px);
+    line-height: 1.3;
+    margin: 10px 0 14px;
+  }
+  #opening-title > small {
+    font-size: 12px;
+  }
+  .team-ending .section-heading h2 {
+    font-size: 19px;
+  }
+  .team-ending .end-actions :is(a, button) {
+    font-size: 15px;
+  }
+}
+@media (max-height: 700px) and (max-width: 599px) {
+  #opening-title h1 {
+    font-size: 27px;
+    margin: 8px 0 12px;
+  }
+  #opening-title h1 br {
+    display: none;
+  }
+  #opening-title h1 em {
+    margin-left: 0.2em;
+    font-size: 1em;
+  }
+}
+@media (max-height: 600px) and (min-width: 600px) {
+  #opening-title h1 {
+    font-size: 22px;
+    line-height: 1.3;
+    margin: 0;
+  }
+  #opening-title h1 br {
+    display: none;
+  }
+  #opening-title h1 em {
+    margin-left: 0.2em;
+    font-size: 1em;
+  }
+}

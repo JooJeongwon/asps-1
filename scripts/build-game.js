@@ -22,6 +22,13 @@ for (const route of routes) {
 }
 for (const [, file] of html.matchAll(/(?:src|href)="\/([^"]+)"/g))
   await access(new URL(file, root));
+const fontsRoot = new URL("assets/fonts/", root);
+const fonts = JSON.parse(await readFile(new URL("manifest.json", fontsRoot), "utf8"));
+for (const { file, sha256 } of fonts.fonts) {
+  const actual = createHash("sha256").update(await readFile(new URL(file, fontsRoot))).digest("hex");
+  if (actual !== sha256) throw new Error(`Font checksum mismatch: ${file}`);
+}
+for (const file of fonts.licenses) await access(new URL(file, fontsRoot));
 await access(new URL("assets/team04-scenes.png", root));
 for (const file of Object.values(context.window.YEONBUN_SCENES))
   await access(new URL(`assets/${file}`, root));

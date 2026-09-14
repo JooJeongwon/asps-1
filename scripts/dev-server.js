@@ -23,6 +23,10 @@ const files = new Map([
   ],
   ["/characters.js", ["characters.js", "text/javascript; charset=utf-8"]],
   ["/campus.css", ["campus.css", "text/css; charset=utf-8"]],
+  ["/typography.css", ["typography.css", "text/css; charset=utf-8"]],
+  ...["hahmlet-bold", "maru-buri-regular", "maru-buri-semibold", "gowun-dodum-regular", "cormorant-garamond-semibold"].map((name) => [
+    `/assets/fonts/${name}.woff2`, [`assets/fonts/${name}.woff2`, "font/woff2"],
+  ]),
   ...[
     "campus-gate",
     "campus-project",
