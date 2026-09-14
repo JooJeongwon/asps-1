@@ -27,12 +27,12 @@
   const script = {
     Start: [function () { Object.assign(this.storage(), fresh()); return true; }, "jump Prologue"],
     Prologue: [...scene(0), ...scenario.prologue, {
-      Choice: { Dialog: "you 일단 들어가 보자. 설마 팀플보다 어렵겠어?", Class: "start-choice",
+      Choice: { Dialog: "you 일단 들어가 보자. 팀플보다 어렵겠어?", Class: "start-choice",
         Enter: { Text: "코코네 강의실로 들어간다", Do: "jump MeetingHub" } },
     }],
     MeetingHub: [...scene(1), {
       Choice: {
-        Dialog: "you 누구부터 만나볼까? 네 사람을 모두 만나야 마지막 선택을 할 수 있다.",
+        Dialog: "you 누구부터 만나볼까? 한 사람당 두 번의 대화!",
         Class: "cast-choices meeting-choice",
         ...Object.fromEntries(routes.map((r) => [r.id, {
           Text: card(r), Do: `jump Route_${r.id}`,
@@ -45,7 +45,7 @@
     } }],
     FinalChoice: [...scene(1), {
       Choice: {
-        Dialog: "you 마지막으로 함께하고 싶은 사람은? 지금까지의 대답과 관계없이 누구나 선택할 수 있다.",
+        Dialog: "you 네 명 중, 마지막으로 함께하고 싶은 사람은?",
         Class: "cast-choices final-choice",
         ...Object.fromEntries(routes.map((r) => [r.id, {
           Text: card(r), Do: `jump Ending_${r.id}`,
@@ -55,7 +55,7 @@
       },
     }],
     CommonEnding: [...scene(1, routes.map((r) => r.id)), ...scenario.commonEnding, {
-      Choice: { Dialog: "system 팀플은 지금부터입니다. TEAM 01의 실제 역할을 확인하세요.", Class: "start-choice reveal-choice",
+      Choice: { Dialog: "system 연애 상대는 한 명, 팀플 상대는 네 명!", Class: "start-choice reveal-choice",
         Reveal: { Text: "진짜 팀 역할 공개 →", Do: "jump TeamPage" } },
     }],
     TeamPage: [function () {
@@ -74,7 +74,7 @@
   chapters.Prologue = chapters.Start;
   chapters.FinalChoice = chapters.FinalSelect;
   const messages = {
-    SajuNote: { title: "성수의 진짜 사주 노트", subtitle: "실제 팀원 4명 사이의 기록 · 고백용 예시 점수와는 별개", body: "{{saju.note}}", actionString: "Continue" },
+    SajuNote: { title: "성수의 진짜 사주 노트", subtitle: "실제 팀원 4명 사이의 사주 궁합", body: "{{saju.note}}", actionString: "Continue" },
   };
   for (const route of routes) {
     const member = members.find((m) => m.id === route.id);
@@ -103,7 +103,7 @@
         script[`${label}A${answer}`] = [...option.reply, `jump ${label}After`];
         chapters[`${label}A${answer}`] = chapters[label];
       });
-      script[`${label}After`] = [`jump ${index < 4 ? questionId(route.id, index + 1) : `Complete_${route.id}`}`];
+      script[`${label}After`] = [`jump ${index + 1 < route.questions.length ? questionId(route.id, index + 1) : `Complete_${route.id}`}`];
       chapters[`${label}After`] = chapters[label];
     });
     script[`Complete_${route.id}`] = [
@@ -127,7 +127,7 @@
         Apply() {
           const data = this.storage();
           if (!route.questions.every((_, i) => [0, 1].includes(data.choices[questionId(route.id, i)])))
-            throw new Error("Complete all five conversations before leaving a route.");
+            throw new Error("Complete all conversations before leaving a route.");
           if (!data.visitOrder.includes(route.id)) data.visitOrder.push(route.id);
           data.unlocked[route.id] = true;
         },
@@ -142,12 +142,11 @@
         True: `jump FinalBridge_${route.id}`, False: `jump Departure_${route.id}`,
       } },
     ];
-    chapters[`Complete_${route.id}`] = { ...meta, question: 5 };
+    chapters[`Complete_${route.id}`] = { ...meta, question: route.questions.length };
     script[`Departure_${route.id}`] = [...route.departure, "jump MeetingHub"];
     chapters[`Departure_${route.id}`] = { ...meta, phase: "departure" };
     script[`FinalBridge_${route.id}`] = [
       ...scenario.bridge.slice(0, 1), ...route.bridge,
-      `${route.id} 결국 우리 네 명을 전부 만났네. 이제는 호기심이 아니라 네 마음으로 선택해야 해.`,
       ...scenario.bridge.slice(1), "jump FinalSelect",
     ];
     chapters[`FinalBridge_${route.id}`] = { ...meta, phase: "bridge", title: "네 번째 만남, 마지막 선택" };

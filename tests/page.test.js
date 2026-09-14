@@ -50,7 +50,7 @@ test("root starts the Kokone prologue and isolates incompatible old saves", asyn
       await new Promise((r) => setTimeout(r, 0));
       assert.equal(captured.settings.ShowMainScreen, false);
       assert.equal(captured.settings.Label, "Start");
-      assert.equal(captured.settings.Name, "ASPS_TEAM01_kokone_v3");
+      assert.equal(captured.settings.Name, "ASPS_TEAM01_kokone_short_v4");
       assert.equal(captured.script.Start[1], "jump Prologue");
       assert.equal(w.document.querySelectorAll("[data-affinity]").length, 4);
       for (const m of w.TEAM04_MEMBERS)

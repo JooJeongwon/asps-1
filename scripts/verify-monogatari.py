@@ -1,4 +1,4 @@
-"""Verify Kokone's selectable route order, twenty conversations and all endings."""
+"""Verify Kokone's selectable route order, eight conversations and all endings."""
 import argparse
 import json
 import re
@@ -28,7 +28,7 @@ def check_hud(page):
     data = page.evaluate('monogatari.storage()')
     for id in ids:
         score = data['affinity'][id]
-        expected = '✓' if id in data['visitOrder'] else f'{score}/5' if score else '대기'
+        expected = '✓' if id in data['visitOrder'] else f'{score}/2' if score else '대기'
         expect(page.locator(f'[data-affinity="{id}"]')).to_have_text(expected)
 
 def walk(page, order=None, ending='jinhwan', answer=0, stop=None):
@@ -53,7 +53,7 @@ def walk(page, order=None, ending='jinhwan', answer=0, stop=None):
             modal.locator('[data-action="close"]').click()
         elif page.locator('choice-container button').count():
             check_hud(page)
-            if re.fullmatch(r'Question_[a-z]+_[1-5]', label): questions.add(label)
+            if re.fullmatch(r'Question_[a-z]+_[1-2]', label): questions.add(label)
             if stop == label:
                 return {'questions': questions, 'departures': departures, 'bridges': bridges, 'endings': endings, 'common': common}
             if label == 'MeetingHub':
@@ -69,7 +69,7 @@ def walk(page, order=None, ending='jinhwan', answer=0, stop=None):
             elif label == 'FinalChoice':
                 assert page.evaluate('monogatari.storage().visitOrder') == order
                 assert page.evaluate('monogatari.storage().saju?.status') in ['ready', 'unavailable']
-                assert len(page.evaluate('Object.keys(monogatari.storage().choices)')) == 20
+                assert len(page.evaluate('Object.keys(monogatari.storage().choices)')) == 8
                 expect(page.locator('.final-choice button')).to_have_count(4)
                 assert all(page.locator(f'[data-choice="{id}"]').is_enabled() for id in ids)
                 shot(page, f'final-{page.viewport_size["width"]}.png')
@@ -92,17 +92,17 @@ with sync_playwright() as p:
     page.on('pageerror', lambda e: errors.append(str(e)))
     page.on('response', lambda r: failed.append(r.url) if r.status >= 400 and r.url.startswith(base) else None)
     # Save in a pending question, load it, and undo a chosen answer.
-    start(page); walk(page, stop='Question_jinhwan_3')
+    start(page); walk(page, stop='Question_jinhwan_2')
     saved = page.evaluate('monogatari.storage()')
-    assert saved['affinity']['jinhwan'] == 2
+    assert saved['affinity']['jinhwan'] == 1
     page.locator('quick-menu [data-open="save"]').click()
-    page.locator('save-screen input').fill('코코네 · 왕과 세 번째 대화')
+    page.locator('save-screen input').fill('코코네 · 왕과 두 번째 대화')
     page.locator('save-screen [data-action="save"]').click()
     expect(page.locator('save-screen save-slot')).to_have_count(1)
     start(page)
     page.locator('quick-menu [data-open="load"]').click()
     page.locator('load-screen save-slot').focus(); page.keyboard.press('Enter')
-    expect(page.locator('#route-step')).to_have_text('대화 3 / 5')
+    expect(page.locator('#route-step')).to_have_text('대화 2 / 2')
     expect(page.locator('[data-choice="Answer0"]')).to_be_visible()
     assert page.evaluate('monogatari.storage()') == saved
     page.locator('[data-choice="Answer0"]').click(); page.wait_for_timeout(100)
@@ -115,16 +115,16 @@ with sync_playwright() as p:
     assert page.evaluate('monogatari.storage().visitOrder') == ['jinhwan']
     for _ in range(25):
         page.locator('quick-menu [data-action="back"]').click(); page.wait_for_timeout(80)
-        if page.evaluate('monogatari.state("label")') == 'Question_jinhwan_5' and page.locator('[data-choice="Answer0"]').count(): break
+        if page.evaluate('monogatari.state("label")') == 'Question_jinhwan_2' and page.locator('[data-choice="Answer0"]').count(): break
     else: raise AssertionError('Could not rewind across completion')
     assert page.evaluate('monogatari.storage().visitOrder') == []
-    assert page.evaluate('monogatari.storage().affinity.jinhwan') == 4
+    assert page.evaluate('monogatari.storage().affinity.jinhwan') == 1
     check_hud(page)
     page.locator('quick-menu [data-action="end"]').click()
     page.locator('alert-modal [data-action="quit"]').click()
     expect(page.locator('#route-step')).to_have_text('만남 0 / 4')
     assert page.evaluate('monogatari.storage().choices') == {}
-    expected_questions = {f'Question_{id}_{i}' for id in ids for i in range(1,6)}
+    expected_questions = {f'Question_{id}_{i}' for id in ids for i in range(1,3)}
     # Each man is both an ending choice and the fourth speaker in one full run.
     for index, ending in enumerate(ids):
         order = ids[index:] + ids[:index]
@@ -146,7 +146,7 @@ with sync_playwright() as p:
         page.locator('#show-project').click(); expect(page.locator('#project')).to_be_visible()
         assert not page.evaluate('document.documentElement.scrollWidth>innerWidth')
         shot(page, f'roles-{w}.png')
-        print(f'{names[ending]} END: 20 questions, departures {order[:3]}, fourth {order[-1]}, common ending + roles passed', flush=True)
+        print(f'{names[ending]} END: 8 questions, departures {order[:3]}, fourth {order[-1]}, common ending + roles passed', flush=True)
     # Readiness is an external database probe; tolerate a brief upstream miss.
     for attempt in range(3):
         readiness = page.request.get(base + '/api/status').json()
@@ -155,5 +155,5 @@ with sync_playwright() as p:
     assert readiness == {'configured':True}, readiness
     assert not errors, errors
     assert not failed, failed
-    print(json.dumps({'routes':4,'questions':20,'endings':4,'save_load_rollback':'passed','errors':errors},ensure_ascii=False))
+    print(json.dumps({'routes':4,'questions':8,'endings':4,'save_load_rollback':'passed','errors':errors},ensure_ascii=False))
     browser.close()

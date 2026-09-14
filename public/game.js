@@ -7,14 +7,15 @@
     return;
   }
   const scenario = window.TEAM04_SCENARIO;
+  const questionCounts = Object.fromEntries(scenario.routes.map((r) => [r.id, r.questions.length]));
   const members = scenario.routes.map((r) => window.TEAM04_MEMBERS.find((m) => m.id === r.id));
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
   engine.settings({
     // New story, new save namespace. Original prologue saves remain intact.
-    Name: "ASPS_TEAM01_kokone_v3",
-    Version: "3.0.0",
+    Name: "ASPS_TEAM01_kokone_short_v4",
+    Version: "4.0.0",
     Label: "Start",
     ShowMainScreen: false,
     ServiceWorkers: false,
@@ -91,7 +92,7 @@
     document.getElementById("route-motif").textContent = chapter.motif || "TEAM 01 · 두근두근 코코네";
     document.getElementById("route-location").textContent = chapter.location;
     document.getElementById("route-step").textContent = chapter.question
-      ? `대화 ${chapter.question} / 5`
+      ? `대화 ${chapter.question} / ${questionCounts[chapter.route]}`
       : chapter.phase === "ending" ? "개별 엔딩"
       : chapter.phase === "common" ? "팀플 시작"
       : `만남 ${state.visitOrder?.length || 0} / 4`;
@@ -101,9 +102,10 @@
       const count = document.querySelector(`[data-affinity="${m.id}"]`);
       const met = state.visitOrder?.includes(m.id);
       const progress = state.affinity?.[m.id] || 0;
-      count.textContent = met ? "✓" : progress ? `${progress}/5` : "대기";
+      const total = questionCounts[m.id];
+      count.textContent = met ? "✓" : progress ? `${progress}/${total}` : "대기";
       count.parentElement.dataset.met = String(Boolean(met));
-      count.parentElement.setAttribute("aria-label", `${m.name}: ${met ? "대화 완료" : `${progress}/5 대화`}`);
+      count.parentElement.setAttribute("aria-label", `${m.name}: ${met ? "대화 완료" : `${progress}/${total} 대화`}`);
     }
   }
   for (const event of ["didRunAction", "didRevertAction", "didLoadGame"])

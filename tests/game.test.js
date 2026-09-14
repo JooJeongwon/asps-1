@@ -15,19 +15,20 @@ const question = (id, i) => `Question_${id}_${i + 1}`;
 const permutations = (items) => items.length ? items.flatMap((id) =>
   permutations(items.filter((other) => other !== id)).map((rest) => [id, ...rest])) : [[]];
 
-test("Kokone has four ordered personas, five binary conversations each and four endings", () => {
+test("Kokone has four ordered personas, two binary conversations each and four endings", () => {
   assert.equal(scenario.title, "두근두근 코코네: 운명의 팀원을 선택하세요");
   assert.deepEqual(Array.from(scenario.routes, (r) => [r.letter, r.id]),
     [["A", "jinhwan"], ["B", "jeongwon"], ["C", "chihoon"], ["D", "seongsu"]]);
   assert.deepEqual(Object.fromEntries(members.map((m) => [m.name, m.role])),
     { 정치훈: "PM", 박진환: "백엔드", 주정원: "프론트엔드", 남성수: "발표" });
   for (const route of scenario.routes) {
-    assert.equal(route.questions.length, 5);
+    assert.equal(route.questions.length, 2);
     assert.ok(route.departure.length && route.bridge.length && route.ending.lines.length);
     for (const q of route.questions) assert.equal(q.choices.length, 2);
   }
   assert.match(JSON.stringify(scenario.commonEnding), /탈퇴 기능/);
-  assert.match(JSON.stringify(scenario.routes[3]), /고백용 예시 점수/);
+  assert.ok(scenario.routes[3].sajuLines);
+  assert.equal(scenario.targetSeconds, 160);
 });
 
 test("every answer rejoins the next question and every jump has scene metadata", () => {
@@ -38,32 +39,33 @@ test("every answer rejoins the next question and every jump has scene metadata",
   }
   visit(script);
   for (const r of scenario.routes) {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < r.questions.length; i++) {
       const label = question(r.id, i);
       for (let a = 0; a < 2; a++) {
         assert.equal(choice(label)[`Answer${a}`].Do, `jump ${label}A${a}`);
         assert.equal(script[`${label}A${a}`].at(-1), `jump ${label}After`);
       }
-      assert.equal(script[`${label}After`].at(-1), `jump ${i < 4 ? question(r.id, i + 1) : `Complete_${r.id}`}`);
+      assert.equal(script[`${label}After`].at(-1), `jump ${i + 1 < r.questions.length ? question(r.id, i + 1) : `Complete_${r.id}`}`);
     }
     assert.equal(script[`Ending_${r.id}`].at(-1), "jump CommonEnding");
   }
 });
 
-test("all 24 meeting orders and all 32 answer patterns per route reach a free final choice", () => {
+test("all 24 meeting orders and all four answer patterns per route reach a free final choice", () => {
   const ids = Array.from(scenario.routes, (r) => r.id);
   const hub = choice("MeetingHub");
   const final = choice("FinalChoice");
   const gate = script.FinalSelect[0].Conditional;
   for (const order of permutations(ids)) {
-    for (let mask = 0; mask < 32; mask++) {
+    for (let mask = 0; mask < 4; mask++) {
       const game = engine();
       assert.equal(gate.Condition.call(game), false);
       for (const [position, id] of order.entries()) {
+        const r = scenario.routes.find((route) => route.id === id);
         assert.equal(context.window.TEAM04_CAN_MEET(game.data, id), true);
         assert.equal(script[`Route_${id}`][0].Conditional.Condition.call(game), true);
-        for (let i = 0; i < 5; i++) {
-          // All five answer bits are exercised independently within each route.
+        for (let i = 0; i < r.questions.length; i++) {
+          // Both answer bits are exercised independently within each route.
           const answer = ((mask + position) >> i) & 1;
           const option = choice(question(id, i))[`Answer${answer}`];
           option.onChosen.call(game); option.onChosen.call(game);
@@ -83,7 +85,7 @@ test("all 24 meeting orders and all 32 answer patterns per route reach a free fi
         assert.equal(branch.False, `jump Departure_${id}`);
         assert.equal(gate.Condition.call(game), position === 3);
       }
-      assert.equal(Object.keys(game.data.choices).length, 20);
+      assert.equal(Object.keys(game.data.choices).length, 8);
       for (const id of ids) {
         assert.equal(final[id].Condition, undefined);
         assert.equal(final[id].Clickable, undefined);
@@ -98,8 +100,8 @@ test("all 24 meeting orders and all 32 answer patterns per route reach a free fi
 test("completion rolls back to an available route; incomplete routes cannot complete; restart clears the run", () => {
   const game = engine();
   for (const r of scenario.routes) {
-    assert.throws(() => completion(r.id).Apply.call(game), /five conversations/);
-    for (let i = 0; i < 5; i++) choice(question(r.id, i)).Answer0.onChosen.call(game);
+    assert.throws(() => completion(r.id).Apply.call(game), /all conversations/);
+    for (let i = 0; i < r.questions.length; i++) choice(question(r.id, i)).Answer0.onChosen.call(game);
     completion(r.id).Apply.call(game);
     const saved = JSON.stringify(game.data);
     game.data = JSON.parse(saved);
