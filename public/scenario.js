@@ -84,63 +84,71 @@ window.TEAM04_SCENARIO = {
       "scene": 2,
       "location": "교내 카페 · 창가 자리",
       "intro": [
-        "jeongwon 햄버거는 주문이 잘못 나온 거야. 먹든가.",
-        "you 컵에 내 이름이 적혀 있는데?"
+        "jeongwon 지금 듣는 곡 끝나면 말 걸어도 돼.",
+        "you 그렇게 집중해서 뭘 듣고 있어?"
       ],
       "questions": [
         {
-          "title": "준비된 햄버거",
+          "title": "첫 곡",
           "lines": [
-            "jeongwon 직원이 눈치가 빠르네."
+            "jeongwon 그냥 공강이라 듣는 거야.",
+            "jeongwon 시끄러운 데서 듣기 좋은 곡은 따로 있거든."
           ],
           "choices": [
             {
-              "text": "고마워. 잘 먹을게.",
+              "text": "어떤 노래인지 들려줘.",
               "reply": [
-                "jeongwon 그렇게 웃으면 다음에도 챙기고 싶어지잖아."
+                "jeongwon 여기. 취향 아니어도 끝까지 들어봐.",
+                "jeongwon 듣고 싶다니까 주는 거야. 오해는 하지 말고.",
+                "jeongwon 끝나면 네가 좋아하는 곡도 하나 골라봐."
               ]
             },
             {
-              "text": "나 기다렸어?",
+              "text": "나도 그런 곡 추천해줘.",
               "reply": [
-                "jeongwon 아니. 햄버거가 널 기다린 거야."
+                "jeongwon 취향도 모르는데 바로 추천은 못 하지.",
+                "jeongwon 일단 네가 듣는 거 하나만 알려줘."
               ]
             }
           ]
         },
         {
-          "title": "말보다 행동",
+          "title": "플레이리스트",
           "lines": [
-            "jeongwon 오글거리는 말은 못 해. 대신 화면은 잘 만들지."
+            "jeongwon 새벽에 듣기 좋은 거, 걸으면서 듣기 좋은 거, 머리 복잡할 때 듣기 좋은 거.",
+            "jeongwon 아까 네가 고른 곡, 생각보다 괜찮네.",
+            "jeongwon 칭찬은 아니고. 다음 곡 고르기 편하다는 뜻이야."
           ],
           "choices": [
             {
-              "text": "나도 도와줄게.",
+              "text": "나한테도 추천해줘.",
               "reply": [
-                "jeongwon 그럼 내 옆에 앉아. 자리 비워뒀어."
+                "jeongwon 그럼 비슷한 거 세 곡만 보내줄게.",
+                "jeongwon 마음에 드는 게 있으면 다음에도 골라봐."
               ]
             },
             {
-              "text": "그래도 한마디만.",
+              "text": "나랑 같이 들어도 돼?",
               "reply": [
-                "jeongwon 너… 괜찮아. 두 번은 안 한다."
+                "jeongwon 그래. 그 곡부터 틀어봐.",
+                "jeongwon 가까이 앉아. 선이 짧아서 그런 거니까."
               ]
             }
           ]
         }
       ],
       "departure": [
-        "jeongwon 다른 사람 만나고 와. 햄버거는 남겨둘게."
+        "jeongwon 다른 사람 만나고 와. 다음 곡은 남겨둘게."
       ],
       "bridge": [
         "jeongwon 다 만났네. 이제 네가 원하는 사람을 골라."
       ],
       "ending": {
-        "title": "말보다 행동인 츤데레",
+        "title": "같이 들을 곡을 고르는 츤데레",
         "lines": [
-          "jeongwon 진짜 날 골랐네. 말은 못 해도 잘해줄게.",
-          "you 그럼 내일도 햄버거?",
-          "jeongwon 이미 주문했어."
+          "jeongwon 진짜 날 골랐네. 생각보다 괜찮은 선택이네.",
+          "you 그건 칭찬이야?",
+          "jeongwon 아니. 다음 곡 같이 들을 사람이 생겨서 편하다는 뜻이야."
         ]
       }
     },
