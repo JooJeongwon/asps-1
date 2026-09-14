@@ -2,7 +2,7 @@
 import argparse
 import json
 from pathlib import Path
-from playwright.sync_api import sync_playwright, expect, Error
+from playwright.sync_api import sync_playwright, expect, Error, TimeoutError as PlaywrightTimeoutError
 
 parser=argparse.ArgumentParser()
 parser.add_argument('--url', default='http://127.0.0.1:3012')
@@ -33,7 +33,8 @@ def walk(page, ending='chihoon', answer=0, stop=None):
         try:
             label=page.evaluate('monogatari.state("label")')
         except Error as error:
-            if 'Execution context was destroyed' not in str(error):raise
+            # Navigation can finish between reading page.url and evaluating the engine.
+            if 'Execution context was destroyed' not in str(error) and page.url!=base+'/team.html?match='+ending:raise
             page.wait_for_url(base+'/team.html?match='+ending)
             return visited,unlocks
         if label.startswith('Cut'):visited.add(label[3:5])
@@ -60,7 +61,13 @@ def walk(page, ending='chihoon', answer=0, stop=None):
             else:
                 count=page.locator('choice-container button').count()
                 page.locator(f'[data-choice="Answer{min(answer,count-1)}"]').click()
-        else:page.locator('text-box').click()
+        else:
+            try:
+                page.locator('text-box').click(timeout=1000)
+            except PlaywrightTimeoutError:
+                # The async saju response can open its modal after the check above.
+                # Handle that modal on the next iteration without clicking through it.
+                if not page.locator('message-modal').count():raise
         page.wait_for_timeout(55)
     raise AssertionError('Story did not reach target or ending')
 
