@@ -73,7 +73,7 @@ test("data stays fixed across rewind and save/load, resets on new run and never 
   let calls = 0;
   const original = saju.load;
   saju.load = async () => { calls++; return saju.snapshot(saju.normalize(rows)); };
-  const action = story.Cut03.find((a) => a.Function).Function;
+  const action = story.Complete_seongsu.find((a) => a.Function).Function;
   try {
     await action.Apply.call(game);
     const saved = JSON.stringify(game.data);
@@ -85,7 +85,7 @@ test("data stays fixed across rewind and save/load, resets on new run and never 
     assert.equal(JSON.stringify(game.data), saved);
     assert.ok(Object.values(game.data.affinity).every((n) => n === 0));
     for (const member of members) {
-      const choice = story.Cut19.find((a) => a.Choice).Choice[member.id];
+      const choice = story.FinalChoice.find((a) => a.Choice).Choice[member.id];
       assert.equal(choice.Condition, undefined);
       choice.onChosen.call(game);
       assert.equal(game.data.selected, member.id);

@@ -120,6 +120,9 @@ body:has(#opening-title[hidden]) #cover-art {
 .affinity-item b {
   color: var(--accent);
 }
+.affinity-item b::before {
+  content: none;
+}
 body:has(#opening-title:not([hidden])) #affinity-hud {
   visibility: hidden;
 }
@@ -146,6 +149,40 @@ body:has(#opening-title:not([hidden])) #affinity-hud {
   margin-top: 20px;
   letter-spacing: 0.5em;
   color: #52677f;
+}
+.cover-subtitle {
+  display: block;
+  font: 600 clamp(18px, 1.5vw, 24px)/1.5 var(--sans);
+  color: #172c48;
+}
+.meeting-choice button:disabled {
+  opacity: 0.55;
+  cursor: default;
+  transform: none;
+  filter: saturate(0.35);
+}
+.meeting-choice button:disabled::after {
+  content: "대화 완료";
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 6px 9px;
+  border-radius: 4px;
+  background: #172c48;
+  color: white;
+  font: 600 13px var(--sans);
+}
+.affinity-item[data-met="true"] {
+  background: #e8edf4;
+  border-color: #52677f;
+}
+body[data-phase="bridge"] game-screen {
+  animation: final-reveal 0.35s ease-in-out 2;
+}
+@keyframes final-reveal {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
 }
 #opening-title h1 {
   font: 700 clamp(32px, 3.8vw, 63px) / 1.6 var(--serif);
@@ -291,7 +328,7 @@ choice-container button:focus-visible {
 }
 .cast-choices {
   top: 138px;
-  bottom: 220px;
+  bottom: 248px;
   max-height: none;
   width: min(1320px, 94%);
 }
@@ -739,7 +776,7 @@ alert-modal {
   }
   .cast-choices {
     top: 118px;
-    bottom: 212px;
+    bottom: 248px;
     max-height: none;
     width: calc(100% - 24px);
   }
@@ -965,7 +1002,7 @@ alert-modal {
     max-height: 250px;
     padding-bottom: 120px;
   }
-  game-screen:has(.final-choice) #affinity-hud {
+  game-screen:has(.cast-choices) #affinity-hud {
     visibility: hidden;
   }
   choice-container {

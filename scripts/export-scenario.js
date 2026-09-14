@@ -1,61 +1,38 @@
-// Export the exact playable dialogue as a reviewable Korean screenplay.
+// Export the exact editable Kokone script, including both replies and all fourth-speaker variants.
 import { readFile, writeFile } from "node:fs/promises";
 import vm from "node:vm";
 const context = vm.createContext({ window: {} });
-for (const name of ["team.js", "scenario.js"])
-  vm.runInContext(
-    await readFile(new URL(`../public/${name}`, import.meta.url), "utf8"),
-    context,
-  );
+for (const file of ["team.js", "scenario.js"])
+  vm.runInContext(await readFile(new URL(`../public/${file}`, import.meta.url), "utf8"), context);
 const { TEAM04_MEMBERS: members, TEAM04_SCENARIO: story } = context.window;
-const names = Object.fromEntries([
-  ...members.map((m) => [m.id, m.name]),
-  ["n", "지문"],
-  ["you", "나"],
-  ["system", "SYSTEM"],
-]);
-const dialogue = (lines) =>
-  lines
-    .map((line) => {
-      const i = line.indexOf(" ");
-      return `**${names[line.slice(0, i)]}** ${line.slice(i + 1)
-        .replace("{{saju.summary}}", "[이번 회차에 불러온 실제 사주 점수: 최고 조합의 이름·점수, 동점이면 모두 소개. 조회 실패 시 노트가 열리지 않는다는 대사.]")
-        .replace("{{saju.teamwork}}", "[CUT 03의 사주 최고 조합·점수를 다시 떠올린 뒤, 네 사람이 모두 서로의 일을 이어주는 모습을 이야기한다.]")}`;
-    })
-    .join("\n\n");
-let text = `# 《${story.title}》\n\n여자 전학생인 주인공은 이름과 얼굴이 드러나지 않는다. 첫날 네 명을 차례로 알아가고, 공동 위기를 함께 해결한 뒤 마지막 밤 직접 한 명을 선택한다.\n\n## 확정한 팀 역할\n\n| 인물 | 실제 역할 | 이야기 속 인상 |\n| --- | --- | --- |\n`;
-for (const m of members) text += `| ${m.name} | ${m.role} | ${m.trait} |\n`;
-text += "\n## 사주 데이터가 이야기에 쓰이는 곳\n\n";
-for (const m of members) text += `- **${m.name} · ${m.pillar}:** ${m.sajuScene}\n`;
-text += "\nCUT 03에서 Supabase의 네 팀원 간 사주 점수 여섯 조합을 조회해 ‘우리 팀의 사주 노트’를 연다. 종합 궁합·MBTI·KAI 점수를 사주 점수로 대신 쓰지 않는다. 원점수로 순서를 정하고 화면에는 소수점 한 자리로 표시한다. CUT 16에서는 같은 회차의 점수와 최고 조합을 다시 언급한다. 데이터 조회 실패 시 점수를 만들지 않고 공통 이야기를 계속한다. 저장/불러오기와 되감기는 해당 회차의 데이터를 유지하며 새 회차는 다시 조회한다. 주인공의 사주나 생년월일은 설정하지 않는다.\n";
-text +=
-  "\n역할은 사용자가 확정했다. MBTI·일주·KAI와 관심사 문구는 기존 프로젝트에서 가져왔으며, 사건·대사·감정과 캐릭터의 성격 묘사는 창작이다. 사주나 MBTI가 실제 성격·감정·연애 결과를 결정한다는 설정은 사용하지 않는다.\n\n## 진행 규칙\n\n- CUT 01부터 공통 이야기로 시작한다. 초반 인물 선택은 없다.\n- 일상 선택은 짧은 반응 뒤 같은 컷의 뒷부분에 합류한다. 합류 후 모두 동일한 다음 컷으로 이동한다.\n- CUT 02 인사에 따라 두 인물의 호감도가 +1. CUT 04·07·10·13은 해당 인물 +1, CUT 16은 전원 +1이다. CUT 05는 점수 변화 없이 대사만 달라진다.\n- CUT 05·08·11·14에서 각각 프로필을 해금한다.\n- CUT 19에서 호감도 순위와 관계없이 네 명 모두 선택할 수 있다. CUT 20만 네 개의 엔딩으로 분기한다.\n- 7개의 이지선다 × 최종 4인 선택 = 512개 선택 조합이지만, 스토리는 20컷으로 합류한다.\n\n";
-for (const cut of story.cuts) {
-  text += `## CUT ${cut.id.slice(3)}. ${cut.title}\n\n**배경:** ${cut.location}\n\n${dialogue(cut.lines)}\n\n`;
-  if (cut.sajuNote) text += "**사주 노트:** 실제 팀원 간 6개 조합과 사주 점수 / 100을 표시한다.\n\n" + dialogue(cut.sajuLines) + "\n\n";
-  if (cut.prompt) text += dialogue([cut.prompt]) + "\n\n";
-  if (cut.choices) {
-    cut.choices.forEach((option, i) => {
-      text += `### 선택 ${i + 1} · ${option.text}\n\n${dialogue(option.reply)}\n\n`;
-      const score = Object.entries(option.affinity)
-        .map(([id, n]) => `${names[id]} 호감도 +${n}`)
-        .join(" / ");
-      text += `${score || "호감도 변화 없음"}\n\n`;
+const names = Object.fromEntries([...members.map((m) => [m.id, m.name]), ["n", "지문"], ["you", "아무개"], ["system", "시스템"]]);
+const dialogue = (lines) => lines.map((line) => {
+  const i = line.indexOf(" ");
+  return `**${names[line.slice(0, i)]}** ${line.slice(i + 1).replace("{{saju.summary}}", "[이번 회차에 조회한 실제 네 팀원 사이의 사주 최고 조합·점수. 동점은 모두 소개하고, 조회 실패 시 점수 없는 대사로 진행.]")}`;
+}).join("\n\n");
+let text = `# 《${story.title}》\n\n> ${story.tagline}\n>\n> ${story.twist}\n\n주인공은 얼굴이 공개되지 않는 대학생 **아무개**. 정통 미연시처럼 시작하지만 마지막에는 네 명과 팀플하는 결말에 도착하는 팀 소개 코미디다. 기존 현대 캠퍼스 일러스트를 유지하며 왕좌·프랑스 성·운명 분석은 캐릭터의 과장된 설정과 지문으로 표현한다.\n\n## 진행 구조\n\n1. 코코네 강의실 문 앞 프롤로그.\n2. A·B·C·D 중 아직 만나지 않은 캐릭터 선택. 만나는 순서는 자유다.\n3. 해당 인물과 5번의 2지선다 대화. 두 반응은 다음 질문으로 합류한다.\n4. 처음 세 명은 자기 방식으로 물러나고 선택 화면으로 돌아온다.\n5. 네 번째 인물은 퇴장 대사 대신 최종 선택을 안내한다.\n6. A·B·C·D 중 한 명을 자유롭게 선택한다.\n7. 선택한 사람의 엔딩 → 네 명과 팀플하는 공통 엔딩.\n8. 버튼을 누르면 TEAM 01의 실제 역할 공개.\n\n다시 만날 수 없는 카드에는 ‘대화 완료’를 표시한다. 대화 진행은 인물별 0/5~5/5로 기록한다. 선호 점수로 정답을 강요하지 않으며, 마지막 선택에는 만남 순서나 대답 조건이 없다.\n\n## 목표 분량 · 약 4분 40초\n\n| 구간 | 목표 |\n| --- | --- |\n| 문 앞 프롤로그 | 15초 |\n| 캐릭터 선택 화면과 처음 세 번의 퇴장 | 합계 30초 |\n| 네 캐릭터의 등장·5번 대화 | 각 약 40초, 합계 160초 |\n| 네 번째 캐릭터의 연결 | 10초 |\n| 최종 선택 | 15초 |\n| 개별 엔딩 | 20초 |\n| 공통 엔딩과 실제 역할 공개 | 30초 |\n| 합계 | 280초 |\n\n대사는 한 화면에 한두 문장으로 줄였다. 읽는 속도와 선택을 고민하는 시간, 실제 사주 노트를 읽는 시간에 따라 더 길어질 수 있다. 강제 타이머나 자동 선택은 없다. 원안의 감미로운 음악은 연출 방향이며 이번 대본 변경에서 새 음원은 추가하지 않았다.\n\n## 캐릭터 선택 화면\n\n| 선택 | 인물 | 캐릭터 소개 |\n| --- | --- | --- |\n`;
+for (const route of story.routes) text += `| ${route.letter} | ${names[route.id]} | ${route.alias} |\n`;
+text += `\n## 프롤로그 · 코코네 강의실 문 앞\n\n${dialogue(story.prologue)}\n\n**아무개** 일단 들어가 보자. 설마 팀플보다 어렵겠어?\n\n[코코네 강의실로 들어간다]\n\n`;
+for (const route of story.routes) {
+  text += `## ${route.letter} 루트 · ${names[route.id]}\n\n**${route.alias}**\n\n**장소:** ${route.location}\n\n### 등장\n\n${dialogue(route.intro)}\n\n`;
+  route.questions.forEach((q, i) => {
+    text += `### ${route.letter}-${i + 1}. ${q.title}\n\n${dialogue(q.lines)}\n\n`;
+    q.choices.forEach((option, answer) => {
+      text += `**선택 ${answer + 1} — ${option.text}**\n\n${dialogue(option.reply)}\n\n`;
     });
-    text += "**합류:** 어떤 선택을 해도 다음 내용으로 이어진다.\n\n";
-  }
-  if (cut.after) text += dialogue(cut.after) + "\n\n";
-  if (cut.unlock) {
-    const m = members.find((m) => m.id === cut.unlock);
-    text += `> PROFILE UNLOCK · ${m.name}\n>\n> ${m.role} · ${m.pillar}\n>\n> ${m.trait}\n>\n> ${m.hidden}\n>\n> ${m.sajuScene}\n\n`;
-  }
-  if (cut.final)
-    for (const m of members) text += `- **${m.name}** — ${m.summary}\n`;
+    text += `*합류: ${i < 4 ? `다음 질문 ${i + 2}/5` : "이 인물의 대화 완료"}. 답에 따른 추가 분기는 없다.*\n\n`;
+  });
+  if (route.sajuLines) text += `### 실제 사주 노트\n\n이 지점에서 서버의 실제 팀원 간 사주 점수 여섯 조합을 표시한다. 앞의 97.8점·운명 가능성 수치는 성수의 고백용 개그이고 DB 점수로 저장하거나 표시하지 않는다. 아무개의 생년월일·사주는 설정하지 않는다.\n\n${dialogue(route.sajuLines)}\n\n`;
+  text += `### 첫 번째~세 번째로 만났을 때 · 퇴장\n\n${dialogue(route.departure)}\n\n[아직 만나지 않은 캐릭터 선택 화면으로]\n\n### 네 번째로 만났을 때 · 최종 선택 연결\n\n${dialogue([story.bridge[0], ...route.bridge, `${route.id} 결국 우리 네 명을 전부 만났네. 이제는 호기심이 아니라 네 마음으로 선택해야 해.`, ...story.bridge.slice(1)])}\n\n*이 경우 위 퇴장 대사는 재생하지 않는다. 짧게 화면이 흔들리고 최종 선택으로 이어진다.*\n\n`;
 }
-text += "\n## CUT 20. 네 가지 엔딩\n\n";
-for (const end of story.endings)
-  text += `### ${names[end.member]} END — ${end.title}\n\n*${end.subtitle}*\n\n${dialogue(end.lines)}\n\n`;
-text +=
-  "## END SCREEN · MEET OUR TEAM\n\n> YOU FOUND YOUR MATCH.\n>\n> 하지만—\n>\n> 좋은 프로젝트를 만드는 데에는\n> 한 명의 완벽한 사람이 아니라\n> 서로 다른 네 사람이 필요합니다.\n\n실제 팀원 사진 네 장과 정치훈(PM) · 박진환(백엔드) · 주정원(프론트엔드) · 남성수(발표)를 보여준다.\n\n- **MEMBER PROFILE:** 네 사람의 프로필 펼치기.\n- **OUR PROJECT:** ASPS 프로젝트 소개 펼치기.\n- **GITHUB:** 실제 저장소로 이동.\n- **처음부터 다시 플레이하기:** 공통 스토리의 CUT 01부터 시작.\n\n## 편집 위치\n\n`public/scenario.js`가 실제 플레이 대본이다. `public/team.js`에서 역할과 프로필을 관리한다. 이 문서는 `node scripts/export-scenario.js`로 대본에서 다시 생성할 수 있다.\n";
-await writeFile(new URL("../docs/scenario-team04.md", import.meta.url), text);
-console.log("Exported 20-cut screenplay to docs/scenario-team04.md");
+text += "## 최종 선택\n\n**아무개** 마지막으로 함께하고 싶은 사람은? 지금까지의 대답과 관계없이 누구나 선택할 수 있다.\n\n";
+for (const r of story.routes) text += `- **${r.letter}. ${names[r.id]}** — ${r.shortAlias}\n`;
+for (const r of story.routes) text += `\n## ${r.letter} END · ${r.ending.title}\n\n${dialogue(r.ending.lines)}\n\n[공통 최종 엔딩으로 합류]\n`;
+text += `\n## 공통 최종 엔딩 · 탈퇴 버튼은 없습니다\n\n${dialogue(story.commonEnding)}\n\n**시스템** 팀플은 지금부터입니다. TEAM 01의 실제 역할을 확인하세요.\n\n[진짜 팀 역할 공개 →]\n\n## 실제 역할 공개\n\n> 연애 상대는 한 명, 팀플 상대는 네 명.\n>\n> 선택은 끝났지만, 팀플은 지금부터.\n\n| 인물 | 실제 역할 | 공개 문구 |\n| --- | --- | --- |\n`;
+for (const r of story.routes) {
+  const m = members.find((m) => m.id === r.id);
+  text += `| ${m.name} | ${m.role} | ${m.reveal} |\n`;
+}
+text += "\n원본 사진 대신 캠퍼스 AI 일러스트를 사용한다. 실제 프로필·프로젝트·GitHub 링크와 처음부터 다시 플레이하기를 제공한다.\n\n## 수정 및 검증\n\n`public/scenario.js`에서 대본을 수정하고 `node scripts/export-scenario.js`로 이 문서를 다시 생성한다. `public/story.js`가 선택·합류·방문 완료·네 번째 안내를 구성한다. 새로운 분기 구조는 `ASPS_TEAM01_kokone_v3` 저장 공간을 사용하며 이전 대본의 저장은 별도로 보관한다.\n\n[Monogatari 공식 엔진](https://github.com/Monogatari/Monogatari/releases/tag/v2.8.0)의 Choice·Conditional·Function·Message 액션으로 구현한다. 24가지 만남 순서, 인물별 32가지 대답 패턴, 네 명의 최종 자유 선택과 되감기를 검증한다.\n";
+await writeFile(new URL("../docs/scenario-kokone.md", import.meta.url), text);
+console.log("Exported Kokone screenplay: 4 routes × 5 conversations, 4 endings, common ending and role reveal.");

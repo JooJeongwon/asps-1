@@ -22,6 +22,9 @@
     const role = document.createElement("p");
     role.className = "role";
     role.textContent = member.role;
+    const reveal = document.createElement("p");
+    reveal.className = "role-reveal";
+    reveal.textContent = member.reveal;
     const details = document.createElement("details");
     details.id = `profile-${member.id}`;
     const summary = document.createElement("summary");
@@ -34,7 +37,7 @@
     interests.className = "interests";
     interests.textContent = `관심사 · ${member.interests}`;
     details.append(summary, facts, trait, interests);
-    card.append(photo, name, role, details);
+    card.append(photo, name, role, reveal, details);
     host.append(card);
   }
   const profileButton = document.getElementById("show-profiles");

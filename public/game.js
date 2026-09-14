@@ -6,15 +6,15 @@
       "게임을 불러오지 못했어요. 새로고침 후 다시 시도해주세요.";
     return;
   }
-  const members = window.TEAM04_MEMBERS;
   const scenario = window.TEAM04_SCENARIO;
+  const members = scenario.routes.map((r) => window.TEAM04_MEMBERS.find((m) => m.id === r.id));
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
   engine.settings({
     // New story, new save namespace. Original prologue saves remain intact.
-    Name: "ASPS_TEAM04_saju_v2",
-    Version: "2.1.0",
+    Name: "ASPS_TEAM01_kokone_v3",
+    Version: "3.0.0",
     Label: "Start",
     ShowMainScreen: false,
     ServiceWorkers: false,
@@ -42,7 +42,7 @@
   engine.storage(window.TEAM04_FRESH_STATE());
   engine.characters({
     n: { name: "이야기", color: "#52677f" },
-    you: { name: "나", color: "#833e51" },
+    you: { name: "아무개", color: "#833e51" },
     system: { name: "SYSTEM", color: "#52677f" },
     ...Object.fromEntries(
       members.map((m) => [
@@ -79,40 +79,46 @@
     item.append(document.createTextNode(`${member.name} `));
     const count = document.createElement("b");
     count.dataset.affinity = member.id;
-    count.textContent = "0";
+    count.textContent = "대기";
     item.append(count);
     hud.append(item);
   }
   function updateChapter() {
     const label = engine.state("label") || "Start";
-    const match = /^Cut(\d{2})/.exec(label);
-    const cut = scenario.cuts.find((c) => c.id === `Cut${match?.[1]}`);
-    const ending = label.startsWith("Cut20_")
-      ? scenario.endings.find((e) => label === `Cut20_${e.member}`)
-      : null;
-    const member = members.find((m) => m.id === ending?.member);
-    document.getElementById("route-name").textContent = ending
-      ? `${member.name} · ${ending.title}`
-      : cut?.title || scenario.title;
-    document.getElementById("route-motif").textContent = ending
-      ? ending.subtitle
-      : "TEAM 01 · 오늘, 우리 중 한 명을 선택해";
-    document.getElementById("route-location").textContent =
-      cut?.location || "마지막 밤 · 당신의 대답";
-    document.getElementById("route-step").textContent =
-      `CUT ${match?.[1] || "01"} / 20`;
-    document.getElementById("opening-title").hidden =
-      label !== "Start" && !label.startsWith("Cut01");
+    const chapter = window.TEAM04_CHAPTERS[label] || window.TEAM04_CHAPTERS.Start;
     const state = engine.storage();
-    for (const m of members)
-      document.querySelector(`[data-affinity="${m.id}"]`).textContent =
-        state.affinity?.[m.id] || 0;
+    document.getElementById("route-name").textContent = chapter.title;
+    document.getElementById("route-motif").textContent = chapter.motif || "TEAM 01 · 두근두근 코코네";
+    document.getElementById("route-location").textContent = chapter.location;
+    document.getElementById("route-step").textContent = chapter.question
+      ? `대화 ${chapter.question} / 5`
+      : chapter.phase === "ending" ? "개별 엔딩"
+      : chapter.phase === "common" ? "팀플 시작"
+      : `만남 ${state.visitOrder?.length || 0} / 4`;
+    document.getElementById("opening-title").hidden = chapter.phase !== "prologue";
+    document.body.dataset.phase = chapter.phase;
+    for (const m of members) {
+      const count = document.querySelector(`[data-affinity="${m.id}"]`);
+      const met = state.visitOrder?.includes(m.id);
+      const progress = state.affinity?.[m.id] || 0;
+      count.textContent = met ? "✓" : progress ? `${progress}/5` : "대기";
+      count.parentElement.dataset.met = String(Boolean(met));
+      count.parentElement.setAttribute("aria-label", `${m.name}: ${met ? "대화 완료" : `${progress}/5 대화`}`);
+    }
   }
   for (const event of ["didRunAction", "didRevertAction", "didLoadGame"])
     engine.on(event, updateChapter);
   engine.on("didLoadGame", () => requestAnimationFrame(updateChapter));
   engine.on("componentDidMount", (event) => {
     const { component, tag } = event.detail || {};
+    // Monogatari 2.8.0 evaluates Clickable functions concurrently and can leave
+    // its global input lock set. Keep native buttons, applying disabled after mount.
+    if (tag === "choice-container" && component.classList.contains("meeting-choice")) {
+      for (const button of component.querySelectorAll("[data-choice]")) {
+        button.disabled = !window.TEAM04_CAN_MEET(engine.storage(), button.dataset.choice);
+        if (button.disabled) button.setAttribute("aria-label", `${button.textContent.trim()} · 대화 완료`);
+      }
+    }
     if (tag === "message-modal") {
       component.setAttribute("role", "dialog");
       component.setAttribute("aria-modal", "true");

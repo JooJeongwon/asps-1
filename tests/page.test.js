@@ -14,7 +14,7 @@ const scripts = await Promise.all(
     "game.js",
   ].map((f) => fs.readFile(new URL(f, root), "utf8")),
 );
-test("root always starts the shared story; old route links cannot bypass the meetings", async () => {
+test("root starts the Kokone prologue and isolates incompatible old saves", async () => {
   for (const query of [
     "",
     "?route=정치훈",
@@ -50,15 +50,15 @@ test("root always starts the shared story; old route links cannot bypass the mee
       await new Promise((r) => setTimeout(r, 0));
       assert.equal(captured.settings.ShowMainScreen, false);
       assert.equal(captured.settings.Label, "Start");
-      assert.equal(captured.settings.Name, "ASPS_TEAM04_saju_v2");
-      assert.equal(captured.script.Start[1], "jump Cut01");
+      assert.equal(captured.settings.Name, "ASPS_TEAM01_kokone_v3");
+      assert.equal(captured.script.Start[1], "jump Prologue");
       assert.equal(w.document.querySelectorAll("[data-affinity]").length, 4);
       for (const m of w.TEAM04_MEMBERS)
         assert.equal(
           captured.characters[m.id].sprites.portrait,
           w.YEONBUN_PORTRAITS[m.name],
         );
-      assert.equal(captured.characters.you.name, "나");
+      assert.equal(captured.characters.you.name, "아무개");
       assert.equal(captured.characters.you.sprites, undefined);
       assert.equal(
         w.document.querySelectorAll("header, footer, #blind").length,
