@@ -55,7 +55,11 @@
       ]),
     ),
   });
-  engine.assets("scenes", { team04: "team04-scenes.png" });
+  engine.assets("scenes", {
+    // Keep the original scene key available to older saved games.
+    team04: "team04-scenes.png",
+    ...window.YEONBUN_SCENES,
+  });
   engine.action("Message").messages(window.TEAM04_MESSAGES);
   engine.script(window.TEAM04_STORY);
   engine.translation("한국어", {

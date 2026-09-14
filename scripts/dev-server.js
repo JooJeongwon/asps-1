@@ -22,6 +22,23 @@ const files = new Map([
     ["assets/characters/nam-seongsu-anime.png", "image/png"],
   ],
   ["/characters.js", ["characters.js", "text/javascript; charset=utf-8"]],
+  ["/rofan.css", ["rofan.css", "text/css; charset=utf-8"]],
+  ...[
+    "rofan-campus",
+    "rofan-atelier",
+    "rofan-conservatory",
+    "rofan-midnight",
+    "rofan-cover",
+  ].map((name) => [
+    `/assets/${name}.webp`,
+    [`assets/${name}.webp`, "image/webp"],
+  ]),
+  ...["jeong-chihoon", "joo-jeongwon", "park-jinhwan", "nam-seongsu"].map(
+    (name) => [
+      `/assets/characters/${name}-rofan.webp`,
+      [`assets/characters/${name}-rofan.webp`, "image/webp"],
+    ],
+  ),
   [
     "/assets/characters/jeong-chihoon.jpeg",
     ["assets/characters/jeong-chihoon.jpeg", "image/jpeg"],

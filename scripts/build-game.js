@@ -23,6 +23,8 @@ for (const route of routes) {
 for (const [, file] of html.matchAll(/(?:src|href)="\/([^"]+)"/g))
   await access(new URL(file, root));
 await access(new URL("assets/team04-scenes.png", root));
+for (const file of Object.values(context.window.YEONBUN_SCENES))
+  await access(new URL(`assets/${file}`, root));
 const vendor = new URL("vendor/monogatari/", root);
 const manifest = JSON.parse(
   await readFile(new URL("manifest.json", vendor), "utf8"),

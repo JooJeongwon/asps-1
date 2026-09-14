@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f7f4f9" />
+    <meta name="theme-color" content="#50303f" />
     <title>오늘, 우리 중 한 명을 선택해 — TEAM 01</title>
     <meta
       name="description"
@@ -12,12 +12,26 @@
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta
+      property="og:title"
+      content="오늘, 우리 중 한 명을 선택해 — 연분 · TEAM 01"
+    />
+    <meta
+      property="og:description"
+      content="서로 다른 사주, 네 사람의 이야기. 오늘 밤 당신의 마음이 향하는 한 사람은?"
+    />
+    <meta
+      property="og:image"
+      content="https://asps-1.vercel.app/assets/rofan-cover.webp"
+    />
+    <link rel="preload" as="image" href="/assets/rofan-cover.webp" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/vendor/monogatari/monogatari.css" />
     <link rel="stylesheet" href="/play.css" />
+    <link rel="stylesheet" href="/rofan.css" />
     <script src="/vendor/monogatari/monogatari.js" defer></script>
     <script src="/characters.js" defer></script>
     <script src="/team.js" defer></script>
@@ -26,12 +40,18 @@
     <script src="/story.js" defer></script>
     <script src="/game.js" defer></script>
   </head>
-  <body>
+  <body class="rofan-game">
     <main id="monogatari" aria-label="오늘, 우리 중 한 명을 선택해">
       <visual-novel>
         <loading-screen></loading-screen>
         <main-screen><main-menu></main-menu></main-screen>
         <game-screen>
+          <div id="cover-art" aria-hidden="true">
+            <img src="/assets/rofan-cover.webp" alt="" fetchpriority="high" />
+          </div>
+          <div class="stardust" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
           <div class="scene-heading" aria-live="polite">
             <div class="chapter">
               <span id="route-name">새로운 시작</span
@@ -47,8 +67,13 @@
           ></div>
           <div id="opening-title">
             <small>TEAM 01</small>
-            <h1>오늘, 우리 중<br />한 명을 선택해</h1>
-            <p>첫 만남부터 마지막 선택까지, 함께 만드는 하루.</p>
+            <span class="cover-brand">연분</span>
+            <h1>오늘, 우리 중<br />한 명을 <em>선택해</em></h1>
+            <span class="cover-rule" aria-hidden="true">✦</span>
+            <p>
+              서로 다른 사주, 네 사람의 이야기.<br />마지막 페이지의 대답은
+              당신에게.
+            </p>
           </div>
           <dialog-log></dialog-log>
           <text-box></text-box>

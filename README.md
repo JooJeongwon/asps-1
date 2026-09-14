@@ -4,7 +4,9 @@
 
 일상 선택은 반응과 호감도만 바꾼 뒤 같은 스토리로 합류한다. CUT 05·08·11·14에서 네 명의 프로필을 해금하고, CUT 19에서는 호감도와 관계없이 네 명 모두 선택할 수 있다. CUT 20의 4개 엔딩 뒤 실제 사진·팀 역할과 MEMBER PROFILE / OUR PROJECT / GITHUB를 제공하는 `/team.html`로 이어진다.
 
-[전체 20컷 시나리오](docs/scenario-team04.md) · [엔진 및 편집 안내](docs/design-reference.md) · [AI 캐릭터와 프롬프트](docs/character-art-prompts.md)
+[전체 20컷 시나리오](docs/scenario-team04.md) · [엔진 및 편집 안내](docs/design-reference.md) · [로판 이미지와 생성 프롬프트](docs/rofan-art-prompts.md)
+
+기존 연분의 반실사 일러스트를 참고하여 네 명의 인물화, 장미 아카데미·서재·온실·별빛 프로젝트 룸, 네 사람이 함께 등장하는 표지를 내장 image_gen으로 제작했다. 금장 테두리와 종이색 대화창으로 게임과 엔딩 화면을 통일하며 모바일에서도 선택과 저장 기능을 제공한다.
 
 선택·되감기·대사록·저장·불러오기·자동재생은 Monogatari 기능이다. 저장 공간은 `ASPS_TEAM04_saju_v2`이며 이전 대본 저장과 분리했다. 하단 **처음부터**는 현재 회차를 초기화한다. 저장 파일은 현재 주소와 브라우저의 LocalStorage에 보관된다.
 

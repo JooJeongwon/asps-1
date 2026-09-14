@@ -13,10 +13,10 @@
 | `public/team.js` | 사용자 확정 역할, 기존 프로필 정보, 캐릭터 요약 |
 | `public/saju.js` | 실제 사주 점수 조회·검증, 회차 데이터와 노트·대사 생성 |
 | `public/scenario.js` | 19개 공통 컷과 CUT 20의 4개 엔딩 대사 |
-| `public/characters.js` | 이름별 AI 초상화 경로 |
+| `public/characters.js` | 이름별 AI 초상화와 네 배경 경로 |
 | `public/story.js` | 대본을 Monogatari 라벨·Choice·Function·Message로 컴파일 |
 | `public/game.js` | 엔진 초기화, 호감도 HUD, CUT 진행 표시, 저장 UI |
-| `public/index.html`, `public/play.css` | 게임 화면과 프로필 해금 모달 |
+| `public/index.html`, `public/play.css`, `public/rofan.css` | 게임 화면·프로필 해금 모달과 로판 테마 |
 | `public/team.html`, `public/team-page.js`, `public/team.css` | 실제 사진·팀원 소개·프로젝트·GitHub 링크 |
 | `scripts/export-scenario.js` | 실제 플레이 대사를 검토용 Markdown으로 내보내기 |
 
@@ -38,8 +38,9 @@ CUT 19의 네 선택에는 조건이나 호감도 경계를 두지 않았다. �
 
 ## 이미지
 
-- [4인 AI 초상화와 실제 프롬프트](character-art-prompts.md): 사용자가 제공한 인물별 사진을 바탕으로 내장 image_gen으로 생성했다. 게임에서는 `*-anime.png`, 마지막 팀 소개에서는 제공된 원본 사진을 사용한다.
-- [게임 배경 시트와 실제 프롬프트](team04-background-prompt.md): 아침 캠퍼스, 낮 프로젝트 룸, 라운지, 밤 프로젝트 룸의 2×2 시트. `scene: 0~3`에 대응한다.
+- [현재 로판 이미지와 실제 생성 프롬프트](rofan-art-prompts.md): 제공된 네 사람의 사진을 바탕으로 만든 반실사 인물화, 장미 아카데미·금장 서재·온실·별빛 배경, 4인 표지다. 기존 연분의 꽃·금빛·별빛 그림체를 참고했다. 웹 배포본은 WebP이며 마지막 팀 소개에는 제공된 실제 사진을 사용한다.
+- `characters.js`의 `YEONBUN_SCENES`에서 `scene: 0~3`에 대응하는 개별 배경을 바꾼다. `rofan.css`가 금장 프레임·종이색 대화창·모바일 구도를 담당한다. 표지는 CUT 01에서만 보이고 다음 컷부터 해당 배경이 표시된다.
+- 이전 [AI 초상화](character-art-prompts.md)와 [배경 시트](team04-background-prompt.md)는 제작 기록으로 남겼다. 기존 저장 파일의 배경을 읽을 수 있도록 `team04` 배경 키와 저장 공간 이름은 유지한다.
 
 ## 검증
 

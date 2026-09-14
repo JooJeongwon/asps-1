@@ -58,7 +58,7 @@
     const next = scenario.cuts[index + 1]?.id;
     const cast = cut.cast === "all" ? members.map((m) => m.id) : cut.cast;
     const entry = [
-      `show scene team04 with scene-${cut.scene}`,
+      `show scene rofan${cut.scene} with rofan-scene`,
       ...cast.map(
         (id, i) =>
           `show character ${id} portrait${cast.length > 1 ? ` with ensemble slot-${i}` : ""}`,
@@ -159,7 +159,7 @@
   });
   for (const ending of scenario.endings)
     script[`Cut20_${ending.member}`] = [
-      "show scene team04 with scene-3",
+      "show scene rofan3 with rofan-scene",
       `show character ${ending.member} portrait`,
       `n <span class="ending-title">${ending.title}</span>${ending.subtitle}`,
       ...ending.lines,
