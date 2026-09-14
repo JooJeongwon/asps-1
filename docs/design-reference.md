@@ -17,7 +17,7 @@
 | `public/story.js` | 대본을 Monogatari 라벨·Choice·Function·Message로 컴파일 |
 | `public/game.js` | 엔진 초기화, 호감도 HUD, CUT 진행 표시, 저장 UI |
 | `public/index.html`, `public/play.css`, `public/rofan.css` | 게임 화면·프로필 해금 모달과 로판 테마 |
-| `public/team.html`, `public/team-page.js`, `public/team.css` | 실제 사진·팀원 소개·프로젝트·GitHub 링크 |
+| `public/team.html`, `public/team-page.js`, `public/team.css` | 로판 일러스트·팀원 소개·프로젝트·GitHub 링크 |
 | `scripts/export-scenario.js` | 실제 플레이 대사를 검토용 Markdown으로 내보내기 |
 
 컷의 `lines`는 `인물ID 대사` 형식이다. `you`는 나, `n`은 지문, `system`은 공지다. 역할을 바꾸면 `team.js`와 관련 대사를 함께 수정한다. 대본을 고친 뒤 `node scripts/export-scenario.js`로 문서도 갱신한다.
@@ -38,7 +38,7 @@ CUT 19의 네 선택에는 조건이나 호감도 경계를 두지 않았다. �
 
 ## 이미지
 
-- [현재 로판 이미지와 실제 생성 프롬프트](rofan-art-prompts.md): 제공된 네 사람의 사진을 바탕으로 만든 반실사 인물화, 장미 아카데미·금장 서재·온실·별빛 배경, 4인 표지다. 기존 연분의 꽃·금빛·별빛 그림체를 참고했다. 웹 배포본은 WebP이며 마지막 팀 소개에는 제공된 실제 사진을 사용한다.
+- [현재 로판 이미지와 실제 생성 프롬프트](rofan-art-prompts.md): 제공된 네 사람의 사진을 바탕으로 만든 반실사 인물화, 장미 아카데미·금장 서재·온실·별빛 배경, 4인 표지다. 기존 연분의 꽃·금빛·별빛 그림체를 참고했다. 웹 배포본은 WebP이며 마지막 팀 소개에도 같은 로판 일러스트를 사용하며, 원본 인물 사진은 공개 배포에서 제거했다.
 - `characters.js`의 `YEONBUN_SCENES`에서 `scene: 0~3`에 대응하는 개별 배경을 바꾼다. `rofan.css`가 금장 프레임·종이색 대화창·모바일 구도를 담당한다. 표지는 CUT 01에서만 보이고 다음 컷부터 해당 배경이 표시된다.
 - 이전 [AI 초상화](character-art-prompts.md)와 [배경 시트](team04-background-prompt.md)는 제작 기록으로 남겼다. 기존 저장 파일의 배경을 읽을 수 있도록 `team04` 배경 키와 저장 공간 이름은 유지한다.
 

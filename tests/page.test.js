@@ -5,9 +5,14 @@ import { JSDOM } from "jsdom";
 const root = new URL("../public/", import.meta.url);
 const html = await fs.readFile(new URL("index.html", root), "utf8");
 const scripts = await Promise.all(
-  ["characters.js", "team.js", "saju.js", "scenario.js", "story.js", "game.js"].map((f) =>
-    fs.readFile(new URL(f, root), "utf8"),
-  ),
+  [
+    "characters.js",
+    "team.js",
+    "saju.js",
+    "scenario.js",
+    "story.js",
+    "game.js",
+  ].map((f) => fs.readFile(new URL(f, root), "utf8")),
 );
 test("root always starts the shared story; old route links cannot bypass the meetings", async () => {
   for (const query of [
@@ -64,7 +69,7 @@ test("root always starts the shared story; old route links cannot bypass the mee
     }
   }
 });
-test("ending team page uses real photos and offers functioning profile/project links", async () => {
+test("ending team page uses illustrated portraits and offers functioning profile/project links", async () => {
   const page = await fs.readFile(new URL("team.html", root), "utf8");
   const code = await fs.readFile(new URL("team-page.js", root), "utf8");
   for (const query of ["?match=jinhwan", "?match=%3Cimg%20src=x%3E"]) {
@@ -75,10 +80,21 @@ test("ending team page uses real photos and offers functioning profile/project l
     const w = dom.window;
     try {
       w.HTMLElement.prototype.scrollIntoView = () => {};
+      w.eval(scripts[0]);
       w.eval(scripts[1]);
       w.eval(code);
       assert.equal(w.document.querySelectorAll(".member").length, 4);
       assert.equal(w.document.querySelectorAll(".member img").length, 4);
+      for (const [index, image] of [
+        ...w.document.querySelectorAll(".member img"),
+      ].entries()) {
+        const member = w.TEAM04_MEMBERS[index];
+        assert.equal(
+          image.getAttribute("src"),
+          `/assets/${w.YEONBUN_PORTRAITS[member.name]}`,
+        );
+        assert.match(image.alt, /로판 일러스트/);
+      }
       assert.equal(
         w.document.querySelector("#your-match").hidden,
         query.includes("%3C"),

@@ -39,22 +39,6 @@ const files = new Map([
       [`assets/characters/${name}-rofan.webp`, "image/webp"],
     ],
   ),
-  [
-    "/assets/characters/jeong-chihoon.jpeg",
-    ["assets/characters/jeong-chihoon.jpeg", "image/jpeg"],
-  ],
-  [
-    "/assets/characters/joo-jeongwon.jpeg",
-    ["assets/characters/joo-jeongwon.jpeg", "image/jpeg"],
-  ],
-  [
-    "/assets/characters/park-jinhwan.jpg",
-    ["assets/characters/park-jinhwan.jpg", "image/jpeg"],
-  ],
-  [
-    "/assets/characters/nam-seongsu.png",
-    ["assets/characters/nam-seongsu.png", "image/png"],
-  ],
   ["/team.js", ["team.js", "text/javascript; charset=utf-8"]],
   ["/saju.js", ["saju.js", "text/javascript; charset=utf-8"]],
   ["/scenario.js", ["scenario.js", "text/javascript; charset=utf-8"]],

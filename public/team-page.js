@@ -13,10 +13,10 @@
     const card = document.createElement("article");
     card.className = "member";
     const photo = document.createElement("img");
-    photo.src = `/assets/characters/${member.photo}`;
-    photo.alt = `${member.name} 실제 사진`;
-    photo.width = 413;
-    photo.height = 531;
+    photo.src = `/assets/${window.YEONBUN_PORTRAITS[member.name]}`;
+    photo.alt = `${member.name} 로판 일러스트`;
+    photo.width = 1024;
+    photo.height = 1536;
     const name = document.createElement("h3");
     name.textContent = member.name;
     const role = document.createElement("p");

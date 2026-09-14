@@ -117,6 +117,7 @@ body:has(#opening-title[hidden]) #cover-art {
   gap: 10px;
 }
 .affinity-item {
+  font-size: 13px;
   background: #fff9eced;
   border: 1px solid #d7b985;
   border-radius: 0;
@@ -187,9 +188,9 @@ body:has(#opening-title:not([hidden])) #affinity-hud {
   margin-top: 20px;
 }
 game-screen img[data-character] {
-  top: 145px;
-  width: min(330px, 32vw);
-  height: min(495px, calc(100% - 360px));
+  top: 132px;
+  width: min(480px, 44vw);
+  height: min(720px, calc(100% - 240px));
   max-width: none;
   max-height: none;
   object-fit: cover;
@@ -202,30 +203,36 @@ game-screen img[data-character] {
     0 0 0 6px #ebd1a357;
 }
 game-screen img.ensemble {
-  top: 148px;
-  width: 20%;
-  max-width: 270px;
-  height: min(420px, calc(100% - 405px));
+  top: 138px;
+  width: 23%;
+  max-width: 390px;
+  height: min(650px, calc(100% - 265px));
   max-height: none;
+  object-position: center 8%;
 }
 game-screen img.ensemble.slot-0 {
-  left: 16%;
+  left: 13.5%;
 }
 game-screen img.ensemble.slot-1 {
-  left: 39%;
+  left: 38%;
 }
 game-screen img.ensemble.slot-2 {
   left: 62%;
 }
 game-screen img.ensemble.slot-3 {
-  left: 85%;
+  left: 86.5%;
 }
 text-box {
   z-index: 8;
-  left: 4%;
-  width: 92%;
+  left: 6%;
+  width: 88%;
   bottom: 76px;
-  padding: 7px 28px 18px;
+  height: auto;
+  min-height: 132px;
+  max-height: 180px;
+  grid-template-rows: 28px auto;
+  padding: 5px 22px 12px;
+  scrollbar-color: #b48b4e #fffaf0;
   background: linear-gradient(115deg, #fffaf3fa, #fff7eaf5);
   color: #543d48;
   border: 1px solid #b38a53;
@@ -246,13 +253,30 @@ text-box:after {
   font-size: 24px;
 }
 text-box [data-content="name"] {
-  font: 600 13px var(--serif);
+  font: 600 17px var(--serif);
   color: var(--wine) !important;
-  padding-top: 12px;
+  padding-top: 3px;
 }
 text-box p,
 text-box type-writer {
-  font: 400 18px/1.95 var(--serif);
+  font: 400 24px/1.6 var(--serif);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+game-screen:has(.story-choice) text-box {
+  min-height: 210px;
+  max-height: 260px;
+  padding-bottom: 94px;
+}
+game-screen:has(.start-choice) text-box {
+  min-height: 178px;
+  max-height: 210px;
+  padding-bottom: 76px;
+}
+game-screen:has(.cast-choices) text-box {
+  min-height: 124px;
+  max-height: 160px;
+  padding-bottom: 12px;
 }
 .ending-title {
   color: #8e5e47;
@@ -264,6 +288,8 @@ choice-container {
   bottom: 95px;
 }
 choice-container button {
+  font-size: 18px;
+  padding: 9px 14px;
   color: #70475a;
   background: linear-gradient(120deg, #fffdf8, #f5e7d7);
   border: 1px solid #c8a66f;
@@ -295,7 +321,7 @@ choice-container button:focus-visible {
     0 8px 22px #53333f25;
   padding: 15px;
   letter-spacing: 0.1em;
-  font: 500 13px var(--serif);
+  font: 500 18px var(--serif);
 }
 .start-choice button:hover {
   background: #8e566c;
@@ -305,10 +331,10 @@ choice-container button:focus-visible {
   color: #e9c78b;
 }
 .cast-choices {
-  top: 145px;
-  bottom: 242px;
-  max-height: 520px;
-  width: min(1080px, 88%);
+  top: 138px;
+  bottom: 220px;
+  max-height: none;
+  width: min(1320px, 94%);
 }
 .cast-choices button {
   position: relative;
@@ -327,17 +353,17 @@ choice-container button:focus-visible {
 }
 .cast-choices img {
   object-fit: cover;
-  object-position: center 22%;
+  object-position: center 8%;
   border-radius: 48% 48% 0 0 / 19% 19% 0 0;
   margin-bottom: 12px;
 }
 .cast-name {
-  font: 600 22px var(--serif);
+  font: 600 27px var(--serif);
   color: #60394a;
 }
 .cast-choices small {
   color: #8a705f;
-  font-size: 10px;
+  font-size: 14px;
 }
 quick-menu {
   z-index: 10;
@@ -349,7 +375,7 @@ quick-menu {
 .rofan-game quick-menu button {
   color: #f1dfc5;
   background: transparent;
-  font-size: 10px;
+  font-size: 13px;
 }
 .rofan-game quick-menu button:hover,
 .rofan-game quick-menu button:focus,
@@ -413,7 +439,30 @@ alert-modal {
   color: #59404b;
 }
 .profile-unlock .modal__content {
-  width: min(650px, 92vw);
+  width: min(620px, 94vw);
+  padding: 18px;
+}
+.profile-unlock [data-content="body"] {
+  margin: 12px 0;
+}
+.unlock-profile {
+  grid-template-columns: 190px 1fr;
+  gap: 16px;
+}
+.unlock-profile strong {
+  font-size: 19px;
+}
+.unlock-profile span span {
+  font-size: 16px;
+}
+.unlock-profile small {
+  font-size: 14px;
+}
+.unlock-profile strong,
+.unlock-profile span span,
+.unlock-profile small {
+  margin: 7px 0;
+  line-height: 1.65;
 }
 .profile-unlock [data-content="title"],
 .saju-note [data-content="title"] {
@@ -425,6 +474,8 @@ alert-modal {
   color: #9d7748;
 }
 .unlock-profile img {
+  width: 190px;
+  height: 285px;
   object-fit: cover;
   object-position: center 20%;
   border: 1px solid #c9a66c;
@@ -452,6 +503,8 @@ alert-modal {
   color: #fff2dc;
   border: 1px solid #c7a46c;
   min-height: 44px;
+  font-size: 16px;
+  margin: 12px auto 0;
 }
 .rofan-game .modal__content button:hover {
   background: #8d5d6b;
@@ -543,7 +596,7 @@ alert-modal {
 }
 .team-ending .closing-story {
   border: 1px solid #cfb080;
-  padding: 35px 20px 45px;
+  padding: 20px 20px 24px;
   background: #fff9edac;
   box-shadow:
     inset 0 0 0 6px #f9efdc,
@@ -554,7 +607,17 @@ alert-modal {
   display: block;
   color: #ba9157;
   font-size: 25px;
-  margin-bottom: 18px;
+  margin-bottom: 8px;
+}
+.team-ending .closing-story p {
+  margin: 8px 0;
+}
+.team-ending .closing-story h1 {
+  max-width: 28ch;
+  margin: 14px auto;
+  line-height: 1.5;
+  word-break: keep-all;
+  text-wrap: balance;
 }
 .team-ending h1 {
   font-family: var(--serif);
@@ -580,6 +643,9 @@ alert-modal {
   color: #977d6e;
 }
 .team-ending .member > img {
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-position: center top;
   border: 1px solid #c9a56c;
   padding: 5px;
   background: #fff8eb;
@@ -587,19 +653,24 @@ alert-modal {
   box-shadow: 0 10px 30px #6b4c4920;
 }
 .team-ending .member h3 {
+  font-size: 28px;
   font-family: var(--serif);
   color: #794858;
 }
 .team-ending .role {
+  font-size: 16px;
   color: #a38150;
 }
 .team-ending details {
+  font-size: 16px;
   border-top-color: #d3b787;
 }
 .team-ending .interests {
+  font-size: 15px;
   color: #8e7a69;
 }
 .team-ending .end-actions :is(a, button) {
+  font-size: 14px;
   border-color: #c29c61;
   background: #f6e9d3;
   color: #795163;
@@ -628,10 +699,10 @@ alert-modal {
   }
   .chapter {
     padding: 8px 11px;
-    font-size: 10px;
+    font-size: 12px;
   }
   .chapter small {
-    font-size: 8px;
+    font-size: 9px;
   }
   .scene-heading > span {
     padding: 7px 10px;
@@ -643,8 +714,8 @@ alert-modal {
     right: 12px;
   }
   .affinity-item {
-    font-size: 9px;
-    padding: 5px 7px;
+    font-size: 11px;
+    padding: 4px 5px;
   }
   #cover-art {
     inset: 0;
@@ -698,52 +769,69 @@ alert-modal {
     margin-top: 10px;
   }
   game-screen img[data-character] {
-    top: 128px;
-    width: min(62vw, 290px);
-    height: min(430px, calc(100% - 340px));
+    top: 112px;
+    width: min(88vw, 460px);
+    height: calc(100% - 225px);
   }
   game-screen:has(.story-choice) img[data-character] {
-    height: min(330px, calc(100% - 430px));
+    height: calc(100% - 320px);
   }
   game-screen img.ensemble {
-    top: 126px;
-    width: 38%;
-    max-width: 205px;
-    height: min(215px, calc((100% - 350px) / 2));
+    top: 112px;
+    width: 44%;
+    max-width: none;
+    height: calc((100% - 280px) / 2);
   }
   game-screen img.ensemble.slot-0,
   game-screen img.ensemble.slot-2 {
-    left: 28%;
+    left: 26%;
   }
   game-screen img.ensemble.slot-1,
   game-screen img.ensemble.slot-3 {
-    left: 72%;
+    left: 74%;
   }
   game-screen img.ensemble.slot-2,
   game-screen img.ensemble.slot-3 {
-    top: calc(144px + min(215px, (100% - 350px) / 2));
+    top: calc(120px + (100% - 280px) / 2);
   }
   game-screen:has(.story-choice) img.ensemble {
-    height: min(156px, calc((100% - 442px) / 2));
+    height: calc((100% - 390px) / 2);
   }
   game-screen:has(.story-choice) img.ensemble.slot-2,
   game-screen:has(.story-choice) img.ensemble.slot-3 {
-    top: calc(138px + min(156px, (100% - 442px) / 2));
+    top: calc(120px + (100% - 390px) / 2);
   }
   text-box {
     left: 12px;
     width: calc(100% - 24px);
     bottom: 66px;
-    padding: 6px 19px 16px;
+    min-height: 136px;
+    max-height: min(220px, 30dvh);
+    grid-template-rows: 26px auto;
+    padding: 5px 16px 10px;
   }
   text-box p,
   text-box type-writer {
-    font-size: 16px;
-    line-height: 1.9;
+    font-size: 20px;
+    line-height: 1.6;
   }
   text-box [data-content="name"] {
-    font-size: 12px;
-    padding-top: 8px;
+    font-size: 15px;
+    padding-top: 3px;
+  }
+  game-screen:has(.story-choice) text-box {
+    min-height: 248px;
+    max-height: 285px;
+    padding-bottom: 142px;
+  }
+  game-screen:has(.start-choice) text-box {
+    min-height: 180px;
+    max-height: 220px;
+    padding-bottom: 76px;
+  }
+  game-screen:has(.cast-choices) text-box {
+    min-height: 128px;
+    max-height: 168px;
   }
   text-box:after {
     top: 12px;
@@ -751,24 +839,26 @@ alert-modal {
     font-size: 20px;
   }
   choice-container {
-    width: calc(100% - 58px);
-    bottom: 85px;
+    width: calc(100% - 48px);
+    bottom: 78px;
   }
   choice-container button {
-    font-size: 11px;
+    font-size: 16px;
+    padding: 8px 10px;
+    line-height: 1.5;
   }
   .start-choice button {
-    font-size: 12px;
-    padding: 13px;
+    font-size: 17px;
+    padding: 10px;
   }
   .cast-choices {
-    top: 125px;
-    bottom: 232px;
+    top: 118px;
+    bottom: 212px;
     max-height: none;
-    width: calc(100% - 36px);
+    width: calc(100% - 24px);
   }
   .cast-choices [data-content="wrapper"] {
-    gap: 12px;
+    gap: 8px;
   }
   .cast-choices button {
     padding: 5px 5px 9px;
@@ -777,33 +867,60 @@ alert-modal {
     margin-bottom: 5px;
   }
   .cast-name {
-    font-size: 16px;
+    font-size: 20px;
   }
   .cast-choices small {
-    font-size: 9px;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
   quick-menu {
     gap: 0;
   }
   .rofan-game quick-menu button {
-    font-size: 9px;
-    padding: 5px 3px;
+    font-size: 11px;
+    padding: 5px 2px;
+  }
+  .unlock-profile {
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+  }
+  .unlock-profile strong {
+    font-size: 16px;
+  }
+  .unlock-profile span span {
+    font-size: 15px;
+  }
+  .unlock-profile small {
+    font-size: 13px;
   }
   .unlock-profile img {
-    width: 90px;
-    height: 135px;
+    width: 120px;
+    height: 180px;
   }
   .profile-unlock [data-content="title"] {
-    font-size: 17px;
+    font-size: 21px;
   }
   .team-ending main {
     padding-top: 30px;
   }
   .team-ending .closing-story {
-    padding: 25px 15px 30px;
+    padding: 15px 12px 18px;
   }
   .team-ending .closing-story h1 {
-    font-size: 22px;
+    font-size: 24px;
+  }
+  .team-ending .members {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .team-ending .member {
+    width: 100%;
+    max-width: 460px;
+    margin: auto;
   }
 }
 @media (max-height: 700px) and (max-width: 599px) {
@@ -832,59 +949,39 @@ alert-modal {
       #f3e3df 67%
     );
   }
-  game-screen img.ensemble,
-  game-screen:has(.story-choice) img.ensemble {
-    top: 124px;
-    width: 20%;
-    height: min(135px, calc(100% - 440px));
-    border-radius: 40% 40% 2px 2px / 15% 15% 2px 2px;
-  }
-  game-screen img.ensemble.slot-0 {
-    left: 15%;
-  }
-  game-screen img.ensemble.slot-1 {
-    left: 38%;
-  }
-  game-screen img.ensemble.slot-2,
-  game-screen:has(.story-choice) img.ensemble.slot-2 {
-    top: 124px;
-    left: 61%;
-  }
-  game-screen img.ensemble.slot-3,
-  game-screen:has(.story-choice) img.ensemble.slot-3 {
-    top: 124px;
-    left: 84%;
-  }
   .cast-choices {
-    top: 123px;
-    bottom: 190px;
+    top: 112px;
+    bottom: 200px;
   }
   .cast-choices [data-content="wrapper"] {
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, minmax(0, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
   .cast-choices button {
-    border-radius: 2px;
-    display: grid;
-    grid-template-columns: 43px 1fr;
-    grid-template-rows: 20px 1fr;
-    gap: 0 12px;
-    padding: 4px 10px;
-    text-align: left;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 4px 6px;
   }
   .cast-choices img {
-    height: 100%;
-    width: 43px;
-    grid-row: 1 / 3;
-    margin: 0;
-    border-radius: 3px;
+    width: 100%;
+    height: 0;
+    flex: 1;
+    margin: 0 0 4px;
+    object-position: center 8%;
   }
   .cast-choices .cast-name {
-    font-size: 14px;
+    font-size: 20px;
   }
   .cast-choices small {
-    margin: 0;
+    display: none;
+  }
+  game-screen:has(.final-choice) text-box {
+    min-height: 120px;
+    max-height: 145px;
+  }
+  game-screen:has(.final-choice) text-box type-writer {
+    font-size: 20px;
   }
 }
 @media (max-height: 600px) and (min-width: 600px) {
@@ -946,16 +1043,16 @@ alert-modal {
   }
   game-screen img[data-character] {
     left: 21%;
-    top: 100px;
-    width: 28%;
-    height: calc(100% - 172px);
+    top: 78px;
+    width: 39%;
+    height: calc(100% - 150px);
     max-width: none;
   }
   game-screen img.ensemble,
   game-screen:has(.story-choice) img.ensemble {
-    width: 17%;
-    height: calc((100% - 182px) / 2);
-    top: 86px;
+    width: 19%;
+    height: calc((100% - 158px) / 2);
+    top: 72px;
   }
   game-screen img.ensemble.slot-0 {
     left: 12%;
@@ -965,11 +1062,11 @@ alert-modal {
   }
   game-screen img.ensemble.slot-2 {
     left: 12%;
-    top: calc(94px + (100% - 182px) / 2);
+    top: calc(80px + (100% - 158px) / 2);
   }
   game-screen img.ensemble.slot-3 {
     left: 31%;
-    top: calc(94px + (100% - 182px) / 2);
+    top: calc(80px + (100% - 158px) / 2);
   }
   text-box {
     left: 42%;
@@ -978,8 +1075,16 @@ alert-modal {
   }
   text-box p,
   text-box type-writer {
-    font-size: 14px;
-    line-height: 1.85;
+    font-size: 18px;
+    line-height: 1.55;
+  }
+  game-screen:has(.story-choice) text-box {
+    min-height: 210px;
+    max-height: 250px;
+    padding-bottom: 120px;
+  }
+  game-screen:has(.final-choice) #affinity-hud {
+    visibility: hidden;
   }
   choice-container {
     left: 70%;
@@ -987,8 +1092,8 @@ alert-modal {
     bottom: 80px;
   }
   .cast-choices {
-    top: 114px;
-    bottom: 170px;
+    top: 74px;
+    bottom: 186px;
     left: 50%;
     width: 92%;
   }
@@ -1000,7 +1105,7 @@ alert-modal {
     padding: 4px 4px 6px;
   }
   .cast-choices .cast-name {
-    font-size: 14px;
+    font-size: 18px;
   }
   .cast-choices small {
     display: none;
@@ -1008,6 +1113,8 @@ alert-modal {
   game-screen:has(.cast-choices) text-box {
     left: 4%;
     width: 92%;
+    min-height: 108px;
+    max-height: 116px;
   }
 }
 @media (max-height: 700px) and (max-width: 599px) {
@@ -1016,6 +1123,25 @@ alert-modal {
   }
 }
 @media (max-height: 600px) and (max-width: 599px) {
+  game-screen:has(.story-choice) img.ensemble {
+    top: 112px;
+    width: 23%;
+    height: min(160px, calc(100% - 420px));
+  }
+  game-screen:has(.story-choice) img.ensemble.slot-0 {
+    left: 13.5%;
+  }
+  game-screen:has(.story-choice) img.ensemble.slot-1 {
+    left: 38%;
+  }
+  game-screen:has(.story-choice) img.ensemble.slot-2 {
+    top: 112px;
+    left: 62%;
+  }
+  game-screen:has(.story-choice) img.ensemble.slot-3 {
+    top: 112px;
+    left: 86.5%;
+  }
   #opening-title > small {
     display: none;
   }
@@ -1023,6 +1149,19 @@ alert-modal {
     font-size: 22px;
     line-height: 1.4;
     margin: 0;
+  }
+}
+@media (max-width: 380px) {
+  .rofan-game quick-menu {
+    justify-content: flex-start;
+    overflow-x: auto;
+    gap: 4px;
+    scrollbar-width: none;
+  }
+  .rofan-game quick-menu button {
+    flex: 0 0 auto;
+    min-width: 44px;
+    padding: 5px 7px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
