@@ -58,6 +58,8 @@ def walk(page, order=None, ending='jinhwan', answer=0, stop=None):
                 return {'questions': questions, 'departures': departures, 'bridges': bridges, 'endings': endings, 'common': common}
             if label == 'MeetingHub':
                 visited = page.evaluate('monogatari.storage().visitOrder')
+                if 'seongsu' in visited:
+                    assert page.evaluate('monogatari.storage().saju?.status') in ['ready', 'unavailable']
                 expect(page.locator('.meeting-choice button')).to_have_count(4)
                 for id in ids:
                     assert page.locator(f'[data-choice="{id}"]').is_enabled() == (id not in visited)
@@ -66,6 +68,7 @@ def walk(page, order=None, ending='jinhwan', answer=0, stop=None):
                 page.locator(f'[data-choice="{id}"]').click()
             elif label == 'FinalChoice':
                 assert page.evaluate('monogatari.storage().visitOrder') == order
+                assert page.evaluate('monogatari.storage().saju?.status') in ['ready', 'unavailable']
                 assert len(page.evaluate('Object.keys(monogatari.storage().choices)')) == 20
                 expect(page.locator('.final-choice button')).to_have_count(4)
                 assert all(page.locator(f'[data-choice="{id}"]').is_enabled() for id in ids)

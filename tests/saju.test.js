@@ -69,13 +69,15 @@ test("same-origin load requests only the four members and returns a nonnumeric f
 });
 
 test("data stays fixed across rewind and save/load, resets on new run and never awards affinity", async () => {
-  const game = { data: fresh(), storage() { return this.data; } };
+  const game = { data: fresh(), blocked: false, storage() { return this.data; },
+    global(key, value) { assert.equal(key, "block"); if (value !== undefined) this.blocked = value; return this.blocked; } };
   let calls = 0;
   const original = saju.load;
   saju.load = async () => { calls++; return saju.snapshot(saju.normalize(rows)); };
   const action = story.Complete_seongsu.find((a) => a.Function).Function;
   try {
     await action.Apply.call(game);
+    assert.equal(game.blocked, false);
     const saved = JSON.stringify(game.data);
     action.Revert.call(game);
     await action.Apply.call(game);
@@ -94,5 +96,24 @@ test("data stays fixed across rewind and save/load, resets on new run and never 
     assert.equal(game.data.saju, null);
     await action.Apply.call(game);
     assert.equal(calls, 2);
+  } finally { saju.load = original; }
+});
+
+
+test("pending saju lookup holds native input until either data or fallback is ready", async () => {
+  const action = story.Complete_seongsu.find((a) => a.Function).Function;
+  const original = saju.load;
+  const game = { data: fresh(), blocked: false, storage() { return this.data; },
+    global(key, value) { assert.equal(key, "block"); if (value !== undefined) this.blocked = value; return this.blocked; } };
+  let resolve;
+  saju.load = () => new Promise((done) => { resolve = done; });
+  try {
+    const pending = action.Apply.call(game);
+    assert.equal(game.blocked, true);
+    assert.equal(game.data.saju, null);
+    resolve(saju.snapshot(saju.normalize(rows)));
+    await pending;
+    assert.equal(game.data.saju.status, "ready");
+    assert.equal(game.blocked, false);
   } finally { saju.load = original; }
 });

@@ -109,7 +109,16 @@
     script[`Complete_${route.id}`] = [
       ...(route.sajuLines ? [
         { Function: {
-          async Apply() { const data = this.storage(); if (!data.saju) data.saju = await window.TEAM04_SAJU.load(); },
+          async Apply() {
+            const data = this.storage();
+            if (data.saju) return;
+            // A fast tap can arrive while a nested Jump is awaiting this Function.
+            // Hold the native input lock until the bounded lookup has completed.
+            const wasBlocked = this.global("block");
+            this.global("block", true);
+            try { data.saju = await window.TEAM04_SAJU.load(); }
+            finally { this.global("block", wasBlocked); }
+          },
           Revert() {},
         } },
         "show message SajuNote saju-note", ...route.sajuLines,
