@@ -41,15 +41,15 @@
   engine.preferences({ Language: "한국어", TextSpeed: 25, AutoPlaySpeed: 5 });
   engine.storage(window.TEAM04_FRESH_STATE());
   engine.characters({
-    n: { name: "이야기", color: "#795d88" },
-    you: { name: "나", color: "#9b6683" },
-    system: { name: "SYSTEM", color: "#795d88" },
+    n: { name: "이야기", color: "#52677f" },
+    you: { name: "나", color: "#833e51" },
+    system: { name: "SYSTEM", color: "#52677f" },
     ...Object.fromEntries(
       members.map((m) => [
         m.id,
         {
           name: m.name,
-          color: "#795d88",
+          color: "#172c48",
           sprites: { portrait: window.YEONBUN_PORTRAITS[m.name] },
         },
       ]),

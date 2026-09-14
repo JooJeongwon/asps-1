@@ -14,7 +14,7 @@
     card.className = "member";
     const photo = document.createElement("img");
     photo.src = `/assets/${window.YEONBUN_PORTRAITS[member.name]}`;
-    photo.alt = `${member.name} 로판 일러스트`;
+    photo.alt = `${member.name} 캠퍼스 일러스트`;
     photo.width = 1024;
     photo.height = 1536;
     const name = document.createElement("h3");

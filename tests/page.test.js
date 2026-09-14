@@ -93,7 +93,7 @@ test("ending team page uses illustrated portraits and offers functioning profile
           image.getAttribute("src"),
           `/assets/${w.YEONBUN_PORTRAITS[member.name]}`,
         );
-        assert.match(image.alt, /로판 일러스트/);
+        assert.match(image.alt, /캠퍼스 일러스트/);
       }
       assert.equal(
         w.document.querySelector("#your-match").hidden,

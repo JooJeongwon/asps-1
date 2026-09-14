@@ -22,8 +22,14 @@ const files = new Map([
     ["assets/characters/nam-seongsu-anime.png", "image/png"],
   ],
   ["/characters.js", ["characters.js", "text/javascript; charset=utf-8"]],
-  ["/rofan.css", ["rofan.css", "text/css; charset=utf-8"]],
+  ["/campus.css", ["campus.css", "text/css; charset=utf-8"]],
   ...[
+    "campus-gate",
+    "campus-project",
+    "campus-lounge",
+    "campus-night",
+    "campus-cover",
+    // Keep old illustration URLs available for existing browser saves.
     "rofan-campus",
     "rofan-atelier",
     "rofan-conservatory",
@@ -33,11 +39,11 @@ const files = new Map([
     `/assets/${name}.webp`,
     [`assets/${name}.webp`, "image/webp"],
   ]),
-  ...["jeong-chihoon", "joo-jeongwon", "park-jinhwan", "nam-seongsu"].map(
-    (name) => [
-      `/assets/characters/${name}-rofan.webp`,
-      [`assets/characters/${name}-rofan.webp`, "image/webp"],
-    ],
+  ...["jeong-chihoon", "joo-jeongwon", "park-jinhwan", "nam-seongsu"].flatMap(
+    (name) => ["campus", "rofan"].map((style) => [
+      `/assets/characters/${name}-${style}.webp`,
+      [`assets/characters/${name}-${style}.webp`, "image/webp"],
+    ]),
   ),
   ["/team.js", ["team.js", "text/javascript; charset=utf-8"]],
   ["/saju.js", ["saju.js", "text/javascript; charset=utf-8"]],
