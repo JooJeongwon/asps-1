@@ -1,102 +1,556 @@
 <!doctype html>
-<html lang="ko" class="scroll-smooth">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="네 사람이 만드는 팀, ASPS의 데이터 기반 궁합 이야기" />
-    <title>ASPS — 우리는 얼마나 잘 맞을까?</title>
-    <link rel="stylesheet" href="/tailwind.css" />
+    <meta name="theme-color" content="#f7f4f9" />
+    <meta
+      name="description"
+      content="정치훈, 주정원, 박진환, 남성수. 사주에서 시작된 네 갈래의 인연을 당신의 선택으로 이어가는 로맨스 비주얼 노벨, 연분."
+    />
+    <meta property="og:title" content="연분 — 네 사람, 네 갈래의 운명" />
+    <meta
+      property="og:description"
+      content="사주로 시작해, 선택으로 완성하는 우리 이야기. 네 사람의 프롤로그를 지금 만나보세요."
+    />
+    <meta
+      property="og:image"
+      content="https://asps-1.vercel.app/assets/yeonbun-hero.png"
+    />
+    <title>연분 緣分 — 네 사람, 네 갈래의 운명</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/styles.css" />
+    <script src="/routes.js" defer></script>
+    <script src="/app.js" defer></script>
+    <script src="/game.js" defer></script>
   </head>
   <body>
-    <header class="absolute inset-x-0 top-0 z-50">
-      <nav class="wrap flex h-20 items-center justify-between" aria-label="주요 메뉴">
-        <a href="#" class="flex items-center gap-2 text-sm font-black tracking-[-.04em]" aria-label="ASPS 홈"><span class="grid size-7 place-items-center rounded-full bg-ink text-[9px] text-white">A</span>ASPS</a>
-        <div class="hidden gap-7 text-[11px] font-bold md:flex"><a href="#team" class="hover:text-violet">팀 소개</a><a href="#compatibility" class="hover:text-violet">우리의 조합</a><a href="#try" class="hover:text-violet">26인 궁합</a><a href="#blind" class="hover:text-violet">블라인드 1위</a></div>
-        <a href="#try" class="btn !px-4 !py-2.5">궁합 확인하기</a>
+    <a href="#main" class="skip-link">본문 바로가기</a>
+    <header class="site-header">
+      <a class="brand" href="#main" aria-label="연분 홈"
+        ><span class="brand-flower" aria-hidden="true">✳</span
+        ><span>연분<small>緣 分 · YEONBUN</small></span></a
+      >
+      <nav aria-label="주요 메뉴">
+        <a href="#story">세계관</a><a href="#characters">네 사람의 이야기</a
+        ><a href="#try">인연 기록</a>
       </nav>
+      <a class="nav-play" href="#play"
+        >프롤로그 플레이 <span aria-hidden="true">↗</span></a
+      >
     </header>
-
-    <main>
-      <section class="hero relative overflow-hidden">
-        <div class="hero-grid wrap">
-        <div class="hero-copy">
-          <h1 class="title mx-auto max-w-4xl text-5xl sm:text-7xl">우리는 얼마나<br />잘 맞는 팀일까?</h1>
-          <p class="mx-auto mt-6 max-w-xl text-sm leading-6 text-black/50 sm:text-base">주정원, 남성수, 박진환, 정치훈.<br />서로 다른 네 사람이 만드는 팀의 궁합을 숫자와 이야기로 소개합니다.</p>
-          <div class="mt-8 flex items-center gap-5"><a href="#compatibility" class="btn">결과 바로보기</a><a href="#team" class="text-xs font-black text-violet hover:text-ink">우리 팀 만나기 →</a></div>
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <img
+          class="hero-art"
+          src="/assets/yeonbun-hero.png"
+          alt="봄날의 천문대 앞에서 편지를 든 네 사람의 게임 캐릭터 일러스트"
+          fetchpriority="high"
+        />
+        <div class="hero-wash" aria-hidden="true"></div>
+        <div class="hero-orbit" aria-hidden="true"></div>
+        <div class="hero-content wrap">
+          <p class="eyebrow">
+            <span class="tiny-star">✦</span> SAJU × ROMANCE VISUAL NOVEL
+          </p>
+          <h1 id="hero-title">
+            우리의 만남은<br />우연일까,<br /><em>운명일까.</em>
+          </h1>
+          <p class="hero-description">
+            태어난 날에 담긴 작은 단서.<br />그리고, 아직 쓰이지 않은 우리
+            사이의 이야기.
+          </p>
+          <a class="button primary" href="#play"
+            >나의 이야기 시작하기 <span aria-hidden="true">↗</span></a
+          >
+          <p class="hero-note">
+            <span></span> 네 사람의 프롤로그, 지금 플레이할 수 있어요.
+          </p>
         </div>
+        <div class="hero-quote">
+          <span class="quote-star">✧</span>
+          <p>“우리, 언젠가 만난 적 있지 않아요?”</p>
+          <small>이야기는 그 한마디에서 시작되었다.</small>
+        </div>
+        <div class="hero-foot">
+          <span>CHAPTER 00 <i></i> 봄, 다시 만난 우리</span
+          ><a href="#story">SCROLL TO DISCOVER <span>↓</span></a>
+        </div>
+      </section>
 
-        <div class="hero-stage">
-          <div class="grid-floor absolute inset-x-[-15%] bottom-[-10rem] h-[650px]"></div>
-          <div class="hero-report card z-10 overflow-hidden bg-white/95 backdrop-blur">
-            <div class="flex h-11 items-center justify-between border-b border-black/8 px-4"><p class="text-[8px] font-black tracking-widest">ASPS / 01</p><p class="text-[8px] font-bold">TEAM COMPATIBILITY REPORT</p><span id="hero-data-label" class="text-[7px] font-bold text-violet">연결 확인 중</span></div>
-            <div class="grid min-h-[340px] sm:grid-cols-[1fr_250px]">
-              <div class="relative overflow-hidden border-b border-black/8 p-5 sm:border-r sm:border-b-0 sm:p-8">
-                <p class="text-left text-[9px] font-black uppercase tracking-widest text-black/30">Team constellation</p>
-                <svg class="absolute inset-x-6 top-16 h-52 w-[calc(100%-3rem)]" viewBox="0 0 520 210" fill="none" aria-hidden="true"><path d="M95 55L257 25L425 70L350 175L165 170L95 55ZM257 25L350 175M425 70L165 170M95 55L350 175" stroke="#cfc9f9" stroke-width="1.5" stroke-dasharray="4 5"/><circle cx="95" cy="55" r="3" fill="#7457ff"/><circle cx="257" cy="25" r="3" fill="#7457ff"/><circle cx="425" cy="70" r="3" fill="#7457ff"/><circle cx="350" cy="175" r="3" fill="#7457ff"/></svg>
-                <div class="relative mx-auto mt-3 h-52 max-w-lg">
-                  <div class="absolute left-[5%] top-5 text-center"><span class="face mx-auto size-12 bg-gradient-to-br from-blue-400 to-indigo-700">JW</span><p class="mt-2 text-[9px] font-black">주정원</p></div>
-                  <div class="absolute left-[42%] top-0 text-center"><span class="face mx-auto size-12 bg-gradient-to-br from-orange-300 to-rose-600">SS</span><p class="mt-2 text-[9px] font-black">남성수</p></div>
-                  <div class="absolute right-[4%] top-9 text-center"><span class="face mx-auto size-12 bg-gradient-to-br from-cyan-400 to-teal-700">JH</span><p class="mt-2 text-[9px] font-black">박진환</p></div>
-                  <div class="absolute bottom-0 left-[58%] text-center"><span class="face mx-auto size-12 bg-gradient-to-br from-violet to-fuchsia-600">CH</span><p class="mt-2 text-[9px] font-black">정치훈</p></div>
-                </div>
-                <div class="mt-3 grid grid-cols-3 gap-2 text-left"><div class="rounded-lg bg-[#f7f6fa] p-3"><p class="text-[7px] text-black/35">최고 케미</p><b id="hero-best" class="mt-1 block text-[10px]">—</b></div><div class="rounded-lg bg-[#f7f6fa] p-3"><p class="text-[7px] text-black/35">MBTI 평균</p><b id="hero-mbti" class="mt-1 block text-[10px]">—</b></div><div class="rounded-lg bg-[#f7f6fa] p-3"><p class="text-[7px] text-black/35">분석 조합</p><b id="hero-pairs" class="mt-1 block text-[10px]">—</b></div></div>
+      <section class="story-strip wrap" id="story">
+        <div class="story-mark" aria-hidden="true">緣<span>분</span></div>
+        <div>
+          <p class="eyebrow">A STORY WRITTEN BETWEEN US</p>
+          <h2>
+            정해진 운명 위에,<br class="mobile-only" />
+            <em>나의 선택을 더하다.</em>
+          </h2>
+        </div>
+        <p>
+          같은 봄, 서로 다른 네 사람.<br />사주의 기질은 만남의 첫 장을 열고,<br />당신의
+          대답은 그다음 장면을 만듭니다.
+        </p>
+        <span class="story-spark" aria-hidden="true">✧</span>
+      </section>
+
+      <section class="characters-section section-pad" id="characters">
+        <div class="wrap">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">01 / THE FOUR ENCOUNTERS</p>
+              <h2>마음이 향하는 사람은 누구인가요?</h2>
+            </div>
+            <p>
+              네 개의 기질, 네 갈래의 이야기.<br />먼저 궁금해진 사람을
+              만나보세요.
+            </p>
+          </div>
+          <div class="character-grid">
+            <article class="character-card wood">
+              <button
+                class="member-card"
+                data-member="정치훈"
+                type="button"
+                aria-haspopup="dialog"
+                aria-label="정치훈 캐릭터 프로필 보기"
+              >
+                <span
+                  class="portrait portrait-0"
+                  role="img"
+                  aria-label="정치훈의 창작 게임 아바타"
+                ></span
+                ><span class="element-seal"><b>木</b>갑진</span
+                ><span class="portrait-caption"
+                  ><small>망설임 끝에, 가장 먼저 내미는 손</small
+                  ><strong>정치훈</strong
+                  ><span>ESTP <i>·</i> 갑진 甲辰 <i>·</i> KAI 102</span></span
+                ><span class="profile-plus" aria-hidden="true">＋</span>
+              </button>
+              <div class="character-bottom">
+                <p>“일단 나와요. 나머지는 걸으면서.”</p>
+                <button data-route="정치훈" type="button">
+                  치훈의 이야기 <span>↗</span>
+                </button>
               </div>
-              <aside class="flex items-center justify-center p-7"><div><p class="text-[8px] font-black uppercase tracking-widest text-black/30">Team score</p><div class="score-ring relative mx-auto mt-5 grid size-32 place-items-center rounded-full" style="--score:0%"><div class="relative z-10 text-center"><b id="hero-score" class="text-3xl tracking-[-.06em]">—</b><p class="text-[7px] font-bold text-black/35">OUT OF 100</p></div></div><p id="hero-status" class="mt-5 border border-violet/20 bg-lilac px-4 py-2 text-center text-[9px] font-black text-violet">—</p></div></aside>
+            </article>
+            <article class="character-card metal">
+              <button
+                class="member-card"
+                data-member="주정원"
+                type="button"
+                aria-haspopup="dialog"
+                aria-label="주정원 캐릭터 프로필 보기"
+              >
+                <span
+                  class="portrait portrait-1"
+                  role="img"
+                  aria-label="주정원의 창작 게임 아바타"
+                ></span
+                ><span class="element-seal"><b>金</b>경진</span
+                ><span class="portrait-caption"
+                  ><small>익숙한 세상에, 낯선 질문 하나</small
+                  ><strong>주정원</strong
+                  ><span>ENTP <i>·</i> 경진 庚辰 <i>·</i> KAI 126</span></span
+                ><span class="profile-plus" aria-hidden="true">＋</span>
+              </button>
+              <div class="character-bottom">
+                <p>“우연에도 이유가 있다면, 궁금하지 않아요?”</p>
+                <button data-route="주정원" type="button">
+                  정원의 이야기 <span>↗</span>
+                </button>
+              </div>
+            </article>
+            <article class="character-card vine">
+              <button
+                class="member-card"
+                data-member="박진환"
+                type="button"
+                aria-haspopup="dialog"
+                aria-label="박진환 캐릭터 프로필 보기"
+              >
+                <span
+                  class="portrait portrait-2"
+                  role="img"
+                  aria-label="박진환의 창작 게임 아바타"
+                ></span
+                ><span class="element-seal"><b>木</b>을해</span
+                ><span class="portrait-caption"
+                  ><small>말보다 먼저, 마음에 닿는 온도</small
+                  ><strong>박진환</strong
+                  ><span>ENFP <i>·</i> 을해 乙亥 <i>·</i> KAI 111</span></span
+                ><span class="profile-plus" aria-hidden="true">＋</span>
+              </button>
+              <div class="character-bottom">
+                <p>“이 노래, 왠지 네가 좋아할 것 같아서.”</p>
+                <button data-route="박진환" type="button">
+                  진환의 이야기 <span>↗</span>
+                </button>
+              </div>
+            </article>
+            <article class="character-card earth">
+              <button
+                class="member-card"
+                data-member="남성수"
+                type="button"
+                aria-haspopup="dialog"
+                aria-label="남성수 캐릭터 프로필 보기"
+              >
+                <span
+                  class="portrait portrait-3"
+                  role="img"
+                  aria-label="남성수의 창작 게임 아바타"
+                ></span
+                ><span class="element-seal"><b>土</b>무진</span
+                ><span class="portrait-caption"
+                  ><small>조용히 머물러, 오래 남는 사람</small
+                  ><strong>남성수</strong
+                  ><span>INFJ <i>·</i> 무진 戊辰 <i>·</i> KAI 103</span></span
+                ><span class="profile-plus" aria-hidden="true">＋</span>
+              </button>
+              <div class="character-bottom">
+                <p>“서두르지 않아도 돼요. 기다릴 수 있어요.”</p>
+                <button data-route="남성수" type="button">
+                  성수의 이야기 <span>↗</span>
+                </button>
+              </div>
+            </article>
+          </div>
+          <p class="caption-note">
+            실제 팀원의 MBTI·일주·KAI 정보를 바탕으로 구성했습니다. 일러스트와
+            대사, 사건은 게임을 위한 창작입니다.
+          </p>
+        </div>
+      </section>
+
+      <section class="play-section section-pad" id="play">
+        <div class="wrap play-layout">
+          <div class="play-copy">
+            <p class="eyebrow">02 / YOUR FIRST CHOICE</p>
+            <h2>그날, 다른 대답을<br />했더라면.</h2>
+            <p>
+              어색한 첫인사부터 작은 약속까지.<br />세 번의 선택으로 완성하는
+              짧은 프롤로그.<br />누구와 어떤 봄을 시작할지, 직접 골라보세요.
+            </p>
+            <div class="play-facts">
+              <span><b>4</b>인물별 루트</span><span><b>3</b>번의 선택</span
+              ><span><b>8</b>가지 에필로그</span>
+            </div>
+            <p class="small-note">
+              완성된 장편 게임에 앞서, 첫 만남을 체험하는 버전입니다.
+            </p>
+          </div>
+          <div class="preview-window">
+            <div class="window-top">
+              <span><i></i> PROLOGUE / 봄날의 첫 페이지</span><span>✧</span>
+            </div>
+            <div class="preview-scene">
+              <span class="scene-tag">어느 봄날, 해 질 무렵</span>
+              <div class="preview-avatars" aria-hidden="true">
+                <span class="portrait portrait-0"></span
+                ><span class="portrait portrait-1"></span
+                ><span class="portrait portrait-2"></span
+                ><span class="portrait portrait-3"></span>
+              </div>
+            </div>
+            <div class="preview-dialogue">
+              <span class="speaker-label">당신</span>
+              <h3>이 봄을, 누구와 시작할까요?</h3>
+              <div class="route-choices">
+                <button data-route="정치훈">
+                  정치훈 <small>비 온 뒤의 운동장</small><span>↗</span></button
+                ><button data-route="주정원">
+                  주정원 <small>별이 뜨는 옥상</small><span>↗</span></button
+                ><button data-route="박진환">
+                  박진환 <small>이어폰 한쪽의 거리</small><span>↗</span></button
+                ><button data-route="남성수">
+                  남성수 <small>책갈피에 남긴 말</small><span>↗</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        </div>
       </section>
 
-      <section class="metric-strip"><div class="wrap flex flex-wrap items-center justify-center text-center text-[9px] font-black uppercase tracking-[.15em] sm:justify-between"><span>4 different minds</span><span>6 relationships</span><span>3 data signals</span><span>1 team</span></div></section>
+      <section class="elements-section wrap" aria-labelledby="elements-title">
+        <p class="eyebrow">FIVE ELEMENTS, ENDLESS POSSIBILITIES</p>
+        <h2 id="elements-title">
+          사주는 첫 문장.<br class="mobile-only" />
+          결말은 우리가.
+        </h2>
+        <div class="element-line" aria-label="오행: 목 화 토 금 수">
+          <span>木<small>자라나는 마음</small></span
+          ><i>·</i><span>火<small>다가가는 용기</small></span
+          ><i>·</i><span>土<small>머무르는 믿음</small></span
+          ><i>·</i><span>金<small>선명해지는 진심</small></span
+          ><i>·</i><span>水<small>흐르는 이해</small></span>
+        </div>
+        <p>
+          네 사람의 일주에서 찾은 모티프를 이야기로 풀었습니다.<br />사주와
+          점수는 서로를 알아가는 단서이며, 실제 마음이나 관계의 결말을 예측하지
+          않습니다.
+        </p>
+      </section>
 
-      <section id="team" class="wrap py-28 sm:py-40">
-        <div class="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:gap-20"><div><p class="eyebrow">01 · Meet ASPS</p><h2 class="title mt-4 text-4xl sm:text-6xl">먼저, 우리를<br />소개합니다.</h2><p class="mt-6 max-w-md text-sm leading-7 text-black/50">네 사람의 MBTI, 사주 원국, KAI 점수입니다. 서로 다른 기질과 인지 스타일이 우리 팀의 출발점입니다.</p></div>
-          <div class="member-grid grid sm:grid-cols-2">
-            <button class="member-card card p-5 text-left" type="button" data-member="주정원" aria-haspopup="dialog"><span class="flex items-center gap-4"><span class="face size-14 bg-gradient-to-br from-blue-400 to-indigo-700">JW</span><span><span class="block text-[9px] font-bold text-violet">TEAM MEMBER 01</span><span class="mt-1 block text-xl font-black">주정원</span></span></span><span class="mt-5 block text-xs leading-6 text-black/45">서로 다른 관점을 연결하는 탐색자.</span><span class="member-metrics mt-5 grid grid-cols-3 gap-2"><span><small>MBTI</small><b>ENTP</b></span><span><small>사주</small><b>경진 (庚辰)</b></span><span><small>KAI</small><b>126</b></span></span></button>
-            <button class="member-card card p-5 text-left sm:translate-y-8" type="button" data-member="정치훈" aria-haspopup="dialog"><span class="flex items-center gap-4"><span class="face size-14 bg-gradient-to-br from-violet to-fuchsia-600">CH</span><span><span class="block text-[9px] font-bold text-violet">TEAM MEMBER 02</span><span class="mt-1 block text-xl font-black">정치훈</span></span></span><span class="mt-5 block text-xs leading-6 text-black/45">선명한 성향을 실행력으로 바꾸는 촉진자.</span><span class="member-metrics mt-5 grid grid-cols-3 gap-2"><span><small>MBTI</small><b>ESTP</b></span><span><small>사주</small><b>갑진 (甲辰)</b></span><span><small>KAI</small><b>102</b></span></span></button>
-            <button class="member-card card p-5 text-left" type="button" data-member="박진환" aria-haspopup="dialog"><span class="flex items-center gap-4"><span class="face size-14 bg-gradient-to-br from-cyan-400 to-teal-700">JH</span><span><span class="block text-[9px] font-bold text-violet">TEAM MEMBER 03</span><span class="mt-1 block text-xl font-black">박진환</span></span></span><span class="mt-5 block text-xs leading-6 text-black/45">관계의 흐름을 잇는 연결자.</span><span class="member-metrics mt-5 grid grid-cols-3 gap-2"><span><small>MBTI</small><b>ENFP</b></span><span><small>사주</small><b>을해 (乙亥)</b></span><span><small>KAI</small><b>111</b></span></span></button>
-            <button class="member-card card p-5 text-left sm:translate-y-8" type="button" data-member="남성수" aria-haspopup="dialog"><span class="flex items-center gap-4"><span class="face size-14 bg-gradient-to-br from-orange-300 to-rose-600">SS</span><span><span class="block text-[9px] font-bold text-violet">TEAM MEMBER 04</span><span class="mt-1 block text-xl font-black">남성수</span></span></span><span class="mt-5 block text-xs leading-6 text-black/45">팀의 현실적인 균형을 잡는 조율자.</span><span class="member-metrics mt-5 grid grid-cols-3 gap-2"><span><small>MBTI</small><b>INFJ</b></span><span><small>사주</small><b>무진 (戊辰)</b></span><span><small>KAI</small><b>103</b></span></span></button>
+      <section class="records-section section-pad" id="try">
+        <div class="wrap">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">03 / OUR CONNECTION ARCHIVE</p>
+              <h2>이야기 너머, 우리의 인연 기록.</h2>
+            </div>
+            <p>
+              26명의 실제 궁합 데이터로<br />두 사람 사이의 단서를 찾아보세요.
+            </p>
           </div>
-        </div>
-      </section>
-
-      <dialog id="member-dialog" class="member-dialog" aria-labelledby="member-name">
-        <div class="member-dialog__content"><p class="eyebrow">Member profile</p><h2 id="member-name" class="title mt-4 text-4xl">—</h2><p id="member-one-line" class="mt-4 max-w-md text-lg font-black text-violet">—</p><dl class="member-profile mt-8"><div><dt>Mini Bio</dt><dd id="member-bio">—</dd></div><div><dt>Team Mode</dt><dd id="member-team-mode">—</dd></div><div><dt>Interests</dt><dd id="member-interests">—</dd></div><div><dt>TMI</dt><dd id="member-tmi">—</dd></div></dl></div>
-      </dialog>
-
-      <section id="compatibility" class="border-y border-black/6 bg-white py-28 sm:py-40">
-        <div class="wrap"><div class="max-w-2xl"><p class="eyebrow">02 · Our compatibility</p><h2 class="title mt-4 text-4xl sm:text-6xl">넷이 만나면,<br />여섯 조합이 됩니다.</h2><p class="mt-6 text-sm leading-7 text-black/50">KAI 차이, MBTI, 사주 지표를 바탕으로 우리 안의 여섯 관계를 읽었습니다. 점수는 답이 아니라 서로를 이해하는 대화의 시작입니다.</p></div>
-          <div id="pair-grid" class="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3" aria-live="polite"><p class="p-5 text-sm text-black/50">궁합 결과를 불러오는 중입니다.</p>
+          <div class="records-layout">
+            <div class="match-panel">
+              <div class="panel-heading">
+                <span class="tiny-star">✧</span>
+                <h3>우리 사이의 궁합</h3>
+                <span class="subtle-label">26 PEOPLE</span>
+              </div>
+              <form id="match-form">
+                <div class="name-fields">
+                  <label for="person-a"
+                    >첫 번째 사람<input
+                      id="person-a"
+                      list="people-list"
+                      autocomplete="off"
+                      value="주정원"
+                      placeholder="이름을 입력하세요"
+                      maxlength="40"
+                      required /></label
+                  ><span class="name-cross" aria-hidden="true">×</span
+                  ><label for="person-b"
+                    >두 번째 사람<input
+                      id="person-b"
+                      list="people-list"
+                      autocomplete="off"
+                      value="정치훈"
+                      placeholder="이름을 입력하세요"
+                      maxlength="40"
+                      required
+                  /></label>
+                </div>
+                <datalist id="people-list"></datalist
+                ><button class="button primary" type="submit">
+                  인연의 단서 확인하기 <span>↗</span>
+                </button>
+              </form>
+              <div
+                id="match-result"
+                class="match-result"
+                role="status"
+                aria-live="polite"
+              >
+                <span class="tiny-star">✦</span>
+                <p>
+                  두 사람의 이름을 고르면<br />궁합과 세 가지 지표를 확인할 수
+                  있어요.
+                </p>
+              </div>
+            </div>
+            <div id="blind" class="blind-panel">
+              <div class="panel-heading">
+                <span class="tiny-star">✧</span>
+                <h3>가장 가까운 두 별</h3>
+                <span class="subtle-label">BEST MATCH</span>
+              </div>
+              <p class="blind-intro">이름보다 먼저, 우리 사이의 가능성을.</p>
+              <div class="blind-score-line">
+                <span aria-hidden="true">✦</span><b id="blind-score">—</b
+                ><small>/ 100</small>
+              </div>
+              <div class="blind-metrics">
+                <span>MBTI<b id="blind-mbti">—</b></span
+                ><span>KAI 차이<b id="blind-kai">—</b></span
+                ><span>사주<b id="blind-saju">—</b></span>
+              </div>
+              <details id="blind-result">
+                <summary>두 사람의 이름 펼쳐보기 <span>＋</span></summary>
+                <div class="blind-reveal">
+                  <h3 id="blind-names">결과 준비 중</h3>
+                  <p id="blind-group">—</p>
+                </div>
+              </details>
+              <p id="blind-data-label" class="data-label" role="status">
+                궁합 기록을 불러오는 중
+              </p>
+            </div>
           </div>
-          <p id="data-state" class="mt-5 text-right text-[9px] text-black/30">궁합 데이터 연결 중…</p>
-        </div>
-      </section>
-
-      <section id="try" class="bg-ink py-28 text-white sm:py-36">
-        <div class="wrap grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-24"><div><p class="text-[10px] font-black uppercase tracking-[.2em] text-white/35">03 · 26 people, live data</p><h2 class="title mt-4 text-4xl sm:text-6xl">이름으로 찾아<br />궁합을 확인하세요.</h2><p class="mt-6 max-w-md text-sm leading-6 text-white/45">26명, 325개 조합의 최신 궁합 결과를 확인합니다. 두 사람의 이름을 검색하면 종합 궁합과 관계가 바로 나타납니다.</p></div>
-          <div class="rounded-2xl border border-white/10 bg-white/[.06] p-5 sm:p-7"><form id="match-form" class="grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-end"><label class="text-[9px] font-bold text-white/40">첫 번째 이름<input id="person-a" type="search" value="주정원" placeholder="이름 검색" autocomplete="off" class="mt-2 w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-bold text-white outline-none placeholder:text-white/35" /></label><span class="hidden pb-3 text-white/20 sm:block">×</span><label class="text-[9px] font-bold text-white/40">두 번째 이름<input id="person-b" type="search" value="정치훈" placeholder="이름 검색" autocomplete="off" class="mt-2 w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-bold text-white outline-none placeholder:text-white/35" /></label><button class="btn mt-2 !bg-white !text-ink sm:col-span-3 hover:!bg-lilac">궁합 확인하기</button></form>
-            <div id="match-result" class="mt-5 rounded-xl bg-black/25 p-5" aria-live="polite"><p class="text-xs text-white/45">두 사람을 선택하고 궁합을 확인해주세요.</p></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="blind" class="wrap py-28 sm:py-40">
-        <div class="grid items-center gap-14 lg:grid-cols-[.8fr_1.2fr] lg:gap-24">
-          <div><p class="eyebrow">04 · Blind best match</p><h2 class="title mt-4 text-4xl sm:text-6xl">이름보다 먼저,<br />점수를 보세요.</h2><p class="mt-6 max-w-md text-sm leading-7 text-black/50">26명의 모든 조합에서 가장 높은 궁합입니다. 선입견 없이 세 지표를 먼저 보고, 준비되면 두 사람의 이름을 확인하세요.</p><p id="blind-data-label" role="status" class="mt-6 text-[10px] font-black text-violet">연결 확인 중</p></div>
-          <details id="blind-result" class="blind-card card overflow-hidden">
-            <summary class="cursor-pointer list-none p-6 sm:p-9"><div class="flex items-start justify-between"><p class="text-[9px] font-black tracking-[.18em] text-black/30">HIGHEST SCORE</p><b id="blind-score" class="text-5xl tracking-[-.07em] text-violet">—</b></div><div class="my-12 flex items-center justify-center gap-5 sm:gap-9"><span class="blind-person">?</span><span class="text-xl text-black/20">×</span><span class="blind-person">?</span></div><div class="grid grid-cols-3 gap-2 text-center"><span class="blind-metric"><small>MBTI</small><b id="blind-mbti">—</b></span><span class="blind-metric"><small>KAI 차이</small><b id="blind-kai">—</b></span><span class="blind-metric"><small>사주</small><b id="blind-saju">—</b></span></div><p class="mt-7 text-center text-[10px] font-black text-violet"><span class="closed-copy">이름 공개하기 ＋</span><span class="open-copy">다시 가리기 −</span></p></summary>
-            <div class="border-t border-black/10 bg-lilac p-6 text-center sm:p-9"><p class="text-[9px] font-black tracking-[.18em] text-violet">THE BEST MATCH IS</p><h3 id="blind-names" class="mt-3 text-2xl font-black">—</h3><p id="blind-group" class="mt-2 text-xs text-black/45">—</p></div>
+          <details class="team-records" id="compatibility">
+            <summary>
+              <span>ASPS 네 사람의 여섯 가지 조합</span
+              ><span class="summary-right"
+                ><span id="hero-data-label">연결 확인 중</span><b>＋</b></span
+              >
+            </summary>
+            <div class="team-records-content">
+              <div class="team-overview">
+                <div class="score-ring">
+                  <span>팀 평균</span><b id="hero-score">—</b>
+                </div>
+                <dl>
+                  <div>
+                    <dt>최고 궁합</dt>
+                    <dd id="hero-best">—</dd>
+                  </div>
+                  <div>
+                    <dt>MBTI 평균</dt>
+                    <dd id="hero-mbti">—</dd>
+                  </div>
+                  <div>
+                    <dt>분석 조합</dt>
+                    <dd id="hero-pairs">—</dd>
+                  </div>
+                </dl>
+                <span id="hero-status">결과 준비 중</span>
+              </div>
+              <div id="pair-grid" class="pair-grid" aria-live="polite"></div>
+              <p id="data-state" class="data-label">궁합 데이터 연결 중</p>
+            </div>
           </details>
         </div>
       </section>
-
-      <section class="wrap py-24"><div class="mx-auto max-w-3xl"><p class="eyebrow">FAQ</p><div class="mt-8 divide-y divide-black/10 border-y border-black/10"><details class="group py-5" open><summary class="flex cursor-pointer list-none justify-between text-sm font-black">궁합 점수는 어떻게 계산되나요?<span class="group-open:rotate-45">＋</span></summary><p class="pt-4 pr-10 text-xs leading-6 text-black/45">KAI 차이와 MBTI, 사주 지표를 함께 반영한 데이터 모델의 결과입니다.</p></details><details class="group py-5"><summary class="flex cursor-pointer list-none justify-between text-sm font-black">점수가 팀의 좋고 나쁨을 의미하나요?<span class="group-open:rotate-45">＋</span></summary><p class="pt-4 pr-10 text-xs leading-6 text-black/45">아닙니다. 서로의 차이를 이해하고 대화를 시작하기 위한 참고 지표입니다.</p></details><details class="group py-5"><summary class="flex cursor-pointer list-none justify-between text-sm font-black">다른 팀도 볼 수 있나요?<span class="group-open:rotate-45">＋</span></summary><p class="pt-4 pr-10 text-xs leading-6 text-black/45">네. 다른 팀의 이야기를 순차적으로 공개하고, 현재 데이터에 있는 두 사람의 궁합은 위에서 바로 확인할 수 있습니다.</p></details></div></div></section>
+      <section class="closing">
+        <span class="closing-star" aria-hidden="true">✧</span>
+        <p>만나기 전에는 몰랐던,</p>
+        <h2>우리라는 가능성.</h2>
+        <a class="button primary" href="#play"
+          >첫 페이지로 돌아가기 <span>↗</span></a
+        ><small>당신의 선택을 기다리는 네 개의 이야기</small>
+      </section>
     </main>
+    <footer class="site-footer wrap">
+      <a class="brand" href="#main"
+        ><span class="brand-flower" aria-hidden="true">✳</span
+        ><span>연분<small>AN ASPS STORY</small></span></a
+      >
+      <p>
+        정치훈 · 주정원 · 박진환 · 남성수<br /><span
+          >© 2026 ASPS. 사주 기반 로맨스 비주얼 노벨 체험판.</span
+        >
+      </p>
+      <a href="#story">이 이야기의 시작 ↑</a>
+    </footer>
 
-    <footer class="border-t border-black/8 bg-white py-9"><div class="wrap flex flex-col gap-5 text-[10px] text-black/35 sm:flex-row sm:items-center sm:justify-between"><a href="#" class="flex items-center gap-2 text-sm font-black text-ink"><span class="grid size-7 place-items-center rounded-full bg-ink text-[9px] text-white">A</span>ASPS</a><p>주정원 · 남성수 · 박진환 · 정치훈</p><p>© 2026 ASPS</p></div></footer>
+    <dialog
+      id="member-dialog"
+      class="profile-dialog"
+      aria-labelledby="member-name"
+    >
+      <button
+        class="dialog-close"
+        data-close-profile
+        type="button"
+        aria-label="프로필 닫기"
+      >
+        ×
+      </button>
+      <div
+        class="profile-portrait portrait portrait-0"
+        id="member-portrait"
+        role="img"
+        aria-label="창작 캐릭터 아바타"
+      ></div>
+      <div class="profile-content">
+        <p class="eyebrow">CHARACTER FILE / ASPS</p>
+        <h2 id="member-name">—</h2>
+        <p id="member-one-line" class="profile-line">—</p>
+        <p id="member-data" class="profile-data">—</p>
+        <dl>
+          <div>
+            <dt>소개</dt>
+            <dd id="member-bio">—</dd>
+          </div>
+          <div>
+            <dt>팀에서의 모습</dt>
+            <dd id="member-team-mode">—</dd>
+          </div>
+          <div>
+            <dt>관심사</dt>
+            <dd id="member-interests">—</dd>
+          </div>
+          <div>
+            <dt>작은 이야기</dt>
+            <dd id="member-tmi">—</dd>
+          </div>
+        </dl>
+        <button id="profile-play" class="button primary" type="button">
+          이 사람의 이야기 시작하기 ↗
+        </button>
+        <p class="small-note">
+          일러스트와 게임 속 사건은 창작으로 구성했습니다.
+        </p>
+      </div>
+    </dialog>
 
-    <script src="/app.js" defer></script>
+    <dialog id="game-dialog" class="game-dialog" aria-labelledby="game-title">
+      <div class="game-top">
+        <div>
+          <span class="tiny-star">✧</span><span id="game-title">프롤로그</span>
+        </div>
+        <div class="game-controls">
+          <button id="game-prev" type="button" disabled>← 이전 장면</button
+          ><button id="game-close" type="button" aria-label="프롤로그 닫기">
+            닫기 ×
+          </button>
+        </div>
+      </div>
+      <div class="game-scene">
+        <div class="game-scenery"></div>
+        <span id="game-location" class="scene-tag">—</span>
+        <div
+          id="game-portrait"
+          class="game-portrait portrait portrait-0"
+          role="img"
+          aria-label="등장인물의 창작 아바타"
+        ></div>
+        <div class="game-progress">
+          <span id="game-step">01 / 03</span
+          ><span id="game-motif">사주 모티프</span>
+        </div>
+      </div>
+      <div class="game-script">
+        <button id="game-skip" class="game-typing-skip" type="button">
+          대사 한 번에 보기</button
+        ><span id="game-speaker" class="speaker-label">—</span>
+        <p id="game-narration" class="game-narration"></p>
+        <h3
+          id="game-line"
+          tabindex="-1"
+          aria-live="polite"
+          aria-atomic="true"
+        ></h3>
+        <div id="game-choices" class="game-choices"></div>
+        <p id="game-reaction" class="game-reaction" role="status"></p>
+        <button id="game-next" class="button primary" type="button" hidden>
+          다음 장면으로 →
+        </button>
+        <div id="game-ending" hidden>
+          <p id="ending-label" class="eyebrow">EPILOGUE</p>
+          <h3 id="ending-title" tabindex="-1"></h3>
+          <p id="ending-copy"></p>
+          <div class="ending-actions">
+            <button id="game-restart" class="button primary" type="button">
+              다른 선택으로 다시 만나기</button
+            ><button id="game-other" class="button outline" type="button">
+              다른 사람 만나기
+            </button>
+          </div>
+        </div>
+      </div>
+      <p class="game-footnote">
+        사주의 모티프를 활용한 창작 이야기 · 선택은 체험판 안의 전개에만
+        반영됩니다.
+      </p>
+    </dialog>
   </body>
 </html>
