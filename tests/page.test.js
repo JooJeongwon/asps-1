@@ -10,10 +10,10 @@ const scripts = await Promise.all(
   ),
 );
 const portraits = {
-  정치훈: "characters/jeong-chihoon.jpeg",
-  주정원: "characters/joo-jeongwon.jpeg",
-  박진환: "characters/park-jinhwan.jpg",
-  남성수: "characters/nam-seongsu.png",
+  정치훈: "characters/jeong-chihoon-anime.png",
+  주정원: "characters/joo-jeongwon-anime.png",
+  박진환: "characters/park-jinhwan-anime.png",
+  남성수: "characters/nam-seongsu-anime.png",
 };
 
 test("root hosts the native game directly and loads character data before its script", () => {
@@ -40,7 +40,7 @@ test("root hosts the native game directly and loads character data before its sc
   dom.window.close();
 });
 
-test("root and direct links auto-start the engine with the correct named photographs", async () => {
+test("root and direct links auto-start the engine with the correct named anime portraits", async () => {
   for (const [index, name] of [
     undefined,
     ...Object.keys(portraits),

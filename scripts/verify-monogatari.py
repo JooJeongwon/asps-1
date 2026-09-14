@@ -13,7 +13,7 @@ parser.add_argument('--screenshots', default=None)
 args = parser.parse_args()
 base = args.url.rstrip('/')
 names = ['정치훈', '주정원', '박진환', '남성수']
-photos = ['jeong-chihoon.jpeg', 'joo-jeongwon.jpeg', 'park-jinhwan.jpg', 'nam-seongsu.png']
+photos = ['jeong-chihoon-anime.png', 'joo-jeongwon-anime.png', 'park-jinhwan-anime.png', 'nam-seongsu-anime.png']
 titles = [
     ['내일도, 같은 출발선', '한 걸음의 여백'],
     ['우리만 아는 별의 이름', '접어둔 질문 하나'],
@@ -150,7 +150,7 @@ with sync_playwright() as p:
     page.locator('[data-choice="Route0"]').click()
     expect(page.locator('#route-name')).to_contain_text('정치훈')
     assert page.evaluate('monogatari.storage().decisions') == [None,None,None]
-    # Responsive full-screen game and all four original portraits.
+    # Responsive full-screen game and all four AI anime portraits.
     for width,height in [(1440,1000),(390,844),(375,812),(320,740),(768,1024)]:
         page.set_viewport_size({'width':width,'height':height})
         start(page)

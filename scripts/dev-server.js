@@ -5,6 +5,22 @@ import { handleApi } from "../lib/compatibility.js";
 const files = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
+  [
+    "/assets/characters/jeong-chihoon-anime.png",
+    ["assets/characters/jeong-chihoon-anime.png", "image/png"],
+  ],
+  [
+    "/assets/characters/joo-jeongwon-anime.png",
+    ["assets/characters/joo-jeongwon-anime.png", "image/png"],
+  ],
+  [
+    "/assets/characters/park-jinhwan-anime.png",
+    ["assets/characters/park-jinhwan-anime.png", "image/png"],
+  ],
+  [
+    "/assets/characters/nam-seongsu-anime.png",
+    ["assets/characters/nam-seongsu-anime.png", "image/png"],
+  ],
   ["/characters.js", ["characters.js", "text/javascript; charset=utf-8"]],
   [
     "/assets/characters/jeong-chihoon.jpeg",
