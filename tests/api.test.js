@@ -39,6 +39,11 @@ test('modern secret keys are not used as JWTs',async()=>{
   return Response.json(rows);
  });
 });
+test('falls back to the existing D1 dataset when Supabase is unavailable',async()=>{
+ const DB={prepare(sql){assert.match(sql,/FROM individual_matches/);return {all:async()=>({results:rows})};}};
+ const result=await loadMatches({DB},async()=>{throw new Error('Supabase unavailable');});
+ assert.equal(result.length,650);
+});
 test('highlight uses raw maximum and deterministic ties',async()=>{
  const best=await(await call('highlight',async()=>Response.json([...rows].reverse()))).json();
  assert.equal(best.match_score,Math.max(...rows.map(r=>r.match_score)));assert.equal(best.tied_pairs,1);
