@@ -1,4 +1,4 @@
-# TEAM 04 · Monogatari 구성
+# TEAM 01 · Monogatari 구성
 
 ## 현재 이야기
 
@@ -39,7 +39,7 @@ CUT 19의 네 선택에는 조건이나 호감도 경계를 두지 않았다. �
 ## 이미지
 
 - [4인 AI 초상화와 실제 프롬프트](character-art-prompts.md): 사용자가 제공한 인물별 사진을 바탕으로 내장 image_gen으로 생성했다. 게임에서는 `*-anime.png`, 마지막 팀 소개에서는 제공된 원본 사진을 사용한다.
-- [TEAM 04 배경 시트와 실제 프롬프트](team04-background-prompt.md): 아침 캠퍼스, 낮 프로젝트 룸, 라운지, 밤 프로젝트 룸의 2×2 시트. `scene: 0~3`에 대응한다.
+- [게임 배경 시트와 실제 프롬프트](team04-background-prompt.md): 아침 캠퍼스, 낮 프로젝트 룸, 라운지, 밤 프로젝트 룸의 2×2 시트. `scene: 0~3`에 대응한다.
 
 ## 검증
 

@@ -92,7 +92,7 @@
       : cut?.title || scenario.title;
     document.getElementById("route-motif").textContent = ending
       ? ending.subtitle
-      : "TEAM 04 · 오늘, 우리 중 한 명을 선택해";
+      : "TEAM 01 · 오늘, 우리 중 한 명을 선택해";
     document.getElementById("route-location").textContent =
       cut?.location || "마지막 밤 · 당신의 대답";
     document.getElementById("route-step").textContent =
